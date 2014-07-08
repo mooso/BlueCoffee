@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="CloudyBlueKafka" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
+  <WorkerRole name="KafkaBroker" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+      <Import moduleName="RemoteAccess" />
+      <Import moduleName="RemoteForwarder" />
+    </Imports>
+    <Endpoints>
+      <InternalEndpoint name="BrokerEndpoint" port="9092" protocol="tcp" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="250" />
+      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
+    </LocalResources>
+  </WorkerRole>
+  <WorkerRole name="Zookeeper" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+      <Import moduleName="RemoteAccess" />
+    </Imports>
+    <Endpoints>
+      <InternalEndpoint name="ZookeeperEndpoint" port="2181" protocol="tcp" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="250" />
+      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
+    </LocalResources>
+  </WorkerRole>
+  <WorkerRole name="TesterApp" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+      <Import moduleName="RemoteAccess" />
+    </Imports>
+  </WorkerRole>
+</ServiceDefinition>
