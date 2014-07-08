@@ -35,7 +35,10 @@ namespace KafkaBroker
 				runner.RunClass(className,
 					_kafkaServerPropertiesPath,
 					classPathEntries,
-					defines: new Dictionary<string, string> { { "log4j.configuration", _logsDirectory } });
+					defines: new Dictionary<string, string>
+					{
+						{ "log4j.configuration", "file:\"" + _kafkaLog4jPropertiesPath + "\"" }
+					});
 			}
 			catch (Exception ex)
 			{

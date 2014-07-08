@@ -25,7 +25,7 @@ namespace JavaUtils
 			{
 				sampleLog4j = textStream.ReadToEnd();
 			}
-			var finalLog4j = sampleLog4j.Replace("kafka.logs.dir=logs", "kafka.logs.dir=" + _logDirectory);
+			var finalLog4j = sampleLog4j.Replace("kafka.logs.dir=logs", "kafka.logs.dir=" + _logDirectory.Replace('\\', '/'));
 			File.WriteAllText(configFilePath, finalLog4j, Encoding.ASCII);
 		}
 	}

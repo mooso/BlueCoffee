@@ -43,7 +43,7 @@ namespace JavaUtils
 			javaToolArgumentList.Add("-cp " + String.Join(";", classPathEntries));
 			if (defines != null)
 			{
-				javaToolArgumentList.Add(String.Join(" ", defines.Select((k, v) => String.Format(CultureInfo.InvariantCulture, "-D{0}={1}", k, v))));
+				javaToolArgumentList.Add(String.Join(" ", defines.Select(kv => String.Format(CultureInfo.InvariantCulture, "-D{0}={1}", kv.Key, kv.Value))));
 			}
 			javaToolArgumentList.Add(String.Format(CultureInfo.InvariantCulture, "-Xmx{0}M", maxMemoryMb));
 			if (server)
