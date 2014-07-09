@@ -39,7 +39,7 @@ namespace KafkaBroker
 		public void WriteToFile(string configFilePath)
 		{
 			File.WriteAllText(configFilePath,
-				String.Join("\n", _configEntries.Select((k, v) => String.Format(CultureInfo.InvariantCulture, "{0}={1}", k, v))),
+				String.Join("\n", _configEntries.Select(kv => String.Format(CultureInfo.InvariantCulture, "{0}={1}", kv.Key, kv.Value))),
 				Encoding.ASCII);
 		}
 	}

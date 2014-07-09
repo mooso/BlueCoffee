@@ -26,7 +26,7 @@ namespace JavaUtils
 		public void WriteToFile(string configFilePath)
 		{
 			File.WriteAllText(configFilePath,
-				String.Join("\n", _configEntries.Select((k, v) => String.Join("=", k, v))),
+				String.Join("\n", _configEntries.Select(kv => String.Join("=", kv.Key, kv.Value))),
 				Encoding.ASCII);
 		}
 	}

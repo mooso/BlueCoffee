@@ -99,6 +99,7 @@ namespace KafkaBroker
 			var zookeeperRole = RoleEnvironment.Roles["Zookeeper"];
 			var zookeeperHosts = zookeeperRole.Instances.Select(i => i.InstanceEndpoints.First().Value.IPEndpoint.Address.ToString());
 			var zookeeperConnectionString = ZookeeperConfig.GetZookeeperConnectionString(zookeeperHosts);
+			Trace.TraceInformation("Zookeeper connection string: " + zookeeperConnectionString);
 			var myBrokerId = Int32.Parse(RoleEnvironment.CurrentRoleInstance.Id.Split('_').Last());
 			var config = KafkaServerConfig.Default(myBrokerId, _dataDirectory, zookeeperConnectionString);
 			config.WriteToFile(_kafkaServerPropertiesPath);
