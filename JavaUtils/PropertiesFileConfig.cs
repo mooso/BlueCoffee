@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace JavaUtils
 {
-	public abstract class PropertiesFileConfig
+	public sealed class PropertiesFile
 	{
-		private readonly ImmutableDictionary<string, string> _configEntries;
+		private readonly ImmutableList<KeyValuePair<string, string>> _configEntries;
 
-		protected PropertiesFileConfig(IDictionary<string, string> configEntires)
+		public PropertiesFile(IEnumerable<KeyValuePair<string, string>> configEntires)
 		{
-			_configEntries = configEntires.ToImmutableDictionary();
+			_configEntries = configEntires.ToImmutableList();
 		}
 
-		public ImmutableDictionary<string, string> ConfigEntries
+		public ImmutableList<KeyValuePair<string, string>> ConfigEntries
 		{
 			get { return _configEntries; }
 		}

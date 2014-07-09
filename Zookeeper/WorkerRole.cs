@@ -22,6 +22,8 @@ namespace Zookeeper
 		private string _javaHome;
 		private string _configsDirectory;
 		private string _zookeeperPropertiesPath;
+		private string _logsDirectory;
+		private string _zooKeeperLog4jPropertiesPath;
 
 		public override void Run()
 		{
@@ -30,7 +32,11 @@ namespace Zookeeper
 				var runner = new JavaRunner(_javaHome);
 				const string className = "org.apache.zookeeper.server.quorum.QuorumPeerMain";
 				var classPathEntries = JavaRunner.GetClassPathForJarsInDirectories(_jarsHome);
-				runner.RunClass(className, _zookeeperPropertiesPath, classPathEntries);
+				runner.RunClass(className, _zookeeperPropertiesPath, classPathEntries,
+					defines: new Dictionary<string, string>
+					{
+						{ "log4j.configuration", "file:\"" + _zooKeeperLog4jPropertiesPath + "\"" }
+					});
 			}
 			catch (Exception ex)
 			{
@@ -59,6 +65,7 @@ namespace Zookeeper
 				ExtractJars();
 				JavaInstaller.ExtractJdk(_javaInstallHome);
 				WriteZookeeperServerConfigFile(); // TODO: Handle role environment changes to rewrite the file and restart the server.
+				WriteZookeeperLog4jFile();
 				return base.OnStart();
 			}
 			catch (Exception ex)
@@ -80,12 +87,21 @@ namespace Zookeeper
 			_configsDirectory = Path.Combine(dataResource.RootPath, "Config");
 			Directory.CreateDirectory(_configsDirectory);
 			_zookeeperPropertiesPath = Path.Combine(_configsDirectory, "zookeeper.properties");
+			_logsDirectory = Path.Combine(dataResource.RootPath, "Logs");
+			Directory.CreateDirectory(_logsDirectory);
+			_zooKeeperLog4jPropertiesPath = Path.Combine(_configsDirectory, "log4j.properties");
 		}
 
 		private void WriteZookeeperServerConfigFile()
 		{
-			var config = ZookeeperConfig.Default(_dataDirectory);
-			config.WriteToFile(_zookeeperPropertiesPath);
+			var config = new ZookeeperConfig(_dataDirectory);
+			config.ToPropertiesFile().WriteToFile(_zookeeperPropertiesPath);
+		}
+
+		private void WriteZookeeperLog4jFile()
+		{
+			var config = KafkaLog4jConfigFactory.CreateConfig(_logsDirectory);
+			config.ToPropertiesFile().WriteToFile(_zooKeeperLog4jPropertiesPath);
 		}
 
 		private void ExtractJars()

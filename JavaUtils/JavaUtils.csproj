@@ -47,8 +47,16 @@
     <Compile Include="DefaultProcessOutputTracer.cs" />
     <Compile Include="JavaInstaller.cs" />
     <Compile Include="JavaRunner.cs" />
-    <Compile Include="KafkaLog4jConfig.cs" />
+    <Compile Include="KafkaLog4jConfigFactory.cs" />
+    <Compile Include="Log4jConfig.cs" />
     <Compile Include="KafkaServerConfig.cs" />
+    <Compile Include="Log4j\AppenderDefinition.cs" />
+    <Compile Include="Log4j\AppenderDefinitionFactory.cs" />
+    <Compile Include="Log4j\ChildLoggerDefinition.cs" />
+    <Compile Include="Log4j\LayoutDefinition.cs" />
+    <Compile Include="Log4j\Log4jTraceLevel.cs" />
+    <Compile Include="Log4j\LoggerDefinition.cs" />
+    <Compile Include="Log4j\RootLoggerDefinition.cs" />
     <Compile Include="ProcessOutputTracer.cs" />
     <Compile Include="PropertiesFileConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -59,7 +67,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\log4j.properties" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

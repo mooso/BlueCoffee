@@ -9,29 +9,31 @@ using System.Threading.Tasks;
 
 namespace JavaUtils
 {
-	public sealed class KafkaServerConfig : PropertiesFileConfig
+	public sealed class KafkaServerConfig
 	{
 		public const int DefaultPort = 9092;
+		private readonly int _port;
+		private readonly int _brokerId;
+		private readonly string _logFileDirectory;
+		private readonly string _zooKeeperConnectionString;
 
-		private KafkaServerConfig(IDictionary<string, string> configEntries)
-			: base(configEntries)
+		public KafkaServerConfig(int brokerId, string logFileDirectory, string zooKeeperConnectionString, int port = DefaultPort)
 		{
+			_port = port;
+			_brokerId = brokerId;
+			_logFileDirectory = logFileDirectory;
+			_zooKeeperConnectionString = zooKeeperConnectionString;
 		}
 
-		public static KafkaServerConfig Default(int brokerId, string logFileDirectory, string zooKeeperConnectionString)
+		public PropertiesFile ToPropertiesFile()
 		{
-			return new KafkaServerConfig(new Dictionary<string, string>()
+			return new PropertiesFile(new Dictionary<string, string>()
 			{
-				{ "broker.id", brokerId.ToString() },
-				{ "port", DefaultPort.ToString() },
-				{ "log.dirs", logFileDirectory },
-				{ "zookeeper.connect", zooKeeperConnectionString },
+				{ "broker.id", _brokerId.ToString() },
+				{ "port", _port.ToString() },
+				{ "log.dirs", _logFileDirectory.Replace('\\', '/') },
+				{ "zookeeper.connect", _zooKeeperConnectionString },
 			});
-		}
-
-		public KafkaServerConfig WithConfig(string configName, string value)
-		{
-			return new KafkaServerConfig(ConfigEntries.SetItem(configName, value));
 		}
 	}
 }

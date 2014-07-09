@@ -7,32 +7,30 @@ using System.Threading.Tasks;
 
 namespace JavaUtils
 {
-	public sealed class ZookeeperConfig : PropertiesFileConfig
+	public sealed class ZookeeperConfig
 	{
 		public const int DefaultPort = 2181;
+		private readonly string _snapshotDirectory;
+		private readonly int _port;
 
-		private ZookeeperConfig(IDictionary<string, string> configEntries)
-			: base(configEntries)
+		public ZookeeperConfig(string snapshotDirectory, int port = DefaultPort)
 		{
+			_snapshotDirectory = snapshotDirectory;
+			_port = port;
 		}
 
-		public static ZookeeperConfig Default(string snapshotDirectory)
+		public PropertiesFile ToPropertiesFile()
 		{
-			return new ZookeeperConfig(new Dictionary<string, string>()
+			return new PropertiesFile(new Dictionary<string, string>()
 			{
-				{ "dataDir", snapshotDirectory },
-				{ "clientPort", DefaultPort.ToString() },
+				{ "dataDir", _snapshotDirectory.Replace('\\', '/') },
+				{ "clientPort", _port.ToString() },
 			});
 		}
 
 		public static string GetZookeeperConnectionString(IEnumerable<string> zookeeperHosts, int port = DefaultPort)
 		{
 			return String.Join(",", zookeeperHosts.Select(h => String.Join(":", h, port)));
-		}
-
-		public ZookeeperConfig WithConfig(string configName, string value)
-		{
-			return new ZookeeperConfig(ConfigEntries.SetItem(configName, value));
 		}
 	}
 }

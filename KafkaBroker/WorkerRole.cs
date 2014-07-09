@@ -101,14 +101,14 @@ namespace KafkaBroker
 			var zookeeperConnectionString = ZookeeperConfig.GetZookeeperConnectionString(zookeeperHosts);
 			Trace.TraceInformation("Zookeeper connection string: " + zookeeperConnectionString);
 			var myBrokerId = Int32.Parse(RoleEnvironment.CurrentRoleInstance.Id.Split('_').Last());
-			var config = KafkaServerConfig.Default(myBrokerId, _dataDirectory, zookeeperConnectionString);
-			config.WriteToFile(_kafkaServerPropertiesPath);
+			var config = new KafkaServerConfig(myBrokerId, _dataDirectory, zookeeperConnectionString);
+			config.ToPropertiesFile().WriteToFile(_kafkaServerPropertiesPath);
 		}
 
 		private void WriteKafkaLog4jFile()
 		{
-			var config = new KafkaLog4jConfig(_logsDirectory);
-			config.WriteToFile(_kafkaLog4jPropertiesPath);
+			var config = KafkaLog4jConfigFactory.CreateConfig(_logsDirectory);
+			config.ToPropertiesFile().WriteToFile(_kafkaLog4jPropertiesPath);
 		}
 
 		private void ExtractJars()
