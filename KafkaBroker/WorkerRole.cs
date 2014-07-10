@@ -18,29 +18,14 @@ namespace KafkaBroker
 {
 	public class WorkerRole : RoleEntryPoint
 	{
-		private string _javaInstallHome;
-		private string _jarsHome;
-		private string _dataDirectory; // TODO: Put on Azure Files or somewhere permanent
-		private string _javaHome;
-		private string _configsDirectory;
-		private string _logsDirectory;
-		private string _kafkaServerPropertiesPath;
-		private string _kafkaLog4jPropertiesPath;
+		private JavaInstaller _javaInstaller;
+		private KafkaBrokerRunner _kafkaRunner;
 
 		public override void Run()
 		{
 			try
 			{
-				var runner = new JavaRunner(_javaHome);
-				const string className = "kafka.Kafka";
-				var classPathEntries = JavaRunner.GetClassPathForJarsInDirectories(_jarsHome);
-				runner.RunClass(className,
-					_kafkaServerPropertiesPath,
-					classPathEntries,
-					defines: new Dictionary<string, string>
-					{
-						{ "log4j.configuration", "file:\"" + _kafkaLog4jPropertiesPath + "\"" }
-					});
+				_kafkaRunner.Run();
 			}
 			catch (Exception ex)
 			{
@@ -53,11 +38,8 @@ namespace KafkaBroker
 		{
 			try
 			{
-				DiscoverDirectories();
-				ExtractJars();
-				JavaInstaller.ExtractJdk(_javaInstallHome);
-				WriteKafkaServerConfigFile(); // TODO: Handle role environment changes to rewrite the file and restart the server.
-				WriteKafkaLog4jFile();
+				InstallJava();
+				InstallKafka();
 			}
 			catch (Exception ex)
 			{
@@ -67,21 +49,37 @@ namespace KafkaBroker
 			return base.OnStart();
 		}
 
-		private void DiscoverDirectories()
+		private void InstallJava()
 		{
-			var installResource = RoleEnvironment.GetLocalResource("InstallDir");
-			_javaInstallHome = Path.Combine(installResource.RootPath, "Java");
-			_javaHome = Path.Combine(_javaInstallHome, "java");
-			_jarsHome = Path.Combine(installResource.RootPath, "Jars");
-			var dataResource = RoleEnvironment.GetLocalResource("DataDir");
-			_dataDirectory = Path.Combine(dataResource.RootPath, "Data");
-			Directory.CreateDirectory(_dataDirectory);
-			_configsDirectory = Path.Combine(dataResource.RootPath, "Config");
-			Directory.CreateDirectory(_configsDirectory);
-			_logsDirectory = Path.Combine(dataResource.RootPath, "Logs");
-			Directory.CreateDirectory(_logsDirectory);
-			_kafkaServerPropertiesPath = Path.Combine(_configsDirectory, "server.properties");
-			_kafkaLog4jPropertiesPath = Path.Combine(_configsDirectory, "log4j.properties");
+			_javaInstaller = new JavaInstaller(Path.Combine(InstallDirectory, "Java"));
+			_javaInstaller.Setup();
+		}
+
+		private void InstallKafka()
+		{
+			var zookeeperRole = RoleEnvironment.Roles["Zookeeper"];
+			var zookeeperHosts = zookeeperRole.Instances.Select(i => i.InstanceEndpoints.First().Value.IPEndpoint.Address.ToString());
+			var myBrokerId = Int32.Parse(RoleEnvironment.CurrentRoleInstance.Id.Split('_').Last());
+			_kafkaRunner = new KafkaBrokerRunner(
+				dataDirectory: Path.Combine(DataDirectory, "Data"),
+				configsDirectory: Path.Combine(DataDirectory, "Config"),
+				logsDirectory: Path.Combine(DataDirectory, "Logs"),
+				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
+				zooKeeperHosts: zookeeperHosts,
+				zooKeeperPort: ZooKeeperConfig.DefaultPort,
+				brokerId: myBrokerId,
+				javaHome: _javaInstaller.JavaHome);
+			_kafkaRunner.Setup();
+		}
+
+		private static string InstallDirectory
+		{
+			get { return RoleEnvironment.GetLocalResource("InstallDir").RootPath; }
+		}
+
+		private static string DataDirectory
+		{
+			get { return RoleEnvironment.GetLocalResource("DataDir").RootPath; }
 		}
 
 		private void UploadExceptionToBlob(Exception ex)
@@ -94,32 +92,6 @@ namespace KafkaBroker
 			container
 					.GetBlockBlobReference("Exception from " + RoleEnvironment.CurrentRoleInstance.Id + " on " + DateTime.Now)
 					.UploadText(ex.ToString());
-		}
-
-		private void WriteKafkaServerConfigFile()
-		{
-			var zookeeperRole = RoleEnvironment.Roles["Zookeeper"];
-			var zookeeperHosts = zookeeperRole.Instances.Select(i => i.InstanceEndpoints.First().Value.IPEndpoint.Address.ToString());
-			var zookeeperConnectionString = ZooKeeperConfig.GetZookeeperConnectionString(zookeeperHosts);
-			Trace.TraceInformation("Zookeeper connection string: " + zookeeperConnectionString);
-			var myBrokerId = Int32.Parse(RoleEnvironment.CurrentRoleInstance.Id.Split('_').Last());
-			var config = new KafkaServerConfig(myBrokerId, _dataDirectory, zookeeperConnectionString);
-			config.ToPropertiesFile().WriteToFile(_kafkaServerPropertiesPath);
-		}
-
-		private void WriteKafkaLog4jFile()
-		{
-			var config = KafkaLog4jConfigFactory.CreateConfig(_logsDirectory);
-			config.ToPropertiesFile().WriteToFile(_kafkaLog4jPropertiesPath);
-		}
-
-		private void ExtractJars()
-		{
-			using (var rawStream = typeof(WorkerRole).Assembly.GetManifestResourceStream("KafkaBroker.Resources.Jars.zip"))
-			using (var archive = new ZipArchive(rawStream))
-			{
-				archive.ExtractToDirectory(_jarsHome);
-			}
 		}
 	}
 }

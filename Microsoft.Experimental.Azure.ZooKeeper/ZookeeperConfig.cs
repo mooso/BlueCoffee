@@ -28,10 +28,5 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 				{ "clientPort", _port.ToString() },
 			});
 		}
-
-		public static string GetZookeeperConnectionString(IEnumerable<string> zookeeperHosts, int port = DefaultPort)
-		{
-			return String.Join(",", zookeeperHosts.Select(h => String.Join(":", h, port)));
-		}
 	}
 }
