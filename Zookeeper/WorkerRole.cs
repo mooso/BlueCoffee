@@ -11,6 +11,7 @@ using Microsoft.WindowsAzure.Storage;
 using System.IO;
 using JavaUtils;
 using System.IO.Compression;
+using Microsoft.Experimental.Azure.ZooKeeper;
 
 namespace Zookeeper
 {
@@ -94,13 +95,13 @@ namespace Zookeeper
 
 		private void WriteZookeeperServerConfigFile()
 		{
-			var config = new ZookeeperConfig(_dataDirectory);
+			var config = new ZooKeeperConfig(_dataDirectory);
 			config.ToPropertiesFile().WriteToFile(_zookeeperPropertiesPath);
 		}
 
 		private void WriteZookeeperLog4jFile()
 		{
-			var config = KafkaLog4jConfigFactory.CreateConfig(_logsDirectory);
+			var config = ZooKeeperLog4jConfigFactory.CreateConfig(_logsDirectory);
 			config.ToPropertiesFile().WriteToFile(_zooKeeperLog4jPropertiesPath);
 		}
 

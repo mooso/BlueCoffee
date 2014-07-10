@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DC9CB2B9-D563-4EC5-ABE9-4E204B0C4BCB}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{37A6F1A6-AEB4-496E-9A26-C41FA9E5DDD0}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ScratchPad</RootNamespace>
-    <AssemblyName>ScratchPad</AssemblyName>
+    <RootNamespace>Microsoft.Experimental.Azure.Kafka</RootNamespace>
+    <AssemblyName>Microsoft.Experimental.Azure.Kafka</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -44,26 +42,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="KafkaLog4jConfigFactory.cs" />
+    <Compile Include="KafkaServerConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JavaUtils\Microsoft.Experimental.Azure.JavaPlatform.csproj">
       <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
       <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Experimental.Azure.Kafka\Microsoft.Experimental.Azure.Kafka.csproj">
-      <Project>{37a6f1a6-aeb4-496e-9a26-c41fa9e5ddd0}</Project>
-      <Name>Microsoft.Experimental.Azure.Kafka</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Experimental.Azure.ZooKeeper\Microsoft.Experimental.Azure.ZooKeeper.csproj">
-      <Project>{4586a4f0-1fe5-48e2-aed3-e6d5558dbfd1}</Project>
-      <Name>Microsoft.Experimental.Azure.ZooKeeper</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

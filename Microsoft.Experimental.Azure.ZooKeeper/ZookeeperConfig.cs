@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace JavaUtils
 {
-	public sealed class ZookeeperConfig
+	public sealed class ZooKeeperConfig
 	{
 		public const int DefaultPort = 2181;
 		private readonly string _snapshotDirectory;
 		private readonly int _port;
 
-		public ZookeeperConfig(string snapshotDirectory, int port = DefaultPort)
+		public ZooKeeperConfig(string snapshotDirectory, int port = DefaultPort)
 		{
 			_snapshotDirectory = snapshotDirectory;
 			_port = port;

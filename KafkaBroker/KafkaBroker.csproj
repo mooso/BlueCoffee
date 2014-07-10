@@ -83,9 +83,17 @@
     <EmbeddedResource Include="Resources\Jars.zip" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JavaUtils\JavaUtils.csproj">
+    <ProjectReference Include="..\JavaUtils\Microsoft.Experimental.Azure.JavaPlatform.csproj">
       <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
-      <Name>JavaUtils</Name>
+      <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Experimental.Azure.Kafka\Microsoft.Experimental.Azure.Kafka.csproj">
+      <Project>{37a6f1a6-aeb4-496e-9a26-c41fa9e5ddd0}</Project>
+      <Name>Microsoft.Experimental.Azure.Kafka</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Experimental.Azure.ZooKeeper\Microsoft.Experimental.Azure.ZooKeeper.csproj">
+      <Project>{4586a4f0-1fe5-48e2-aed3-e6d5558dbfd1}</Project>
+      <Name>Microsoft.Experimental.Azure.ZooKeeper</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
