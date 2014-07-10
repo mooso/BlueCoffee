@@ -10,14 +10,13 @@ using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.Storage;
 using System.Collections.Immutable;
 using Kafka.Client;
-using Microsoft.Experimental.Azure.JavaPlatform;
-using Microsoft.Experimental.Azure.Kafka;
 
 namespace TesterApp
 {
 	public class WorkerRole : RoleEntryPoint
 	{
 		private ImmutableList<string> _brokerHosts;
+		private const int KafkaPort = 9092;
 
 		public override void Run()
 		{
@@ -31,7 +30,7 @@ namespace TesterApp
 			{
 				try
 				{
-					connector = new Connector(_brokerHosts[brokerHostIndex], KafkaServerConfig.DefaultPort);
+					connector = new Connector(_brokerHosts[brokerHostIndex], KafkaPort);
 					var metadata = connector.Metadata(correlationId, clientId, "sampletopic");
 					break;
 				}
