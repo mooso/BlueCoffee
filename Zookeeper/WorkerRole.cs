@@ -17,27 +17,14 @@ namespace Zookeeper
 {
 	public class WorkerRole : RoleEntryPoint
 	{
-		private string _javaInstallHome;
-		private string _jarsHome;
-		private string _dataDirectory;
-		private string _javaHome;
-		private string _configsDirectory;
-		private string _zookeeperPropertiesPath;
-		private string _logsDirectory;
-		private string _zooKeeperLog4jPropertiesPath;
+		private JavaInstaller _javaInstaller;
+		private ZooKeeperNodeRunner _nodeRunner;
 
 		public override void Run()
 		{
 			try
 			{
-				var runner = new JavaRunner(_javaHome);
-				const string className = "org.apache.zookeeper.server.quorum.QuorumPeerMain";
-				var classPathEntries = JavaRunner.GetClassPathForJarsInDirectories(_jarsHome);
-				runner.RunClass(className, _zookeeperPropertiesPath, classPathEntries,
-					defines: new Dictionary<string, string>
-					{
-						{ "log4j.configuration", "file:\"" + _zooKeeperLog4jPropertiesPath + "\"" }
-					});
+				_nodeRunner.Run();
 			}
 			catch (Exception ex)
 			{
@@ -62,11 +49,8 @@ namespace Zookeeper
 		{
 			try
 			{
-				DiscoverDirectories();
-				ExtractJars();
-				JavaInstaller.ExtractJdk(_javaInstallHome);
-				WriteZookeeperServerConfigFile(); // TODO: Handle role environment changes to rewrite the file and restart the server.
-				WriteZookeeperLog4jFile();
+				InstallJava();
+				InstallZooKeeper();
 				return base.OnStart();
 			}
 			catch (Exception ex)
@@ -76,42 +60,31 @@ namespace Zookeeper
 			}
 		}
 
-		private void DiscoverDirectories()
+		private void InstallJava()
 		{
-			var installResource = RoleEnvironment.GetLocalResource("InstallDir");
-			_javaInstallHome = Path.Combine(installResource.RootPath, "Java");
-			_javaHome = Path.Combine(_javaInstallHome, "java");
-			_jarsHome = Path.Combine(installResource.RootPath, "Jars");
-			var dataResource = RoleEnvironment.GetLocalResource("DataDir");
-			_dataDirectory = Path.Combine(dataResource.RootPath, "Data");
-			Directory.CreateDirectory(_dataDirectory);
-			_configsDirectory = Path.Combine(dataResource.RootPath, "Config");
-			Directory.CreateDirectory(_configsDirectory);
-			_zookeeperPropertiesPath = Path.Combine(_configsDirectory, "zookeeper.properties");
-			_logsDirectory = Path.Combine(dataResource.RootPath, "Logs");
-			Directory.CreateDirectory(_logsDirectory);
-			_zooKeeperLog4jPropertiesPath = Path.Combine(_configsDirectory, "log4j.properties");
+			_javaInstaller = new JavaInstaller(Path.Combine(InstallDirectory, "Java"));
+			_javaInstaller.Setup();
 		}
 
-		private void WriteZookeeperServerConfigFile()
+		private void InstallZooKeeper()
 		{
-			var config = new ZooKeeperConfig(_dataDirectory);
-			config.ToPropertiesFile().WriteToFile(_zookeeperPropertiesPath);
+			_nodeRunner = new ZooKeeperNodeRunner(
+				dataDirectory: Path.Combine(DataDirectory, "Data"),
+				configsDirectory: Path.Combine(DataDirectory, "Config"),
+				logsDirectory: Path.Combine(DataDirectory, "Logs"),
+				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
+				javaHome: _javaInstaller.JavaHome);
+			_nodeRunner.Setup();
 		}
 
-		private void WriteZookeeperLog4jFile()
+		private static string InstallDirectory
 		{
-			var config = ZooKeeperLog4jConfigFactory.CreateConfig(_logsDirectory);
-			config.ToPropertiesFile().WriteToFile(_zooKeeperLog4jPropertiesPath);
+			get { return RoleEnvironment.GetLocalResource("InstallDir").RootPath; }
 		}
 
-		private void ExtractJars()
+		private static string DataDirectory
 		{
-			using (var rawStream = typeof(WorkerRole).Assembly.GetManifestResourceStream("Zookeeper.Resources.Jars.zip"))
-			using (var archive = new ZipArchive(rawStream))
-			{
-				archive.ExtractToDirectory(_jarsHome);
-			}
+			get { return RoleEnvironment.GetLocalResource("DataDir").RootPath; }
 		}
 	}
 }

@@ -80,7 +80,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\Jars.zip" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj">
