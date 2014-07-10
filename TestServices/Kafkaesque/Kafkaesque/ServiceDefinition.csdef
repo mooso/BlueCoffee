@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="Kafkaesque" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
+  <WorkerRole name="KafkaBroker" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <LocalResources>
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="250" />
+      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
+    </LocalResources>
+    <Endpoints>
+      <InternalEndpoint name="BrokerEndpiont" protocol="tcp" port="9092" />
+    </Endpoints>
+  </WorkerRole>
+  <WorkerRole name="TesterApp" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+  </WorkerRole>
+  <WorkerRole name="ZooKeeperNode" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InternalEndpoint name="ZooKeeperEndpoint" protocol="tcp" port="2181" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="250" />
+      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
+    </LocalResources>
+  </WorkerRole>
+</ServiceDefinition>

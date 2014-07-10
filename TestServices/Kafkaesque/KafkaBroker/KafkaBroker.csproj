@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{03C2B389-65BE-4271-AE3C-2FD9A9FA9562}</ProjectGuid>
+    <ProjectGuid>{8EE4E196-964E-4810-A84C-4AF956E79B23}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Zookeeper</RootNamespace>
-    <AssemblyName>Zookeeper</AssemblyName>
+    <RootNamespace>KafkaBroker</RootNamespace>
+    <AssemblyName>KafkaBroker</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <RoleType>Worker</RoleType>
@@ -82,13 +82,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj">
+    <ProjectReference Include="..\..\..\Libraries\Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj">
       <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
       <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Experimental.Azure.ZooKeeper\Microsoft.Experimental.Azure.ZooKeeper.csproj">
-      <Project>{4586a4f0-1fe5-48e2-aed3-e6d5558dbfd1}</Project>
-      <Name>Microsoft.Experimental.Azure.ZooKeeper</Name>
+    <ProjectReference Include="..\..\..\Libraries\Microsoft.Experimental.Azure.Kafka\Microsoft.Experimental.Azure.Kafka.csproj">
+      <Project>{37a6f1a6-aeb4-496e-9a26-c41fa9e5ddd0}</Project>
+      <Name>Microsoft.Experimental.Azure.Kafka</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
