@@ -90,10 +90,6 @@
       <Project>{37a6f1a6-aeb4-496e-9a26-c41fa9e5ddd0}</Project>
       <Name>Microsoft.Experimental.Azure.Kafka</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Microsoft.Experimental.Azure.ZooKeeper\Microsoft.Experimental.Azure.ZooKeeper.csproj">
-      <Project>{4586a4f0-1fe5-48e2-aed3-e6d5558dbfd1}</Project>
-      <Name>Microsoft.Experimental.Azure.ZooKeeper</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,6 +1,5 @@
 using Microsoft.Experimental.Azure.JavaPlatform;
 using Microsoft.Experimental.Azure.Kafka;
-using Microsoft.Experimental.Azure.ZooKeeper;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
@@ -20,6 +19,7 @@ namespace KafkaBroker
 	{
 		private JavaInstaller _javaInstaller;
 		private KafkaBrokerRunner _kafkaRunner;
+		private const int ZooKeeperPort = 2181;
 
 		public override void Run()
 		{
@@ -66,7 +66,7 @@ namespace KafkaBroker
 				logsDirectory: Path.Combine(DataDirectory, "Logs"),
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
 				zooKeeperHosts: zookeeperHosts,
-				zooKeeperPort: ZooKeeperConfig.DefaultPort,
+				zooKeeperPort: ZooKeeperPort,
 				brokerId: myBrokerId,
 				javaHome: _javaInstaller.JavaHome);
 			_kafkaRunner.Setup();
