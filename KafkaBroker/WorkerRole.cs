@@ -1,18 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Threading;
+using Microsoft.Experimental.Azure.JavaPlatform;
+using Microsoft.Experimental.Azure.Kafka;
+using Microsoft.Experimental.Azure.ZooKeeper;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.Storage;
-using System.IO.Compression;
-using Microsoft.Experimental.Azure.JavaPlatform;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using Microsoft.Experimental.Azure.ZooKeeper;
-using Microsoft.Experimental.Azure.Kafka;
+using System.IO.Compression;
+using System.Linq;
+using System.Net;
+using System.Threading;
 
 namespace KafkaBroker
 {
