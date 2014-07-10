@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Experimental.Azure.JavaPlatform;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JavaUtils
+namespace Microsoft.Experimental.Azure.Kafka
 {
 	public sealed class KafkaServerConfig
 	{

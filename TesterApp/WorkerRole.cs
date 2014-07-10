@@ -10,7 +10,8 @@ using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.Storage;
 using System.Collections.Immutable;
 using Kafka.Client;
-using JavaUtils;
+using Microsoft.Experimental.Azure.JavaPlatform;
+using Microsoft.Experimental.Azure.Kafka;
 
 namespace TesterApp
 {

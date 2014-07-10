@@ -1,11 +1,12 @@
-﻿using JavaUtils.Log4j;
+﻿using Microsoft.Experimental.Azure.JavaPlatform;
+using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JavaUtils
+namespace Microsoft.Experimental.Azure.Kafka
 {
 	public static class KafkaLog4jConfigFactory
 	{

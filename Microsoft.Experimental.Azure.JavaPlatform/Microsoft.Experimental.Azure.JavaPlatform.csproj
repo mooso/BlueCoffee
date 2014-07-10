@@ -7,8 +7,8 @@
     <ProjectGuid>{AAFC6C12-F8D1-44A4-A723-91B26DB7DC96}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JavaUtils</RootNamespace>
-    <AssemblyName>JavaUtils</AssemblyName>
+    <RootNamespace>Microsoft.Experimental.Azure.JavaPlatform</RootNamespace>
+    <AssemblyName>Microsoft.Experimental.Azure.JavaPlatform</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JavaUtils.Log4j
+namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 {
 	public static class AppenderDefinitionFactory
 	{

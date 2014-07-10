@@ -1,4 +1,4 @@
-﻿using JavaUtils.Log4j;
+﻿using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JavaUtils
+namespace Microsoft.Experimental.Azure.JavaPlatform
 {
 	public sealed class Log4jConfig
 	{

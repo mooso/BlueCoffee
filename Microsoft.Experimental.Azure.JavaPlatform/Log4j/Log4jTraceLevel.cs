@@ -1,4 +1,4 @@
-﻿namespace JavaUtils.Log4j
+﻿namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 {
 	public enum Log4jTraceLevel
 	{

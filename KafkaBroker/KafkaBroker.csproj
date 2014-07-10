@@ -83,7 +83,7 @@
     <EmbeddedResource Include="Resources\Jars.zip" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JavaUtils\Microsoft.Experimental.Azure.JavaPlatform.csproj">
+    <ProjectReference Include="..\Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj">
       <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
       <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
     </ProjectReference>

@@ -1,4 +1,5 @@
-﻿using JavaUtils;
+﻿using Microsoft.Experimental.Azure.JavaPlatform;
+using Microsoft.Experimental.Azure.Kafka;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

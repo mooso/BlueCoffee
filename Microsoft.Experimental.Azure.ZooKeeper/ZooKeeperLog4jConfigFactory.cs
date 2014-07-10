@@ -1,5 +1,5 @@
-﻿using JavaUtils;
-using JavaUtils.Log4j;
+﻿using Microsoft.Experimental.Azure.JavaPlatform;
+using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
 using System;
 using System.Collections.Generic;
 using System.Linq;

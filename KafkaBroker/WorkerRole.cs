@@ -9,8 +9,10 @@ using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.Storage;
 using System.IO.Compression;
-using JavaUtils;
+using Microsoft.Experimental.Azure.JavaPlatform;
 using System.IO;
+using Microsoft.Experimental.Azure.ZooKeeper;
+using Microsoft.Experimental.Azure.Kafka;
 
 namespace KafkaBroker
 {

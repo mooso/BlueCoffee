@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JavaUtils
+namespace Microsoft.Experimental.Azure.JavaPlatform
 {
 	public sealed class DefaultProcessOutputTracer : ProcessOutputTracer
 	{
