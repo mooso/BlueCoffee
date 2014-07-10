@@ -47,7 +47,7 @@
     <Compile Include="DefaultProcessOutputTracer.cs" />
     <Compile Include="JavaInstaller.cs" />
     <Compile Include="JavaRunner.cs" />
-    <Compile Include="Log4jConfig.cs" />
+    <Compile Include="Log4j\Log4jConfig.cs" />
     <Compile Include="Log4j\AppenderDefinition.cs" />
     <Compile Include="Log4j\AppenderDefinitionFactory.cs" />
     <Compile Include="Log4j\ChildLoggerDefinition.cs" />
