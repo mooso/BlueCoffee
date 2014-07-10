@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zookeeper", "Zookeeper\Zook
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TesterApp", "TesterApp\TesterApp.csproj", "{769C8445-9F1B-4C19-939F-6B1797429875}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Experimental.Azure.JavaPlatform", "JavaUtils\Microsoft.Experimental.Azure.JavaPlatform.csproj", "{AAFC6C12-F8D1-44A4-A723-91B26DB7DC96}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Experimental.Azure.JavaPlatform", "Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj", "{AAFC6C12-F8D1-44A4-A723-91B26DB7DC96}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScratchPad", "ScratchPad\ScratchPad.csproj", "{DC9CB2B9-D563-4EC5-ABE9-4E204B0C4BCB}"
 EndProject
