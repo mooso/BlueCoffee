@@ -17,6 +17,7 @@ namespace Microsoft.Experimental.Azure.Cassandra.Tests
 		{
 			var config = new CassandraConfig(
 				clusterName: "Test Cluster",
+				clusterNodes: new[] { "127.0.0.1", "1.2.3.4" },
 				dataDirectories: new[] { @"c:\d1", @"c:\d2" },
 				commitLogDirectory: @"C:\logs",
 				savedCachesDirectory: @"C:\SavedCaches");
