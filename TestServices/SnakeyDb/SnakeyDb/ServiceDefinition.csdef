@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="SnakeyDb" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
+  <WorkerRole name="CassandraNode" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InternalEndpoint name="Storage" protocol="tcp" port="7000" />
+      <InternalEndpoint name="RPC" protocol="tcp" port="9160" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+    </LocalResources>
+  </WorkerRole>
+</ServiceDefinition>
