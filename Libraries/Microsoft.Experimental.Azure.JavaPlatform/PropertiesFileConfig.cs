@@ -23,10 +23,15 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 			get { return _configEntries; }
 		}
 
+		public string ConstructFileText()
+		{
+			return String.Join("\n", _configEntries.Select(kv => String.Join("=", kv.Key, kv.Value)));
+		}
+
 		public void WriteToFile(string configFilePath)
 		{
 			File.WriteAllText(configFilePath,
-				String.Join("\n", _configEntries.Select(kv => String.Join("=", kv.Key, kv.Value))),
+				ConstructFileText(),
 				Encoding.ASCII);
 		}
 	}

@@ -8,7 +8,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 {
 	public static class AppenderDefinitionFactory
 	{
-		public static AppenderDefinition FileAppender(string name, string filePath,
+		public static AppenderDefinition DailyRollingFileAppender(string name, string filePath,
 			string datePattern = "'.'yyyy-MM-dd-HH",
 			LayoutDefinition layout = null)
 		{
@@ -16,6 +16,20 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 				new Dictionary<string, string>()
 				{
 					{ "DatePattern", datePattern },
+					{ "File", filePath },
+				}.Concat(LayoutProperties(layout)));
+		}
+
+		public static AppenderDefinition RollingFileAppender(string name, string filePath,
+			int maxFileSizeMb,
+			int maxBackupIndex,
+			LayoutDefinition layout = null)
+		{
+			return new AppenderDefinition(name, "org.apache.log4j.RollingFileAppender",
+				new Dictionary<string, string>()
+				{
+					{ "maxFileSize", maxFileSizeMb + "MB" },
+					{ "maxBackupIndex", maxBackupIndex.ToString() },
 					{ "File", filePath },
 				}.Concat(LayoutProperties(layout)));
 		}

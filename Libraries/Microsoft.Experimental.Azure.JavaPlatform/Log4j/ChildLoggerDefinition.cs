@@ -11,8 +11,16 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 	{
 		private readonly string _classPrefix;
 		private readonly bool _additivity;
+
+		public ChildLoggerDefinition(string classPrefix, Log4jTraceLevel level, params AppenderDefinition[] appenders)
+			: base(level, appenders)
+		{
+			_classPrefix = classPrefix;
+			_additivity = true;
+		}
+
 		public ChildLoggerDefinition(string classPrefix, Log4jTraceLevel level, AppenderDefinition appender, bool additivity = true)
-			: base(level, appender)
+			: base(level, new[] { appender })
 		{
 			_classPrefix = classPrefix;
 			_additivity = additivity;

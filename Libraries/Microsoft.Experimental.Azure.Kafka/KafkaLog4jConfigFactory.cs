@@ -30,12 +30,15 @@ namespace Microsoft.Experimental.Azure.Kafka
 					new ChildLoggerDefinition("kafka.log.LogCleaner", Log4jTraceLevel.INFO, cleanerAppender, false),
 					new ChildLoggerDefinition("kafka.state.change.logger", Log4jTraceLevel.TRACE, stateChangeAppender, false),
 				};
-			return new Log4jConfig(LogDirectoryPropertyName, logDirectory, rootLogger, childLoggers);
+			return new Log4jConfig(rootLogger, childLoggers, new Dictionary<string, string>()
+				{
+					{ LogDirectoryPropertyName, logDirectory.Replace('\\', '/') }
+				});
 		}
 
 		private static AppenderDefinition QualifiedFileAppender(string name, string fileName)
 		{
-			return AppenderDefinitionFactory.FileAppender(name, "${" + LogDirectoryPropertyName + "}/" + fileName);
+			return AppenderDefinitionFactory.DailyRollingFileAppender(name, "${" + LogDirectoryPropertyName + "}/" + fileName);
 		}
 	}
 }

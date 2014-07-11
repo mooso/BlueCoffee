@@ -10,31 +10,30 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 {
 	public sealed class Log4jConfig
 	{
-		private readonly string _logDirectory;
-		private readonly string _logDirectoryPropertyName;
+		private readonly ImmutableList<KeyValuePair<string, string>> _definedProperties;
 		private readonly ImmutableList<ChildLoggerDefinition> _childLoggers;
 		private readonly RootLoggerDefinition _rootLogger;
 
-		public Log4jConfig(string logDirectoryPropertyName,
-			string logDirectory,
+		public Log4jConfig(
 			RootLoggerDefinition rootLogger,
-			IEnumerable<ChildLoggerDefinition> childLoggers)
+			IEnumerable<ChildLoggerDefinition> childLoggers,
+			IEnumerable<KeyValuePair<string, string>> definedProperties = null)
 		{
-			_logDirectoryPropertyName = logDirectoryPropertyName;
-			_logDirectory = logDirectory;
+			_definedProperties =
+				(definedProperties ?? Enumerable.Empty<KeyValuePair<string, string>>())
+				.ToImmutableList();
 			_rootLogger = rootLogger;
 			_childLoggers = childLoggers.ToImmutableList();
 		}
 
 		public PropertiesFile ToPropertiesFile()
 		{
-			var uniqueAppenders = _childLoggers.Select(c => c.Appender)
-				.Concat(new[] { _rootLogger.Appender })
+			var uniqueAppenders = _childLoggers.SelectMany(c => c.Appenders)
+				.Concat(_rootLogger.Appenders)
 				.Distinct();
 			var appenderDefinitions = uniqueAppenders.SelectMany(a => a.FullLog4jProperties);
-			var logDirectoryProperty = new Dictionary<string, string>() { { _logDirectoryPropertyName, _logDirectory.Replace('\\', '/') } };
 			return new PropertiesFile(
-				logDirectoryProperty
+				_definedProperties
 				.Concat(_rootLogger.FullLog4jProperties)
 				.Concat(appenderDefinitions)
 				.Concat(_childLoggers.SelectMany(a => a.FullLog4jProperties)));

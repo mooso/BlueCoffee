@@ -9,7 +9,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 {
 	public sealed class RootLoggerDefinition : LoggerDefinition
 	{
-		public RootLoggerDefinition(Log4jTraceLevel level, AppenderDefinition appender)
+		public RootLoggerDefinition(Log4jTraceLevel level, params AppenderDefinition[] appender)
 			: base(level, appender)
 		{ }
 

@@ -19,12 +19,15 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 			var childLoggers = new ChildLoggerDefinition[]
 				{
 				};
-			return new Log4jConfig(LogDirectoryPropertyName, logDirectory, rootLogger, childLoggers);
+			return new Log4jConfig(rootLogger, childLoggers, new Dictionary<string, string>()
+				{
+					{ LogDirectoryPropertyName, logDirectory.Replace('\\', '/') }
+				});
 		}
 
 		private static AppenderDefinition QualifiedFileAppender(string name, string fileName)
 		{
-			return AppenderDefinitionFactory.FileAppender(name, "${" + LogDirectoryPropertyName + "}/" + fileName);
+			return AppenderDefinitionFactory.DailyRollingFileAppender(name, "${" + LogDirectoryPropertyName + "}/" + fileName);
 		}
 	}
 }
