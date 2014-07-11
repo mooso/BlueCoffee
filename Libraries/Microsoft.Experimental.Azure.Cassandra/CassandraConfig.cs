@@ -35,6 +35,15 @@ namespace Microsoft.Experimental.Azure.Cassandra
 			_rpcPort = rpcPort;
 		}
 
+		public IEnumerable<string> AllDirectories
+		{
+			get
+			{
+				return new[] { _commitLogDirectory, _savedCachesDirectory }
+					.Concat(_dataDirectories);
+			}
+		}
+
 		public void WriteToYamlFile(string filePath)
 		{
 			using (var writer = new StreamWriter(filePath, append: false, encoding: Encoding.ASCII))
@@ -49,12 +58,19 @@ namespace Microsoft.Experimental.Azure.Cassandra
 			serializer.Serialize(writer, new
 			{
 				cluster_name = _clusterName,
-				seed_provider = new
+				seed_provider = new object[]
 				{
-					class_name = "org.apache.cassandra.locator.SimpleSeedProvider",
-					parameters = new Dictionary<string, string>()
+					new Dictionary<string,object>()
 					{
-						{ "seeds",  String.Join(",", _clusterNodes) },
+						{ "class_name", "org.apache.cassandra.locator.SimpleSeedProvider" },
+						{ "parameters", new object[]
+							{
+								new Dictionary<string, string>()
+								{
+									{ "seeds",  String.Join(",", _clusterNodes) },
+								}
+							}
+						},
 					}
 				},
 				data_file_directories = _dataDirectories.Select(d => d.Replace('\\', '/')).ToList(),
@@ -62,6 +78,12 @@ namespace Microsoft.Experimental.Azure.Cassandra
 				saved_caches_directory = _savedCachesDirectory.Replace('\\', '/'),
 				storage_port = _storagePort,
 				rpc_port = _rpcPort,
+				// Hard-coded for now, we can make configurable if needed
+				commitlog_sync = "periodic",
+				commitlog_sync_period_in_ms = 10000,
+				partitioner = "org.apache.cassandra.dht.Murmur3Partitioner",
+				endpoint_snitch = "SimpleSnitch",
+				listen_address = "localhost",
 			});
 		}
 	}

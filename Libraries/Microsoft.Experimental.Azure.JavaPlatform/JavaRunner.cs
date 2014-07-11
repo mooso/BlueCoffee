@@ -34,6 +34,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		}
 
 		public int RunClass(string className, string arguments, IEnumerable<string> classPathEntries, int maxMemoryMb = 512, bool server = true, IDictionary<string, string> defines = null,
+			IEnumerable<string> extraJavaOptions = null,
 			ProcessOutputTracer tracer = null, bool runContinuous = true)
 		{
 			var simpleClassName = className.Split('.').Last();
@@ -46,6 +47,10 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 				javaToolArgumentList.Add(String.Join(" ", defines.Select(kv => String.Format(CultureInfo.InvariantCulture, "-D{0}={1}", kv.Key, kv.Value))));
 			}
 			javaToolArgumentList.Add(String.Format(CultureInfo.InvariantCulture, "-Xmx{0}M", maxMemoryMb));
+			if (extraJavaOptions != null)
+			{
+				javaToolArgumentList.AddRange(extraJavaOptions);
+			}
 			if (server)
 			{
 				javaToolArgumentList.Add("-server");

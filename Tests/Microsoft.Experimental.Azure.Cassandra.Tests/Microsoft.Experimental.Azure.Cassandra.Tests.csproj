@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="CassandraConfigTest.cs" />
     <Compile Include="CassandraLog4jConfigFactoryTest.cs" />
+    <Compile Include="CassandraNodeRunnerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
