@@ -56,6 +56,7 @@ namespace CassandraNode
 		private void InstallCassandra()
 		{
 			var nodes = RoleEnvironment.CurrentRoleInstance.Role.Instances.Select(i => i.InstanceEndpoints.First().Value.IPEndpoint.Address.ToString());
+			Trace.WriteLine("Cassandra nodes we'll use: " + String.Join(",", nodes));
 			var config = new CassandraConfig(
 				clusterName: "AzureCluster",
 				clusterNodes: nodes,

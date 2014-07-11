@@ -37,6 +37,14 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CassandraTestApp\CassandraTestApp.csproj">
+      <Name>CassandraTestApp</Name>
+      <Project>{9dab064d-d73b-436f-aff0-a4a4e7f7b135}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>CassandraTestApp</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\CassandraNode\CassandraNode.csproj">
       <Name>CassandraNode</Name>
       <Project>{3199b03f-4f75-47d6-a386-63ff75411fe9}</Project>
@@ -48,10 +56,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CassandraNodeContent\" />
+    <Folder Include="CassandraTestAppContent\" />
     <Folder Include="Profiles" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="CassandraNodeContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="CassandraTestAppContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>

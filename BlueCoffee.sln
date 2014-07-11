@@ -35,6 +35,8 @@ Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "SnakeyDb", "TestServices\Sn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassandraNode", "TestServices\SnakeyDb\CassandraNode\CassandraNode.csproj", "{3199B03F-4F75-47D6-A386-63FF75411FE9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassandraTestApp", "TestServices\SnakeyDb\CassandraTestApp\CassandraTestApp.csproj", "{9DAB064D-D73B-436F-AFF0-A4A4E7F7B135}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{3199B03F-4F75-47D6-A386-63FF75411FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3199B03F-4F75-47D6-A386-63FF75411FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3199B03F-4F75-47D6-A386-63FF75411FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DAB064D-D73B-436F-AFF0-A4A4E7F7B135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DAB064D-D73B-436F-AFF0-A4A4E7F7B135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DAB064D-D73B-436F-AFF0-A4A4E7F7B135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DAB064D-D73B-436F-AFF0-A4A4E7F7B135}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,5 +109,6 @@ Global
 		{78DDA97F-973A-4709-AEDC-697B9963D0E9} = {A6D4F4AA-31A8-406F-8F74-2CD7FFE6DFB9}
 		{2F4B709A-1725-480B-9E23-F401936F6222} = {78DDA97F-973A-4709-AEDC-697B9963D0E9}
 		{3199B03F-4F75-47D6-A386-63FF75411FE9} = {78DDA97F-973A-4709-AEDC-697B9963D0E9}
+		{9DAB064D-D73B-436F-AFF0-A4A4E7F7B135} = {78DDA97F-973A-4709-AEDC-697B9963D0E9}
 	EndGlobalSection
 EndGlobal

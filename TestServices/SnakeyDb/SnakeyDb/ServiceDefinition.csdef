@@ -13,4 +13,9 @@
       <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
   </WorkerRole>
+  <WorkerRole name="CassandraTestApp" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+  </WorkerRole>
 </ServiceDefinition>
