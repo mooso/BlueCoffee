@@ -20,8 +20,23 @@ namespace CassandraTestApp
 		{
 			try
 			{
-				var session = _cluster.ConnectAndCreateDefaultKeyspaceIfNotExists();
-				session.Execute("create table sampletable (uid int primary key, time text)");
+				ISession session;
+				while (true)
+				{
+					try
+					{
+						session = _cluster.ConnectAndCreateDefaultKeyspaceIfNotExists();
+						break;
+					}
+					catch (NoHostAvailableException ex)
+					{
+						Trace.TraceWarning(
+							"No host available exception encountered. Assuming it's because we're still starting up and trying again. Message: " +
+							ex.Message);
+						Thread.Sleep(2000);
+					}
+				}
+				session.Execute("create table if not exists sampletable (uid int primary key, time text)");
 				long numInserted = 0;
 				var timer = Stopwatch.StartNew();
 				while (true)
@@ -50,7 +65,14 @@ namespace CassandraTestApp
 		{
 			var cassandraRole = RoleEnvironment.Roles["CassandraNode"];
 			var cassandraHosts = cassandraRole.Instances.Select(i => i.InstanceEndpoints.First().Value.IPEndpoint.Address).ToArray();
-			_cluster = Cluster.Builder().AddContactPoints(cassandraHosts).Build();
+			var builder = Cluster.Builder()
+				.AddContactPoints(cassandraHosts)
+				.WithPort(9042)
+				.WithDefaultKeyspace("sample_keyspace");
+			Trace.TraceInformation("Configuring to connect to cassandra hosts: {" +
+				String.Join(",", builder.ContactPoints) +
+				"}.");
+			_cluster = builder.Build();
 			return base.OnStart();
 		}
 
