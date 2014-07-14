@@ -7,6 +7,7 @@
     <Endpoints>
       <InternalEndpoint name="Storage" protocol="tcp" port="7000" />
       <InternalEndpoint name="RPC" protocol="tcp" port="9160" />
+      <InternalEndpoint name="NativeTransport" protocol="tcp" port="9042" />
     </Endpoints>
     <LocalResources>
       <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
