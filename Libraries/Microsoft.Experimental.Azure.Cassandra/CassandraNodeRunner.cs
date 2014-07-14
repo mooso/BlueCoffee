@@ -59,11 +59,21 @@ namespace Microsoft.Experimental.Azure.Cassandra
 				{
 					"-javaagent:\"" + Path.Combine(_jarsDirectory, "jamm-0.2.5.jar") + "\"",
 				},
-				defines: new Dictionary<string, string>
+				defines: AddRingDelayOptionIfNeeded(new Dictionary<string, string>
 				{
 					{ "log4j.configuration", "file:\"" + _log4jPropertiesPath + "\"" },
-				},
+				}),
 				runContinuous: runContinuous);
+		}
+
+		private Dictionary<string, string> AddRingDelayOptionIfNeeded(Dictionary<string, string> defines)
+		{
+			if (_config.RingDelay.HasValue)
+			{
+				defines.Add("cassandra.ring_delay_ms",
+					_config.RingDelay.Value.TotalMilliseconds.ToString("F0"));
+			}
+			return defines;
 		}
 
 		private void WriteCassandraConfigFile()

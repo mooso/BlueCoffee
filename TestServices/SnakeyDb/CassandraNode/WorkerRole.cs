@@ -62,7 +62,9 @@ namespace CassandraNode
 				clusterNodes: nodes,
 				dataDirectories: new[] { Path.Combine(DataDirectory, "Data") },
 				commitLogDirectory: Path.Combine(DataDirectory, "CommitLog"),
-				savedCachesDirectory: Path.Combine(DataDirectory, "SavedCaches"));
+				savedCachesDirectory: Path.Combine(DataDirectory, "SavedCaches"),
+				ringDelay: TimeSpan.FromMinutes(5) // Role instances can start up at different times, 30 seconds is not enough.
+			);
 			_cassandraRunner = new CassandraNodeRunner(
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
 				javaHome: _javaInstaller.JavaHome,

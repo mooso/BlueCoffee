@@ -18,13 +18,17 @@ namespace Microsoft.Experimental.Azure.Cassandra
 		private readonly string _savedCachesDirectory;
 		private readonly int _storagePort;
 		private readonly int _rpcPort;
+		private readonly int? _nativeTransportPort;
+		private readonly TimeSpan? _ringDelay;
 
 		public CassandraConfig(string clusterName,
 			IEnumerable<string> clusterNodes,
 			IEnumerable<string> dataDirectories,
 			string commitLogDirectory, string savedCachesDirectory,
+			TimeSpan? ringDelay = null,
 			int storagePort = 7000,
-			int rpcPort = 9160)
+			int rpcPort = 9160,
+			int? nativeTransportPort = 9042)
 		{
 			_clusterName = clusterName;
 			_clusterNodes = clusterNodes.ToImmutableList();
@@ -33,6 +37,17 @@ namespace Microsoft.Experimental.Azure.Cassandra
 			_savedCachesDirectory = savedCachesDirectory;
 			_storagePort = storagePort;
 			_rpcPort = rpcPort;
+			_nativeTransportPort = nativeTransportPort;
+			_ringDelay = ringDelay;
+		}
+
+		/// <summary>
+		/// Delay after which Cassandra assumes the ring has stabilized (and will error out if it can't gossip with any of the nodes)
+		/// Defaul is 30 seconds in Cassandra if not specified.
+		/// </summary>
+		public TimeSpan? RingDelay
+		{
+			get { return _ringDelay; }
 		}
 
 		public IEnumerable<string> AllDirectories
@@ -78,6 +93,8 @@ namespace Microsoft.Experimental.Azure.Cassandra
 				saved_caches_directory = _savedCachesDirectory.Replace('\\', '/'),
 				storage_port = _storagePort,
 				rpc_port = _rpcPort,
+				start_native_transport = _nativeTransportPort.HasValue,
+				native_transport_port = _nativeTransportPort ?? 0,
 				// Hard-coded for now, we can make configurable if needed
 				commitlog_sync = "periodic",
 				commitlog_sync_period_in_ms = 10000,
