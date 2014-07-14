@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Experimental.Azure.Cassandra
 {
+	/// <summary>
+	/// A runner class that can run a Cassandra node in Azure (or any machine).
+	/// </summary>
 	public class CassandraNodeRunner
 	{
 		private readonly string _jarsDirectory;
@@ -21,6 +24,14 @@ namespace Microsoft.Experimental.Azure.Cassandra
 		private readonly string _log4jPropertiesPath;
 		private readonly string _configFilePath;
 
+		/// <summary>
+		/// Create a new runner.
+		/// </summary>
+		/// <param name="jarsDirectory">The directory to use for jar files.</param>
+		/// <param name="javaHome">The directory where Java is isntalled.</param>
+		/// <param name="logsDirctory">The directory to use for logs.</param>
+		/// <param name="configDirectory">The directory to use for configuration.</param>
+		/// <param name="config">The Cassandra configuration to use.</param>
 		public CassandraNodeRunner(string jarsDirectory, string javaHome, string logsDirctory,
 			string configDirectory, CassandraConfig config)
 		{
@@ -33,6 +44,9 @@ namespace Microsoft.Experimental.Azure.Cassandra
 			_configFilePath = Path.Combine(_configDirectory, "cassandra.yaml");
 		}
 
+		/// <summary>
+		/// Setup Cassandra.
+		/// </summary>
 		public void Setup()
 		{
 			foreach (var dir in
@@ -46,6 +60,10 @@ namespace Microsoft.Experimental.Azure.Cassandra
 			WriteCassandraLog4jFile();
 		}
 
+		/// <summary>
+		/// Run Cassandra.
+		/// </summary>
+		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
 		public void Run(bool runContinuous = true)
 		{
 			var runner = new JavaRunner(_javaHome);

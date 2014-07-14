@@ -8,18 +8,33 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Experimental.Azure.ZooKeeper
 {
+	/// <summary>
+	/// ZooKeeper configuration.
+	/// </summary>
 	public sealed class ZooKeeperConfig
 	{
+		/// <summary>
+		/// The default TCP port used for communicating with ZooKeeper.
+		/// </summary>
 		public const int DefaultPort = 2181;
 		private readonly string _snapshotDirectory;
 		private readonly int _port;
 
+		/// <summary>
+		/// Creates the configuration.
+		/// </summary>
+		/// <param name="snapshotDirectory">Directory for snapshots.</param>
+		/// <param name="port">The TCP port to use for communicating with the server.</param>
 		public ZooKeeperConfig(string snapshotDirectory, int port = DefaultPort)
 		{
 			_snapshotDirectory = snapshotDirectory;
 			_port = port;
 		}
 
+		/// <summary>
+		/// Represent this configuration as a properties file.
+		/// </summary>
+		/// <returns>The properties file to use.</returns>
 		public PropertiesFile ToPropertiesFile()
 		{
 			return new PropertiesFile(new Dictionary<string, string>()

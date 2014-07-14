@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Experimental.Azure.ZooKeeper
 {
+	/// <summary>
+	/// A runner class that can run ZooKeeper server in Azure (or any machine).
+	/// </summary>
 	public class ZooKeeperNodeRunner
 	{
 		private readonly string _javaHome;
@@ -19,6 +22,14 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		private readonly string _logsDirectory;
 		private readonly string _zooKeeperLog4jPropertiesPath;
 
+		/// <summary>
+		/// Create a new runner.
+		/// </summary>
+		/// <param name="dataDirectory">The directory to use for ZooKeeper data.</param>
+		/// <param name="configsDirectory">The directory to use for ZooKeeper configuration.</param>
+		/// <param name="logsDirectory">The directory to use for ZooKeeper logs.</param>
+		/// <param name="jarsDirectory">The directory to use for jar files.</param>
+		/// <param name="javaHome">The directory where Java is installed.</param>
 		public ZooKeeperNodeRunner(string dataDirectory, string configsDirectory, string logsDirectory, string jarsDirectory,
 			string javaHome)
 		{
@@ -31,6 +42,12 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 			_zooKeeperLog4jPropertiesPath = Path.Combine(_configsDirectory, "log4j.properties");
 		}
 
+		/// <summary>
+		/// Run ZooKeeper.
+		/// </summary>
+		/// <remarks>
+		/// This method never returns (just runs continuously or throws).
+		/// </remarks>
 		public void Run()
 		{
 			var runner = new JavaRunner(_javaHome);
@@ -43,6 +60,9 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 					});
 		}
 
+		/// <summary>
+		/// Setup ZooKeeper.
+		/// </summary>
 		public void Setup()
 		{
 			foreach (var dir in new[] { _dataDirectory, _configsDirectory, _logsDirectory, _jarsDirectory })

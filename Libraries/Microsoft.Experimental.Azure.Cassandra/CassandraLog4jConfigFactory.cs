@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Experimental.Azure.Cassandra
 {
+	/// <summary>
+	/// Factory class for a default Cassandra log4j configuration.
+	/// </summary>
 	public static class CassandraLog4jConfigFactory
 	{
+		/// <summary>
+		/// Creates the default configuration.
+		/// </summary>
+		/// <param name="logDirectory">Directory for the log files.</param>
+		/// <returns>The configuration to use.</returns>
 		public static Log4jConfig CreateConfig(string logDirectory)
 		{
 			var consoleAppender = AppenderDefinitionFactory.ConsoleAppender(

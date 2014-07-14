@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Experimental.Azure.Kafka
 {
+	/// <summary>
+	/// A runner class that can run an Apache Kafka broker on an Azure compute node (or any machine).
+	/// </summary>
 	public class KafkaBrokerRunner
 	{
 		private readonly string _dataDirectory;
@@ -24,6 +27,17 @@ namespace Microsoft.Experimental.Azure.Kafka
 		private readonly int _brokerId;
 		private readonly string _javaHome;
 
+		/// <summary>
+		/// Creates a new runner.
+		/// </summary>
+		/// <param name="dataDirectory">The directory to use for Kafka data.</param>
+		/// <param name="configsDirectory">The directory to use for Kafka configuration.</param>
+		/// <param name="logsDirectory">The directory to use for logs.</param>
+		/// <param name="jarsDirectory">The directory to use for jar files.</param>
+		/// <param name="zooKeeperHosts">A list of addresses of ZooKeeper cluster hosts.</param>
+		/// <param name="zooKeeperPort">The TCP port to use to communicate to the ZooKeeper nodes.</param>
+		/// <param name="brokerId">A unique ID of this broker in the cluster.</param>
+		/// <param name="javaHome">The directory where Java is installed.</param>
 		public KafkaBrokerRunner(string dataDirectory, string configsDirectory, string logsDirectory, string jarsDirectory,
 			IEnumerable<string> zooKeeperHosts, int zooKeeperPort, int brokerId, string javaHome)
 		{
@@ -39,6 +53,9 @@ namespace Microsoft.Experimental.Azure.Kafka
 			_kafkaLog4jPropertiesPath = Path.Combine(_configsDirectory, "log4j.properties");
 		}
 
+		/// <summary>
+		/// Setup Kafka.
+		/// </summary>
 		public void Setup()
 		{
 			foreach (var dir in new[] { _dataDirectory, _configsDirectory, _logsDirectory, _jarsDirectory })
@@ -50,6 +67,12 @@ namespace Microsoft.Experimental.Azure.Kafka
 			WriteKafkaLog4jFile();
 		}
 
+		/// <summary>
+		/// Run the broker.
+		/// </summary>
+		/// <remarks>
+		/// This method never returns (just runs continuously or throws).
+		/// </remarks>
 		public void Run()
 		{
 			var runner = new JavaRunner(_javaHome);

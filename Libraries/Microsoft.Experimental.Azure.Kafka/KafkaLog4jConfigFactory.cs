@@ -8,10 +8,18 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Experimental.Azure.Kafka
 {
+	/// <summary>
+	/// Factory class for default Kafka broker log4j configuration.
+	/// </summary>
 	public static class KafkaLog4jConfigFactory
 	{
 		private const string LogDirectoryPropertyName = "kafka.logs.dir";
 
+		/// <summary>
+		/// Create the configuration.
+		/// </summary>
+		/// <param name="logDirectory">The directory to use for logs.</param>
+		/// <returns></returns>
 		public static Log4jConfig CreateConfig(string logDirectory)
 		{
 			var consoleAppender = AppenderDefinitionFactory.ConsoleAppender();

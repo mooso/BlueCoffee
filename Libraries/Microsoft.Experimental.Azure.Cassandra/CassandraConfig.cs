@@ -9,6 +9,9 @@ using YamlDotNet.Serialization;
 
 namespace Microsoft.Experimental.Azure.Cassandra
 {
+	/// <summary>
+	/// Configuration for a Cassandra node.
+	/// </summary>
 	public sealed class CassandraConfig
 	{
 		private readonly string _clusterName;
@@ -21,6 +24,18 @@ namespace Microsoft.Experimental.Azure.Cassandra
 		private readonly int? _nativeTransportPort;
 		private readonly TimeSpan? _ringDelay;
 
+		/// <summary>
+		/// Create a new configuration.
+		/// </summary>
+		/// <param name="clusterName">Name of the cluster.</param>
+		/// <param name="clusterNodes">List of cluster nodes (not necessarily exhaustive, see Cassandra help for seeds for details).</param>
+		/// <param name="dataDirectories">List of directories to use for data files.</param>
+		/// <param name="commitLogDirectory">Directory to use for commit logs.</param>
+		/// <param name="savedCachesDirectory">Directory to use for saved caches.</param>
+		/// <param name="ringDelay">The time to wait while trying to reach other nodes in the cluster before giving up (Cassandra defaults to 30 seconds).</param>
+		/// <param name="storagePort">The TCP port to expose for storage service communication (mainly inter-node communication).</param>
+		/// <param name="rpcPort">The TCP port to expose for RPC.</param>
+		/// <param name="nativeTransportPort">The TCP port to expose for native transport.</param>
 		public CassandraConfig(string clusterName,
 			IEnumerable<string> clusterNodes,
 			IEnumerable<string> dataDirectories,
@@ -49,7 +64,10 @@ namespace Microsoft.Experimental.Azure.Cassandra
 		{
 			get { return _ringDelay; }
 		}
-
+		
+		/// <summary>
+		/// All the directories specified in this configuration (data, commit logs, saved caches).
+		/// </summary>
 		public IEnumerable<string> AllDirectories
 		{
 			get
@@ -59,6 +77,10 @@ namespace Microsoft.Experimental.Azure.Cassandra
 			}
 		}
 
+		/// <summary>
+		/// Write out this configuration to a YAML file for Cassandra.
+		/// </summary>
+		/// <param name="filePath">The path of the file.</param>
 		public void WriteToYamlFile(string filePath)
 		{
 			using (var writer = new StreamWriter(filePath, append: false, encoding: Encoding.ASCII))
@@ -67,6 +89,10 @@ namespace Microsoft.Experimental.Azure.Cassandra
 			}
 		}
 
+		/// <summary>
+		/// Write out this configuration to a YAML file for Cassandra.
+		/// </summary>
+		/// <param name="writer">The writer for the file.</param>
 		public void WriteToYamlFile(TextWriter writer)
 		{
 			var serializer = new Serializer();

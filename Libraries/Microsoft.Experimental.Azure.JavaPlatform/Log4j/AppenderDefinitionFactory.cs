@@ -6,8 +6,19 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 {
+	/// <summary>
+	/// Factory class for common appenders in Log4j.
+	/// </summary>
 	public static class AppenderDefinitionFactory
 	{
+		/// <summary>
+		/// Definition for a daily-rolling file appender.
+		/// </summary>
+		/// <param name="name">The name of the appender.</param>
+		/// <param name="filePath">The path of the file.</param>
+		/// <param name="datePattern">The pattern to use when naming that file.</param>
+		/// <param name="layout">The layout to use when writing messages in that file.</param>
+		/// <returns>The defintion.</returns>
 		public static AppenderDefinition DailyRollingFileAppender(string name, string filePath,
 			string datePattern = "'.'yyyy-MM-dd-HH",
 			LayoutDefinition layout = null)
@@ -20,6 +31,15 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 				}.Concat(LayoutProperties(layout)));
 		}
 
+		/// <summary>
+		/// Definition for a rolling file appender.
+		/// </summary>
+		/// <param name="name">The name of the appender.</param>
+		/// <param name="filePath">The path of the file.</param>
+		/// <param name="maxFileSizeMb">Maximum file size in MB.</param>
+		/// <param name="maxBackupIndex">Maximum index for backup files.</param>
+		/// <param name="layout">The layout to use when writing messages in that file.</param>
+		/// <returns>The definition.</returns>
 		public static AppenderDefinition RollingFileAppender(string name, string filePath,
 			int maxFileSizeMb,
 			int maxBackupIndex,
@@ -34,6 +54,12 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 				}.Concat(LayoutProperties(layout)));
 		}
 
+		/// <summary>
+		/// Definition for a console (stdout) appender.
+		/// </summary>
+		/// <param name="name">The name of the appender.</param>
+		/// <param name="layout">The layout to use when writing messages in that file.</param>
+		/// <returns>The definition.</returns>
 		public static AppenderDefinition ConsoleAppender(string name = "stdout",
 			LayoutDefinition layout = null)
 		{

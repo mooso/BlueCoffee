@@ -9,11 +9,19 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Experimental.Azure.JavaPlatform
 {
+	/// <summary>
+	/// This class can be used to run Java programs and tools.
+	/// </summary>
 	public class JavaRunner
 	{
 		private readonly string _javaHome;
 		private readonly string _javaExePath;
 
+		/// <summary>
+		/// Creates a new runner.
+		/// </summary>
+		/// <param name="javaHome">The JAVA_HOME to use.</param>
+		/// <seealso cref="Microsoft.Experimental.Azure.JavaPlatform.JavaInstaller"/>
 		public JavaRunner(string javaHome)
 		{
 			if (String.IsNullOrEmpty(javaHome))
@@ -28,11 +36,29 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 			}
 		}
 
+		/// <summary>
+		/// Helper method to get all the jar files in a given list of directories as classpath entries.
+		/// </summary>
+		/// <param name="directoryList">The directories to search for jar files.</param>
+		/// <returns>The classpath entry list.</returns>
 		public static IEnumerable<String> GetClassPathForJarsInDirectories(params string[] directoryList)
 		{
 			return directoryList.SelectMany(d => Directory.EnumerateFiles(d, "*.jar"));
 		}
 
+		/// <summary>
+		/// Runs a Java class as a separate program.
+		/// </summary>
+		/// <param name="className">The fully qualified name of the Java class to run.</param>
+		/// <param name="arguments">The command-line arguments given to the Java class.</param>
+		/// <param name="classPathEntries">The class path to use.</param>
+		/// <param name="maxMemoryMb">Maximum memory allowed for the Java virtual machine.</param>
+		/// <param name="server">If set, we use the server flag for the Java virtual machine.</param>
+		/// <param name="defines">List of system properties to define.</param>
+		/// <param name="extraJavaOptions">Any other command-line arguments to give to the Java virtual machine.</param>
+		/// <param name="tracer">The output tracer to use to trace the output of the program as it's running.</param>
+		/// <param name="runContinuous">If set, we will restart the program any time it exits.</param>
+		/// <returns></returns>
 		public int RunClass(string className, string arguments, IEnumerable<string> classPathEntries, int maxMemoryMb = 512, bool server = true, IDictionary<string, string> defines = null,
 			IEnumerable<string> extraJavaOptions = null,
 			ProcessOutputTracer tracer = null, bool runContinuous = true)
