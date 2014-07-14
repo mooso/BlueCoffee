@@ -45,14 +45,6 @@
       <RoleName>KafkaBroker</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
-    <ProjectReference Include="..\TesterApp\TesterApp.csproj">
-      <Name>TesterApp</Name>
-      <Project>{769c8445-9f1b-4c19-939f-6b1797429875}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>TesterApp</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
     <ProjectReference Include="..\ZooKeeperNode\ZooKeeperNode.csproj">
       <Name>ZooKeeperNode</Name>
       <Project>{03c2b389-65be-4271-ae3c-2fd9a9fa9562}</Project>
