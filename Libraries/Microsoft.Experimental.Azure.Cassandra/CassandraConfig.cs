@@ -100,7 +100,7 @@ namespace Microsoft.Experimental.Azure.Cassandra
 				commitlog_sync_period_in_ms = 10000,
 				partitioner = "org.apache.cassandra.dht.Murmur3Partitioner",
 				endpoint_snitch = "SimpleSnitch",
-				listen_address = "localhost",
+				listen_address = _clusterNodes.Count == 1 ? "localhost" : null,
 			});
 		}
 	}
