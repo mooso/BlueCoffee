@@ -63,6 +63,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Microsoft.Experimental.Azure.Kafka.nuspec" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\Jars.zip" />
   </ItemGroup>

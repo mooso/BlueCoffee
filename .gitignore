@@ -127,3 +127,6 @@ UpgradeLog*.XML
 
 # Test configuration
 TestConf/
+
+# Final nuget packages
+FinalPackages/
