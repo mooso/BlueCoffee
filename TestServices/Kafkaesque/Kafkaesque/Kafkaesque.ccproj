@@ -56,14 +56,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="KafkaBrokerContent\" />
-    <Folder Include="TesterAppContent\" />
     <Folder Include="ZooKeeperNodeContent\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="KafkaBrokerContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="TesterAppContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
     <Content Include="ZooKeeperNodeContent\diagnostics.wadcfg">
