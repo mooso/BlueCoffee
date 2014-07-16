@@ -1,0 +1,43 @@
+﻿@model Frontend.Models.QueryWikipediaModel
+
+@{
+	ViewBag.Title = "Query Wikipedia";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>QueryWikipedia</h2>
+
+@using (Html.BeginForm())
+{
+	<fieldset>
+		<table>
+			<tr>
+				<td>
+					@Html.LabelFor(m => m.QueryString)
+				</td>
+				<td>
+					@Html.TextAreaFor(m => m.QueryString)
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="submit" value="Search" />
+				</td>
+			</tr>
+		</table>
+	</fieldset>
+}
+
+<table>
+	@if (Model != null)
+	{
+		foreach (var item in Model.Results)
+		{
+			<tr>
+				<td>
+					<a href="@item.Address">@item.Address</a>
+			</td>
+		</tr>
+		}
+	}
+</table>

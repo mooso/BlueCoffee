@@ -96,9 +96,7 @@ namespace Microsoft.Experimental.Azure.ElasticSearch
 			{
 				return null;
 			}
-			return "[" +
-				String.Join(",", _masterNodes.Select(m => "\"" + m + "\"")) +
-				"]";
+			return String.Join(",", _masterNodes);
 		}
 
 		private static KeyValuePair<string, string>? ToKeyValue<T>(string name, T value)
