@@ -3,13 +3,13 @@
   <Role name="CassandraNode">
     <Instances count="3" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=moswest3;AccountKey=A82AeIOZNGrH+u8Y/9tAmxTEx+5qE6CjenXVVuHLFbo7DaLG78j/Kkq46vwIaX+3FsM5z4G7EcmzXvbpET4Dkw==" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
     </ConfigurationSettings>
   </Role>
   <Role name="CassandraTestApp">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=moswest3;AccountKey=A82AeIOZNGrH+u8Y/9tAmxTEx+5qE6CjenXVVuHLFbo7DaLG78j/Kkq46vwIaX+3FsM5z4G7EcmzXvbpET4Dkw==" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>
