@@ -10,7 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <copyright>Copyright 2014</copyright>
-    <tags>Microsoft, Azure, Apache, Cassandra</tags>
+    <tags>Microsoft, Azure, Apache, Java</tags>
     <dependencies>
       <dependency id="Microsoft.Bcl.Immutable" version="[1.0.34,)"/>
     </dependencies>
