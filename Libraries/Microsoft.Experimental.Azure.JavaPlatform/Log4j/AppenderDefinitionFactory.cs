@@ -27,7 +27,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 				new Dictionary<string, string>()
 				{
 					{ "DatePattern", datePattern },
-					{ "File", filePath },
+					{ "File", filePath.Replace('\\', '/') },
 				}.Concat(LayoutProperties(layout)));
 		}
 
@@ -50,7 +50,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Log4j
 				{
 					{ "maxFileSize", maxFileSizeMb + "MB" },
 					{ "maxBackupIndex", maxBackupIndex.ToString() },
-					{ "File", filePath },
+					{ "File", filePath.Replace('\\', '/') },
 				}.Concat(LayoutProperties(layout)));
 		}
 

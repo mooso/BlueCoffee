@@ -70,7 +70,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 			javaToolArgumentList.Add("-cp " + String.Join(";", classPathEntries));
 			if (defines != null)
 			{
-				javaToolArgumentList.Add(String.Join(" ", defines.Select(kv => String.Format(CultureInfo.InvariantCulture, "-D{0}={1}", kv.Key, kv.Value))));
+				javaToolArgumentList.Add(String.Join(" ", defines.Select(FormatDefineString)));
 			}
 			javaToolArgumentList.Add(String.Format(CultureInfo.InvariantCulture, "-Xmx{0}M", maxMemoryMb));
 			if (extraJavaOptions != null)
@@ -109,6 +109,18 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 					}
 					Trace.TraceInformation("Class " + className + " exited with code " + javaProcess.ExitCode + ". Restarting...");
 				}
+			}
+		}
+
+		private static string FormatDefineString(KeyValuePair<string, string> kv)
+		{
+			if (kv.Value == null)
+			{
+				return String.Format(CultureInfo.InvariantCulture, "-D{0}", kv.Key);
+			}
+			else
+			{
+				return String.Format(CultureInfo.InvariantCulture, "-D{0}={1}", kv.Key, kv.Value);
 			}
 		}
 	}
