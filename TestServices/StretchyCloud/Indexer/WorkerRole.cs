@@ -26,6 +26,7 @@ namespace Indexer
 			{
 				var toProbe = new Queue<string>();
 				toProbe.Enqueue("http://en.wikipedia.org/wiki/Main_Page");
+				var rootAuthority = "en.wikipedia.org";
 				using (var webClient = new WebClient())
 				{
 					while (toProbe.Count > 0)
@@ -44,12 +45,23 @@ namespace Indexer
 							int added = 0;
 							foreach (var link in allLinks.Cast<Match>().Select(l => l.Groups["Address"].Value))
 							{
-								var fixedLink = link;
-								if (fixedLink.StartsWith("//"))
+								string fixedLink;
+								if (link.StartsWith("//"))
 								{
 									fixedLink = "http:" + link;
+								} else if (link.StartsWith("/"))
+								{
+									fixedLink = "http://" + rootAuthority + link;
 								}
-								if (!fixedLink.StartsWith("http:"))
+								else if (link.StartsWith("http:"))
+								{
+									fixedLink = link;
+								}
+								else
+								{
+									continue;
+								}
+								if (new Uri(fixedLink).Authority != rootAuthority)
 								{
 									continue;
 								}
