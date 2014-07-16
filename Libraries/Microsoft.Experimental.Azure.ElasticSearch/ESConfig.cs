@@ -81,13 +81,22 @@ namespace Microsoft.Experimental.Azure.ElasticSearch
 					ToKeyValue("node.name", _nodeName),
 					ToKeyValue("node.master", _canBeMasterNode),
 					ToKeyValue("node.data", _canBeDataNode),
-					ToKeyValue("path.data", _dataDirectories.Count != 0 ? String.Join(",", _dataDirectories) : null),
+					ToKeyValue("path.data", DataDirectoryList()),
 					ToKeyValue("transport.tcp.port", _nodeCommunicationPort),
 					ToKeyValue("http.port", _httpPort),
 					ToKeyValue("discovery.zen.minimum_master_nodes", _minimumMasterNodes),
 					ToKeyValue("discovery.zen.ping.multicast.enabled", _enableMulticastDiscovery),
 					ToKeyValue("discovery.zen.ping.unicast.hosts", MasterNodeListString())
 				}.Where(kv => kv.HasValue).Select(kv => kv.Value));
+		}
+
+		private string DataDirectoryList()
+		{
+			if (_dataDirectories == null || _dataDirectories.Count == 0)
+			{
+				return null;
+			}
+			return String.Join(",", _dataDirectories.Select(d => d.Replace('\\', '/')));
 		}
 
 		private string MasterNodeListString()
