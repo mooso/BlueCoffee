@@ -1,9 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Cassandra;
+using Microsoft.Experimental.Azure.Cassandra;
+using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.Experimental.Azure.Presto.Tests
@@ -11,7 +16,10 @@ namespace Microsoft.Experimental.Azure.Presto.Tests
 	[TestClass]
 	public class PrestoNodeRunnerTest
 	{
+		private const string JavaHome = @"C:\Program Files\Java\jdk1.7.0_21";
+
 		[TestMethod]
+		[Ignore]
 		public void EndToEndTest()
 		{
 			var tempDirectory = @"C:\PrestoTestOutput";
@@ -19,21 +27,106 @@ namespace Microsoft.Experimental.Azure.Presto.Tests
 			{
 				Directory.Delete(tempDirectory, recursive: true);
 			}
+			var catalogs = Enumerable.Empty<PrestoCatalogConfig>();
+			var runner = SetupPresto(tempDirectory, catalogs);
+			runner.Run(runContinuous: false);
+		}
+
+		[TestMethod]
+		[Ignore]
+		public void PrestoWithCassandraEndToEndTest()
+		{
+			var tempDirectory = @"C:\PrestoWithCassandraTestOutput";
+			if (Directory.Exists(tempDirectory))
+			{
+				Directory.Delete(tempDirectory, recursive: true);
+			}
+			var cassandraRoot = Path.Combine(tempDirectory, "CassandraRoot");
+			var prestoRoot = Path.Combine(tempDirectory, "Presto");
+			const string cassandraNode = "127.0.0.1";
+			var cassandraRunner = SetupCassandra(cassandraRoot, cassandraNode);
+			var cassandraTask = Task.Factory.StartNew(() => cassandraRunner.Run(runContinuous: false));
+			// Wait for Cassandra to start up
+			CreateSampleTable(cassandraNode);
+			var prestoRunner = SetupPresto(prestoRoot,
+				new[] { new PrestoCassandraCatalogConfig(new[] { cassandraNode }) });
+			var prestoTask = Task.Factory.StartNew(() => prestoRunner.Run(runContinuous: false));
+
+			Task.WaitAll(cassandraTask, prestoTask);
+		}
+
+		private static PrestoNodeRunner SetupPresto(string prestoRoot, IEnumerable<PrestoCatalogConfig> catalogs)
+		{
 			var config = new PrestoConfig(
 				nodeId: "testnode",
-				dataDirectory: Path.Combine(tempDirectory, "data"),
-				pluginConfigDirectory: Path.Combine(tempDirectory, "etc"),
-				pluginInstallDirectory: Path.Combine(tempDirectory, "plugin"),
+				dataDirectory: Path.Combine(prestoRoot, "data"),
+				pluginConfigDirectory: Path.Combine(prestoRoot, "etc"),
+				pluginInstallDirectory: Path.Combine(prestoRoot, "plugin"),
 				discoveryServerUri: "http://localhost:8080",
-				catalogs: Enumerable.Empty<PrestoCatalogConfig>());
+				catalogs: catalogs);
 			var runner = new PrestoNodeRunner(
-				jarsDirectory: Path.Combine(tempDirectory, "jars"),
-				javaHome: @"C:\Program Files\Java\jdk1.7.0_21",
-				logsDirctory: Path.Combine(tempDirectory, "logs"),
-				configDirectory: Path.Combine(tempDirectory, "conf"),
-				config: config);
+				jarsDirectory: Path.Combine(prestoRoot, "jars"),
+				javaHome: JavaHome,
+				logsDirctory: Path.Combine(prestoRoot, "logs"),
+				configDirectory: Path.Combine(prestoRoot, "conf"),
+				config: config,
+				traceLevel: Log4jTraceLevel.DEBUG);
 			runner.Setup();
-			runner.Run(runContinuous: false);
+			return runner;
+		}
+
+		private static CassandraNodeRunner SetupCassandra(string cassandraRoot, string cassandraNode)
+		{
+			var cassandraConfig = new CassandraConfig(
+				clusterName: "Test cluster",
+				clusterNodes: new[] { cassandraNode },
+				dataDirectories: new[] { Path.Combine(cassandraRoot, "data") },
+				commitLogDirectory: Path.Combine(cassandraRoot, "commitlog"),
+				savedCachesDirectory: Path.Combine(cassandraRoot, "savedcaches"));
+			var cassandraRunner = new CassandraNodeRunner(
+				jarsDirectory: Path.Combine(cassandraRoot, "jars"),
+				javaHome: JavaHome,
+				logsDirctory: Path.Combine(cassandraRoot, "logs"),
+				configDirectory: Path.Combine(cassandraRoot, "conf"),
+				config: cassandraConfig);
+			cassandraRunner.Setup();
+			return cassandraRunner;
+		}
+
+		private static void CreateSampleTable(string cassandraNode)
+		{
+			var builder = Cluster.Builder()
+				.AddContactPoints(cassandraNode)
+				.WithPort(9042)
+				.WithDefaultKeyspace("sample_keyspace");
+			var cluster = builder.Build();
+			using (var session = ConnectToCluster(cluster))
+			{
+				session.Execute("create table if not exists sampletable (uid int primary key)");
+				for (int i = 0; i < 100; i++)
+				{
+					session.Execute("insert into sampletable (uid) values (" + i + ")");
+				}
+			}
+		}
+
+		private static ISession ConnectToCluster(Cluster cluster)
+		{
+			var timer = Stopwatch.StartNew();
+			while (true)
+			{
+				try
+				{
+					return cluster.ConnectAndCreateDefaultKeyspaceIfNotExists();
+				}
+				catch (NoHostAvailableException)
+				{
+					if (timer.Elapsed > TimeSpan.FromSeconds(5))
+					{
+						throw;
+					}
+				}
+			}
 		}
 	}
 }

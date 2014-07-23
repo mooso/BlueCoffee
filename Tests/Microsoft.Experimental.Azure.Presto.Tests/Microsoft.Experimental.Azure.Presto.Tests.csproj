@@ -37,6 +37,18 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cassandra">
+      <HintPath>..\..\packages\CassandraCSharpDriver.2.0.3\lib\net40\Cassandra.dll</HintPath>
+    </Reference>
+    <Reference Include="Cassandra.Data">
+      <HintPath>..\..\packages\CassandraCSharpDriver.2.0.3\lib\net40\Cassandra.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Cassandra.Data.Linq">
+      <HintPath>..\..\packages\CassandraCSharpDriver.2.0.3\lib\net40\Cassandra.Data.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="LZ4">
+      <HintPath>..\..\packages\lz4net.1.0.3.93\lib\net40-client\LZ4.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable">
       <HintPath>..\..\packages\Microsoft.Bcl.Immutable.1.0.34\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
@@ -62,6 +74,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.Cassandra\Microsoft.Experimental.Azure.Cassandra.csproj">
+      <Project>{f245abe7-e512-48b8-b37f-5d08f76b6f35}</Project>
+      <Name>Microsoft.Experimental.Azure.Cassandra</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj">
+      <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
+      <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.Presto\Microsoft.Experimental.Azure.Presto.csproj">
       <Project>{67f8d532-1835-4141-a0bb-406575b56e00}</Project>
       <Name>Microsoft.Experimental.Azure.Presto</Name>

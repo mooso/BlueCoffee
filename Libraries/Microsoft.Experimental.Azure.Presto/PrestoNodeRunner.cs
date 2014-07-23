@@ -21,6 +21,8 @@ namespace Microsoft.Experimental.Azure.Presto
 		private readonly string _configDirectory;
 		private readonly PrestoConfig _config;
 		private readonly string _configFilePath;
+		private readonly Log4jTraceLevel? _traceLevel;
+		private readonly string _loggingPropertiesFilePath;
 
 		/// <summary>
 		/// Create a new runner.
@@ -30,8 +32,10 @@ namespace Microsoft.Experimental.Azure.Presto
 		/// <param name="logsDirctory">The directory to use for logs.</param>
 		/// <param name="config">The Presto configuration to use.</param>
 		/// <param name="configDirectory">The directory to use for configuration.</param>
+		/// <param name="traceLevel">The trace level.</param>
 		public PrestoNodeRunner(string jarsDirectory, string javaHome, string logsDirctory,
-			PrestoConfig config, string configDirectory)
+			PrestoConfig config, string configDirectory,
+			Log4jTraceLevel? traceLevel = null)
 		{
 			_jarsDirectory = jarsDirectory;
 			_javaHome = javaHome;
@@ -39,6 +43,8 @@ namespace Microsoft.Experimental.Azure.Presto
 			_config = config;
 			_configDirectory = configDirectory;
 			_configFilePath = Path.Combine(_configDirectory, "config.properties");
+			_loggingPropertiesFilePath = Path.Combine(_configDirectory, "logging.properties");
+			_traceLevel = traceLevel;
 		}
 
 		/// <summary>
@@ -79,14 +85,31 @@ namespace Microsoft.Experimental.Azure.Presto
 				{
 					{ "log.output-file", Path.Combine(_logsDirectory, "Presto.log").Replace('\\', '/') },
 					{ "config", _configFilePath.Replace('\\', '/') },
-				}.Concat(_config.GetNodeProperties()),
+				}
+				.Concat(_config.GetNodeProperties())
+				.Concat(GetLogFileProperties()),
 				runContinuous: runContinuous);
+		}
+
+		private IEnumerable<KeyValuePair<string, string>> GetLogFileProperties()
+		{
+			return _traceLevel.HasValue ?
+				new[]
+				{
+					new KeyValuePair<string, string>(
+						"log.levels-file", _loggingPropertiesFilePath.Replace('\\', '/'))
+				} :
+				Enumerable.Empty<KeyValuePair<string, string>>();
 		}
 
 		private void WritePrestoConfigFiles()
 		{
 			_config.CreateConfigPropertiesFile().WriteToFile(_configFilePath);
 			_config.WriteAllCatalogConfigFiles();
+			if (_traceLevel.HasValue)
+			{
+				File.WriteAllText(_loggingPropertiesFilePath, "com.facebook.presto=" + _traceLevel.Value, Encoding.ASCII);
+			}
 		}
 
 		private void ExtractResourceArchive(string resourceName, string targetDirectory)

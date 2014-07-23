@@ -22,7 +22,7 @@ namespace Microsoft.Experimental.Azure.Presto
 		/// <param name="contactPoints">The list of host names for the Cassandra servers to contact to discover topology.</param>
 		/// <param name="cassandraNativeProtocolPort">The native protocol port on the Cassandra cluster.</param>
 		public PrestoCassandraCatalogConfig(IEnumerable<string> contactPoints,
-			int cassandraNativeProtocolPort = 9142)
+			int cassandraNativeProtocolPort = 9042)
 		{
 			_contactPoints = contactPoints.ToImmutableList();
 			_cassandraNativeProtocolPort = cassandraNativeProtocolPort;

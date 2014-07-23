@@ -105,8 +105,8 @@ namespace Microsoft.Experimental.Azure.Presto
 					{ "http-server.http.port", _httpPort.ToString() },
 					{ "task.max-memory", _maxTaskMemoryMb + "MB" },
 					{ "discovery.uri", _discoveryServerUri.TrimEnd('/') },
-					{ "plugin.config-dir", _pluginConfigDirectory },
-					{ "plugin.dir", _pluginInstallDirectory },
+					{ "plugin.config-dir", _pluginConfigDirectory.Replace('\\', '/') },
+					{ "plugin.dir", _pluginInstallDirectory.Replace('\\', '/') },
 				});
 		}
 
