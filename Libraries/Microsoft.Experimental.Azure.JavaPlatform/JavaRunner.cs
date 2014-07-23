@@ -59,7 +59,8 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		/// <param name="tracer">The output tracer to use to trace the output of the program as it's running.</param>
 		/// <param name="runContinuous">If set, we will restart the program any time it exits.</param>
 		/// <returns></returns>
-		public int RunClass(string className, string arguments, IEnumerable<string> classPathEntries, int maxMemoryMb = 512, bool server = true, IDictionary<string, string> defines = null,
+		public int RunClass(string className, string arguments, IEnumerable<string> classPathEntries, int maxMemoryMb = 512, bool server = true,
+			IEnumerable<KeyValuePair<string, string>> defines = null,
 			IEnumerable<string> extraJavaOptions = null,
 			ProcessOutputTracer tracer = null, bool runContinuous = true)
 		{
