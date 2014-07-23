@@ -46,7 +46,7 @@ namespace Microsoft.Experimental.Azure.Presto
 			string dataDirectory, string pluginConfigDirectory, string pluginInstallDirectory,
 			string discoveryServerUri,
 			IEnumerable<PrestoCatalogConfig> catalogs,
-			string environmentName = "Presto", bool isCoodrinator = true,
+			string environmentName = "presto", bool isCoodrinator = true,
 			bool isWorker = true, bool isDiscoveryServer = true,
 			int httpPort = 8080, int maxTaskMemoryMb = 1024)
 		{

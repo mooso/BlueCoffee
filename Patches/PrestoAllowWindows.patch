@@ -1,0 +1,22 @@
+﻿:100644 100644 7ec00e8... 0000000... M	presto-main/src/main/java/com/facebook/presto/server/PrestoJvmRequirements.java
+
+diff --git a/presto-main/src/main/java/com/facebook/presto/server/PrestoJvmRequirements.java b/presto-main/src/main/java/com/facebook/presto/server/PrestoJvmRequirements.java
+index 7ec00e8..26b74e2 100644
+--- a/presto-main/src/main/java/com/facebook/presto/server/PrestoJvmRequirements.java
++++ b/presto-main/src/main/java/com/facebook/presto/server/PrestoJvmRequirements.java
+@@ -54,7 +54,14 @@ final class PrestoJvmRequirements
+                 }
+                 break;
+             default:
+-                failRequirement("Presto requires Linux or Mac OS X (found %s)", osName);
++                if (osName.startsWith("Windows")) {
++                    if (!osArch.equalsIgnoreCase("amd64")) {
++                        failRequirement("Presto requires architecture amd64 on Windows (found %s)", osArch);
++                    }
++                }
++                else {
++                    failRequirement("Presto requires Linux or Mac OS X or Windows (found %s)", osName);
++                }
+         }
+ 
+         if (!ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
