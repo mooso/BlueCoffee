@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CassandraNode", "TestServic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Populator", "TestServices\FastSnake\Populator\Populator.csproj", "{C04CFE23-4CF5-4CF3-8620-110517C781BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrestoCommon", "TestServices\FastSnake\PrestoCommon\PrestoCommon.csproj", "{F80A7E97-4CAE-489A-A3A6-11270FADA108}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -173,6 +175,10 @@ Global
 		{C04CFE23-4CF5-4CF3-8620-110517C781BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C04CFE23-4CF5-4CF3-8620-110517C781BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C04CFE23-4CF5-4CF3-8620-110517C781BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F80A7E97-4CAE-489A-A3A6-11270FADA108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F80A7E97-4CAE-489A-A3A6-11270FADA108}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F80A7E97-4CAE-489A-A3A6-11270FADA108}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F80A7E97-4CAE-489A-A3A6-11270FADA108}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -207,5 +213,6 @@ Global
 		{3CE05EAA-90B9-4E83-AC58-1817F050BE3D} = {3321130F-B366-436C-966A-1406CDA15056}
 		{C2E4539D-BC91-42F1-B561-F2D81F07D689} = {3321130F-B366-436C-966A-1406CDA15056}
 		{C04CFE23-4CF5-4CF3-8620-110517C781BB} = {3321130F-B366-436C-966A-1406CDA15056}
+		{F80A7E97-4CAE-489A-A3A6-11270FADA108} = {3321130F-B366-436C-966A-1406CDA15056}
 	EndGlobalSection
 EndGlobal
