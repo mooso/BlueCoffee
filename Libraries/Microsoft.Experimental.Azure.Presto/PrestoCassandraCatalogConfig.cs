@@ -21,8 +21,11 @@ namespace Microsoft.Experimental.Azure.Presto
 		/// </summary>
 		/// <param name="contactPoints">The list of host names for the Cassandra servers to contact to discover topology.</param>
 		/// <param name="cassandraNativeProtocolPort">The native protocol port on the Cassandra cluster.</param>
+		/// <param name="catalogName">The name of the catalog.</param>
 		public PrestoCassandraCatalogConfig(IEnumerable<string> contactPoints,
-			int cassandraNativeProtocolPort = 9042)
+			int cassandraNativeProtocolPort = 9042,
+			string catalogName = "cassandra")
+			: base(catalogName)
 		{
 			_contactPoints = contactPoints.ToImmutableList();
 			_cassandraNativeProtocolPort = cassandraNativeProtocolPort;
@@ -32,14 +35,6 @@ namespace Microsoft.Experimental.Azure.Presto
 		/// The name of the connector (cassandra).
 		/// </summary>
 		public override string ConnectorName
-		{
-			get { return "cassandra"; }
-		}
-
-		/// <summary>
-		/// The name of the properties file (cassandra).
-		/// </summary>
-		public override string CatalogPropertiesFileName
 		{
 			get { return "cassandra"; }
 		}

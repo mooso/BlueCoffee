@@ -12,15 +12,29 @@ namespace Microsoft.Experimental.Azure.Presto
 	/// </summary>
 	public abstract class PrestoCatalogConfig
 	{
+		private readonly string _catalogName;
+
+		/// <summary>
+		/// Creates this config.
+		/// </summary>
+		/// <param name="catalogName">The name of the catalog.</param>
+		protected PrestoCatalogConfig(string catalogName)
+		{
+			_catalogName = catalogName;
+		}
+
 		/// <summary>
 		/// The connector name for this catalog.
 		/// </summary>
 		public abstract string ConnectorName { get; }
 		
 		/// <summary>
-		/// The name without extension of the properties file representing this catalog (e.g. "cassandra")
+		/// The name of the catalog.
 		/// </summary>
-		public abstract string CatalogPropertiesFileName { get; }
+		public string CatalogName
+		{
+			get { return _catalogName; }
+		}
 
 		/// <summary>
 		/// Gets the catalog-specific properties for the properties for this catalog.

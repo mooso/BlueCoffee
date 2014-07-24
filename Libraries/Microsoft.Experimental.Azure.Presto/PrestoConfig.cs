@@ -128,7 +128,7 @@ namespace Microsoft.Experimental.Azure.Presto
 			{
 				catalog.ToPropertiesFile().WriteToFile(
 					Path.Combine(_pluginConfigDirectory,
-					catalog.CatalogPropertiesFileName + ".properties"));
+					catalog.CatalogName + ".properties"));
 			}
 		}
 	}
