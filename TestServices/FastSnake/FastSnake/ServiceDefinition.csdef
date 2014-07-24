@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="FastSnake" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
+  <WorkerRole name="PrestoCoordinator" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InputEndpoint name="HTTP" protocol="tcp" port="8080" localPort="8080" />
+      <InternalEndpoint name="Dummy" protocol="tcp" port="8020" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+    </LocalResources>
+  </WorkerRole>
+  <WorkerRole name="PrestoWorker" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <ConfigurationSettings>
+    </ConfigurationSettings>
+    <Endpoints>
+      <InternalEndpoint name="HTTP" protocol="tcp" port="8080" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+    </LocalResources>
+  </WorkerRole>
+  <WorkerRole name="CassandraNode" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InternalEndpoint name="Storage" protocol="tcp" port="7000" />
+      <InternalEndpoint name="RPC" protocol="tcp" port="9160" />
+      <InternalEndpoint name="NativeTransport" protocol="tcp" port="9042" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+    </LocalResources>
+  </WorkerRole>
+  <WorkerRole name="Populator" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+  </WorkerRole>
+</ServiceDefinition>
