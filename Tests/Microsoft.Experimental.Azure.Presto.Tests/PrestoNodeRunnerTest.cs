@@ -67,7 +67,9 @@ namespace Microsoft.Experimental.Azure.Presto.Tests
 			var hiveRoot = Path.Combine(tempDirectory, "HiveRoot");
 			var prestoRoot = Path.Combine(tempDirectory, "Presto");
 			var hiveRunner = SetupHive(hiveRoot);
-			var hiveTask = Task.Factory.StartNew(() => hiveRunner.RunMetastore(runContinuous: false));
+			var metastoreConfig = new HiveDerbyMetastoreConfig(
+				derbyDataDirectory: Path.Combine(hiveRoot, "metastore"));
+			var hiveTask = Task.Factory.StartNew(() => hiveRunner.RunMetastore(metastoreConfig, runContinuous: false));
 			var prestoRunner = SetupPresto(prestoRoot,
 				new[] { new PrestoHiveCatalogConfig("thrift://localhost:9083") });
 			var prestoTask = Task.Factory.StartNew(() => prestoRunner.Run(runContinuous: false));
@@ -97,14 +99,11 @@ namespace Microsoft.Experimental.Azure.Presto.Tests
 
 		private static HiveRunner SetupHive(string hiveRoot)
 		{
-			var config = new HiveConfig(
-				derbyDataDirectory: Path.Combine(hiveRoot, "metastore"));
 			var runner = new HiveRunner(
 				jarsDirectory: Path.Combine(hiveRoot, "jars"),
 				javaHome: JavaHome,
 				logsDirctory: Path.Combine(hiveRoot, "logs"),
-				configDirectory: Path.Combine(hiveRoot, "conf"),
-				config: config);
+				configDirectory: Path.Combine(hiveRoot, "conf"));
 			runner.Setup();
 			return runner;
 		}

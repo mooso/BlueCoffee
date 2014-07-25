@@ -8,29 +8,10 @@ using System.Xml.Linq;
 namespace Microsoft.Experimental.Azure.Hive
 {
 	/// <summary>
-	/// Hive configuration.
+	/// A hive service configuration.
 	/// </summary>
-	public sealed class HiveConfig
+	public abstract class HiveConfig
 	{
-		private readonly string _derbyDataDirectory;
-
-		/// <summary>
-		/// Creates the Hive configuration.
-		/// </summary>
-		/// <param name="derbyDataDirectory">The local directory where the Derby DB files for the metastore will be stored.</param>
-		public HiveConfig(string derbyDataDirectory)
-		{
-			_derbyDataDirectory = derbyDataDirectory;
-		}
-
-		internal IEnumerable<string> AllDirectories
-		{
-			get
-			{
-				return new[] { _derbyDataDirectory };
-			}
-		}
-
 		/// <summary>
 		/// Create the XML representation of this configuration.
 		/// </summary>
@@ -39,16 +20,22 @@ namespace Microsoft.Experimental.Azure.Hive
 		{
 			return new XDocument(
 				new XElement("configuration",
-					PropertyElement("hive.metastore.warehouse.dir", _derbyDataDirectory.Replace('\\', '/'))
+					ConfigurationProperties.Select(PropertyElement)
 				)
 			);
 		}
 
-		private static XElement PropertyElement(string name, string value)
+		/// <summary>
+		/// The configuration properties.
+		/// </summary>
+		protected abstract IEnumerable<KeyValuePair<string, string>> ConfigurationProperties
+		{ get; }
+
+		private static XElement PropertyElement(KeyValuePair<string, string> nameValue)
 		{
 			return new XElement("property",
-				new XElement("name", name),
-				new XElement("value", value));
+				new XElement("name", nameValue.Key),
+				new XElement("value", nameValue.Value));
 		}
 	}
 }

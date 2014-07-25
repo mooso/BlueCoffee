@@ -18,10 +18,9 @@ namespace Microsoft.Experimental.Azure.Hive
 		private readonly string _javaHome;
 		private readonly string _logsDirectory;
 		private readonly string _configDirectory;
-		private readonly string _log4jPropertiesPath;
-		private readonly string _configFilePath;
-		private readonly HiveConfig _config;
 		private readonly string _fakeHadoopHome;
+		private const string _log4jPropertiesFileName = "log4j.properties";
+		private const string _configFileName = "hive-site.xml";
 
 		/// <summary>
 		/// Create a new runner.
@@ -30,17 +29,13 @@ namespace Microsoft.Experimental.Azure.Hive
 		/// <param name="javaHome">The directory where Java is isntalled.</param>
 		/// <param name="logsDirctory">The directory to use for logs.</param>
 		/// <param name="configDirectory">The directory to use for configuration.</param>
-		/// <param name="config">The hive configuration.</param>
 		public HiveRunner(string jarsDirectory, string javaHome, string logsDirctory,
-			HiveConfig config, string configDirectory)
+			string configDirectory)
 		{
 			_jarsDirectory = jarsDirectory;
 			_javaHome = javaHome;
 			_logsDirectory = logsDirctory;
 			_configDirectory = configDirectory;
-			_config = config;
-			_log4jPropertiesPath = Path.Combine(_configDirectory, "hive-log4j.properties");
-			_configFilePath = Path.Combine(_configDirectory, "hive-site.xml");
 			_fakeHadoopHome = Path.Combine(_jarsDirectory, "hadoop");
 		}
 
@@ -50,28 +45,56 @@ namespace Microsoft.Experimental.Azure.Hive
 		public void Setup()
 		{
 			foreach (var dir in
-				new[] { _jarsDirectory, _logsDirectory, _configDirectory }
-				.Concat(_config.AllDirectories))
+				new[] { _jarsDirectory, _logsDirectory, _configDirectory })
 			{
 				Directory.CreateDirectory(dir);
 			}
 			ExtractJars();
-			WriteHiveConfigFile();
-			WriteHiveLog4jFile();
 		}
 
 		/// <summary>
 		/// Run Hive metastore.
 		/// </summary>
+		/// <param name="config">The configuration.</param>
 		/// <param name="runContinuous">If set, this method will keep restarting the metastore whenver it exits and will never return.</param>
-		public void RunMetastore(bool runContinuous = true)
+		public void RunMetastore(HiveMetastoreConfig config, bool runContinuous = true)
+		{
+			const string className = "org.apache.hadoop.hive.metastore.HiveMetaStore";
+			const string fileName = "hive-metastore";
+			WriteHiveConfigFile(fileName, config);
+			WriteHiveLog4jFile(fileName);
+			RunClass(
+				runContinuous: runContinuous,
+				className: className,
+				arguments: "-p " + config.Port,
+				configSubdirectory: fileName);
+		}
+
+		/// <summary>
+		/// Runs Hive server 2.
+		/// </summary>
+		/// <param name="config">The configuration.</param>
+		/// <param name="runContinuous">If set, this method will keep restarting the metastore whenver it exits and will never return.</param>
+		public void RunHiveServer(HiveServerConfig config, bool runContinuous = true)
+		{
+			const string className = "org.apache.hive.service.server.HiveServer2";
+			const string fileName = "hive-server2";
+			WriteHiveConfigFile(fileName, config);
+			WriteHiveLog4jFile(fileName);
+			RunClass(
+				runContinuous: runContinuous,
+				className: className,
+				arguments: "",
+				configSubdirectory: fileName);
+		}
+
+		private void RunClass(bool runContinuous, string className, string arguments, string configSubdirectory)
 		{
 			var runner = new JavaRunner(_javaHome);
-			const string className = "org.apache.hadoop.hive.metastore.HiveMetaStore";
-			var classPathEntries = new[] { _configDirectory }
+			var classPathEntries = new[] { Path.Combine(_configDirectory, configSubdirectory) }
 				.Concat(JavaRunner.GetClassPathForJarsInDirectories(_jarsDirectory));
 			runner.RunClass(className,
-				"",
+				arguments,
 				classPathEntries,
 				extraJavaOptions: new[]
 				{
@@ -82,21 +105,38 @@ namespace Microsoft.Experimental.Azure.Hive
 				},
 				defines: new Dictionary<string, string>
 				{
-						{ "log4j.configuration", "file:\"" + _log4jPropertiesPath + "\"" },
+						{
+							"log4j.configuration",
+							"file:\"" +
+								Path.Combine(_configDirectory, configSubdirectory, _log4jPropertiesFileName) +
+								"\""
+						},
 						{ "hadoop.home.dir", _fakeHadoopHome },
 				},
 				runContinuous: runContinuous);
 		}
 
-		private void WriteHiveConfigFile()
+		private void WriteHiveConfigFile(string configSubdirectory, HiveConfig config)
 		{
-			_config.ToXml().Save(_configFilePath);
+			var directory = EnsureConfigSubdirectoryExists(configSubdirectory);
+			config.ToXml().Save(Path.Combine(directory, _configFileName));
 		}
 
-		private void WriteHiveLog4jFile()
+		private string EnsureConfigSubdirectoryExists(string configSubdirectory)
 		{
-			var config = HiveLog4jConfigFactory.CreateConfig(_logsDirectory);
-			config.ToPropertiesFile().WriteToFile(_log4jPropertiesPath);
+			var directory = Path.Combine(_configDirectory, configSubdirectory);
+			if (!Directory.Exists(directory))
+			{
+				Directory.CreateDirectory(directory);
+			}
+			return directory;
+		}
+
+		private void WriteHiveLog4jFile(string configSubdirectory)
+		{
+			var config = HiveLog4jConfigFactory.CreateConfig(Path.Combine(_logsDirectory, configSubdirectory + ".log"));
+			var directory = EnsureConfigSubdirectoryExists(configSubdirectory);
+			config.ToPropertiesFile().WriteToFile(Path.Combine(directory, _log4jPropertiesFileName));
 		}
 
 		private void ExtractJars()
