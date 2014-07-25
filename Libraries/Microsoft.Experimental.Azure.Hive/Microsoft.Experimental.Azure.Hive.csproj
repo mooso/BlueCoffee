@@ -57,6 +57,7 @@
     <Compile Include="HiveMetastoreConfig.cs" />
     <Compile Include="HiveRunner.cs" />
     <Compile Include="HiveServerConfig.cs" />
+    <Compile Include="HiveSqlServerMetastoreConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
