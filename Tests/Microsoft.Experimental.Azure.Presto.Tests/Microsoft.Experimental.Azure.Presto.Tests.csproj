@@ -78,6 +78,10 @@
       <Project>{f245abe7-e512-48b8-b37f-5d08f76b6f35}</Project>
       <Name>Microsoft.Experimental.Azure.Cassandra</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.Hive\Microsoft.Experimental.Azure.Hive.csproj">
+      <Project>{b079654a-5589-4530-80b4-272a34e2c636}</Project>
+      <Name>Microsoft.Experimental.Azure.Hive</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj">
       <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
       <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>

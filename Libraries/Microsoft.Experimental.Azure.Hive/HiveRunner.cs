@@ -50,7 +50,8 @@ namespace Microsoft.Experimental.Azure.Hive
 		public void Setup()
 		{
 			foreach (var dir in
-				new[] { _jarsDirectory, _logsDirectory, _configDirectory })
+				new[] { _jarsDirectory, _logsDirectory, _configDirectory }
+				.Concat(_config.AllDirectories))
 			{
 				Directory.CreateDirectory(dir);
 			}

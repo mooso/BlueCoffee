@@ -26,15 +26,15 @@ namespace Microsoft.Experimental.Azure.Hive.Tests
 			runner.RunMetastore(runContinuous: false);
 		}
 
-		private static HiveRunner SetupHive(string prestoRoot)
+		private static HiveRunner SetupHive(string hiveRoot)
 		{
 			var config = new HiveConfig(
-				derbyDataDirectory: Path.Combine(prestoRoot, "metastore"));
+				derbyDataDirectory: Path.Combine(hiveRoot, "metastore"));
 			var runner = new HiveRunner(
-				jarsDirectory: Path.Combine(prestoRoot, "jars"),
+				jarsDirectory: Path.Combine(hiveRoot, "jars"),
 				javaHome: JavaHome,
-				logsDirctory: Path.Combine(prestoRoot, "logs"),
-				configDirectory: Path.Combine(prestoRoot, "conf"),
+				logsDirctory: Path.Combine(hiveRoot, "logs"),
+				configDirectory: Path.Combine(hiveRoot, "conf"),
 				config: config);
 			runner.Setup();
 			return runner;
