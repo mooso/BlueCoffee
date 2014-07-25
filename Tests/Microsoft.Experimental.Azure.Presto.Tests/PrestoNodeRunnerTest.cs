@@ -1,5 +1,6 @@
 ﻿using Cassandra;
 using Microsoft.Experimental.Azure.Cassandra;
+using Microsoft.Experimental.Azure.Hive;
 using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -55,6 +56,25 @@ namespace Microsoft.Experimental.Azure.Presto.Tests
 			Task.WaitAll(cassandraTask, prestoTask);
 		}
 
+		[TestMethod]
+		public void PrestoWithHiveEndToEndTest()
+		{
+			var tempDirectory = @"C:\PrestoWithHiveTestOutput";
+			if (Directory.Exists(tempDirectory))
+			{
+				Directory.Delete(tempDirectory, recursive: true);
+			}
+			var hiveRoot = Path.Combine(tempDirectory, "HiveRoot");
+			var prestoRoot = Path.Combine(tempDirectory, "Presto");
+			var hiveRunner = SetupHive(hiveRoot);
+			var hiveTask = Task.Factory.StartNew(() => hiveRunner.RunMetastore(runContinuous: false));
+			var prestoRunner = SetupPresto(prestoRoot,
+				new[] { new PrestoHiveCatalogConfig("thrift://localhost:9083") });
+			var prestoTask = Task.Factory.StartNew(() => prestoRunner.Run(runContinuous: false));
+
+			Task.WaitAll(hiveTask, prestoTask);
+		}
+
 		private static PrestoNodeRunner SetupPresto(string prestoRoot, IEnumerable<PrestoCatalogConfig> catalogs)
 		{
 			var config = new PrestoConfig(
@@ -71,6 +91,20 @@ namespace Microsoft.Experimental.Azure.Presto.Tests
 				configDirectory: Path.Combine(prestoRoot, "conf"),
 				config: config,
 				traceLevel: Log4jTraceLevel.DEBUG);
+			runner.Setup();
+			return runner;
+		}
+
+		private static HiveRunner SetupHive(string hiveRoot)
+		{
+			var config = new HiveConfig(
+				derbyDataDirectory: Path.Combine(hiveRoot, "metastore"));
+			var runner = new HiveRunner(
+				jarsDirectory: Path.Combine(hiveRoot, "jars"),
+				javaHome: JavaHome,
+				logsDirctory: Path.Combine(hiveRoot, "logs"),
+				configDirectory: Path.Combine(hiveRoot, "conf"),
+				config: config);
 			runner.Setup();
 			return runner;
 		}

@@ -54,6 +54,7 @@
     <Compile Include="PrestoCassandraCatalogConfig.cs" />
     <Compile Include="PrestoCatalogConfig.cs" />
     <Compile Include="PrestoConfig.cs" />
+    <Compile Include="PrestoHiveCatalogConfig.cs" />
     <Compile Include="PrestoNodeRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -72,6 +73,7 @@
   <ItemGroup>
     <None Include="Microsoft.Experimental.Azure.Presto.nuspec" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="Resources\HivePlugin.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

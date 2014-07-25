@@ -23,6 +23,14 @@ namespace Microsoft.Experimental.Azure.Hive
 			_derbyDataDirectory = derbyDataDirectory;
 		}
 
+		internal IEnumerable<string> AllDirectories
+		{
+			get
+			{
+				return new[] { _derbyDataDirectory };
+			}
+		}
+
 		/// <summary>
 		/// Create the XML representation of this configuration.
 		/// </summary>
@@ -31,7 +39,7 @@ namespace Microsoft.Experimental.Azure.Hive
 		{
 			return new XDocument(
 				new XElement("configuration",
-					PropertyElement("hive.metastore.warehouse.dir", _derbyDataDirectory)
+					PropertyElement("hive.metastore.warehouse.dir", _derbyDataDirectory.Replace('\\', '/'))
 				)
 			);
 		}

@@ -126,6 +126,7 @@ namespace Microsoft.Experimental.Azure.Presto
 		{
 			ExtractResourceArchive("Jars", _jarsDirectory);
 			ExtractResourceArchive("CassandraPlugin", Path.Combine(_config.PluginInstallDirectory, "cassandra"));
+			ExtractResourceArchive("HivePlugin", Path.Combine(_config.PluginInstallDirectory, "hive-hadoop2"));
 		}
 	}
 }
