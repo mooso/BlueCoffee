@@ -52,8 +52,11 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="HiveConfig.cs" />
+    <Compile Include="HiveDerbyMetastoreConfig.cs" />
     <Compile Include="HiveLog4jConfigFactory.cs" />
+    <Compile Include="HiveMetastoreConfig.cs" />
     <Compile Include="HiveRunner.cs" />
+    <Compile Include="HiveServerConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
