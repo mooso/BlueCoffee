@@ -42,8 +42,9 @@ namespace Microsoft.Experimental.Azure.Presto
 		/// <summary>
 		/// Gets the Cassandra-specific properties.
 		/// </summary>
+		/// <param name="configDirectory">The config directory - ignored.</param>
 		/// <returns>The properties.</returns>
-		public override IEnumerable<KeyValuePair<string, string>> GetCatalogSpecificProperties()
+		protected override IEnumerable<KeyValuePair<string, string>> GetCatalogSpecificProperties(string configDirectory)
 		{
 			return new Dictionary<string, string>()
 			{

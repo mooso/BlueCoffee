@@ -1,0 +1,69 @@
+﻿:100644 100644 577711f... 54d5e29... M	hadoop-tools/hadoop-azure/src/main/java/org/apache/hadoop/fs/azure/NativeAzureFileSystem.java
+:000000 100644 0000000... e522239... A	hadoop-tools/hadoop-azure/src/main/resources/META-INF/services/org.apache.hadoop.fs.FileSystem
+
+diff --git a/hadoop-tools/hadoop-azure/src/main/java/org/apache/hadoop/fs/azure/NativeAzureFileSystem.java b/hadoop-tools/hadoop-azure/src/main/java/org/apache/hadoop/fs/azure/NativeAzureFileSystem.java
+index 577711f..54d5e29 100644
+--- a/hadoop-tools/hadoop-azure/src/main/java/org/apache/hadoop/fs/azure/NativeAzureFileSystem.java
++++ b/hadoop-tools/hadoop-azure/src/main/java/org/apache/hadoop/fs/azure/NativeAzureFileSystem.java
+@@ -50,7 +50,6 @@
+ import org.apache.hadoop.fs.azure.metrics.AzureFileSystemMetricsSystem;
+ import org.apache.hadoop.fs.permission.FsPermission;
+ import org.apache.hadoop.fs.permission.PermissionStatus;
+-import org.apache.hadoop.metrics2.lib.DefaultMetricsSystem;
+ import org.apache.hadoop.security.UserGroupInformation;
+ import org.apache.hadoop.util.Progressable;
+ 
+@@ -124,6 +123,8 @@ public String getScheme() {
+   static final String AZURE_BLOCK_LOCATION_HOST_PROPERTY_NAME = "fs.azure.block.location.impersonatedhost";
+   private static final String AZURE_BLOCK_LOCATION_HOST_DEFAULT = "localhost";
+ 
++  private static final String SKIP_AZURE_METRICS_PROPERTY_NAME = "fs.azure.skip.metrics";
++
+   private class NativeAzureFsInputStream extends FSInputStream {
+     private InputStream in;
+     private final String key;
+@@ -482,13 +483,15 @@ public void initialize(URI uri, Configuration conf) throws IOException {
+       store = createDefaultStore(conf);
+     }
+ 
+-    // Make sure the metrics system is available before interacting with Azure
+-    AzureFileSystemMetricsSystem.fileSystemStarted();
+-    metricsSourceName = newMetricsSourceName();
+-    String sourceDesc = "Azure Storage Volume File System metrics";
+     instrumentation = new AzureFileSystemInstrumentation(conf);
+-    AzureFileSystemMetricsSystem.registerSource(metricsSourceName, sourceDesc,
+-        instrumentation);
++    if (!conf.getBoolean(SKIP_AZURE_METRICS_PROPERTY_NAME, false)) {
++	    // Make sure the metrics system is available before interacting with Azure
++	    AzureFileSystemMetricsSystem.fileSystemStarted();
++	    metricsSourceName = newMetricsSourceName();
++	    String sourceDesc = "Azure Storage Volume File System metrics";
++	    AzureFileSystemMetricsSystem.registerSource(metricsSourceName, sourceDesc,
++	        instrumentation);
++    }
+ 
+     store.initialize(uri, conf, instrumentation);
+     setConf(conf);
+diff --git a/hadoop-tools/hadoop-azure/src/main/resources/META-INF/services/org.apache.hadoop.fs.FileSystem b/hadoop-tools/hadoop-azure/src/main/resources/META-INF/services/org.apache.hadoop.fs.FileSystem
+new file mode 100644
+index 0000000..e522239
+--- /dev/null
++++ b/hadoop-tools/hadoop-azure/src/main/resources/META-INF/services/org.apache.hadoop.fs.FileSystem
+@@ -0,0 +1,17 @@
++# Licensed to the Apache Software Foundation (ASF) under one or more
++# contributor license agreements.  See the NOTICE file distributed with
++# this work for additional information regarding copyright ownership.
++# The ASF licenses this file to You under the Apache License, Version 2.0
++# (the "License"); you may not use this file except in compliance with
++# the License.  You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++org.apache.hadoop.fs.azure.NativeAzureFileSystem
++org.apache.hadoop.fs.azure.NativeAzureFileSystem$Secure
