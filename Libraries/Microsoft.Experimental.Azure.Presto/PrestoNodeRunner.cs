@@ -74,6 +74,7 @@ namespace Microsoft.Experimental.Azure.Presto
 			runner.RunClass(className,
 				"",
 				classPathEntries,
+				maxMemoryMb: _config.MaxNodeMemoryMb,
 				extraJavaOptions: new[]
 				{
 					"-XX:+UseParNewGC",
