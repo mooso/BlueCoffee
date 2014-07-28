@@ -67,6 +67,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Microsoft.Experimental.Azure.Hive.nuspec" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\Jars.zip" />
   </ItemGroup>
