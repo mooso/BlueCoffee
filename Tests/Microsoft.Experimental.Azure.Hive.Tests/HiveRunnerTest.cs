@@ -14,6 +14,7 @@ namespace Microsoft.Experimental.Azure.Hive.Tests
 		private const string JavaHome = @"C:\Program Files\Java\jdk1.7.0_21";
 
 		[TestMethod]
+		[Ignore]
 		public void EndToEndTest()
 		{
 			var tempDirectory = @"C:\HiveTestOutput";

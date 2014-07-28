@@ -57,6 +57,7 @@ namespace Microsoft.Experimental.Azure.Presto.Tests
 		}
 
 		[TestMethod]
+		[Ignore]
 		public void PrestoWithHiveEndToEndTest()
 		{
 			var tempDirectory = @"C:\PrestoWithHiveTestOutput";
