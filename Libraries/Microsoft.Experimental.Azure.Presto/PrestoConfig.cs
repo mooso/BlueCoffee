@@ -26,6 +26,7 @@ namespace Microsoft.Experimental.Azure.Presto
 		private readonly int _maxTaskMemoryMb;
 		private readonly string _discoveryServerUri;
 		private readonly ImmutableList<PrestoCatalogConfig> _catalogs;
+		private readonly int _maxNodeMemoryMb;
 
 		/// <summary>
 		/// Creates a new configuration.
@@ -42,13 +43,15 @@ namespace Microsoft.Experimental.Azure.Presto
 		/// <param name="isDiscoveryServer">Whether this will be a discovery server node.</param>
 		/// <param name="httpPort">The HTTP port exposed for node communication.</param>
 		/// <param name="maxTaskMemoryMb">Maximum amount of memory used by a single task.</param>
+		/// <param name="maxNodeMemoryMb">Maximum amount of memory used by the Presto node as a whole.</param>
 		public PrestoConfig(string nodeId,
 			string dataDirectory, string pluginConfigDirectory, string pluginInstallDirectory,
 			string discoveryServerUri,
 			IEnumerable<PrestoCatalogConfig> catalogs,
 			string environmentName = "presto", bool isCoodrinator = true,
 			bool isWorker = true, bool isDiscoveryServer = true,
-			int httpPort = 8080, int maxTaskMemoryMb = 1024)
+			int httpPort = 8080, int maxTaskMemoryMb = 1024,
+			int maxNodeMemoryMb = 2048)
 		{
 			_environmentName = environmentName;
 			_nodeId = nodeId;
@@ -62,6 +65,7 @@ namespace Microsoft.Experimental.Azure.Presto
 			_catalogs = catalogs.ToImmutableList();
 			_pluginConfigDirectory = pluginConfigDirectory;
 			_pluginInstallDirectory = pluginInstallDirectory;
+			_maxNodeMemoryMb = maxNodeMemoryMb;
 		}
 
 		internal IEnumerable<string> AllDirectories
@@ -76,6 +80,11 @@ namespace Microsoft.Experimental.Azure.Presto
 		/// The plug-in install directory.
 		/// </summary>
 		public string PluginInstallDirectory { get { return _pluginInstallDirectory; } }
+
+		/// <summary>
+		/// Maximum amount of memory used by the Presto node as a whole.
+		/// </summary>
+		public int MaxNodeMemoryMb { get { return _maxNodeMemoryMb; } }
 
 		/// <summary>
 		/// Gets the node properties to be passed as system properties to the Java program.
