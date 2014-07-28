@@ -7,6 +7,7 @@
     <authors>mostafae@microsoft.com</authors>
     <owners>mostafae@microsoft.com</owners>
     <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</iconUrl>
+    <projectUrl>https://github.com/mooso/BlueCoffee</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <copyright>Copyright 2014</copyright>
