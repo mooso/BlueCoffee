@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="ElectricBlobs" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
+  <WorkerRole name="SparkMaster" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InputEndpoint name="HTTP" protocol="tcp" port="8080" localPort="8080" />
+      <InputEndpoint name="Native" protocol="tcp" port="8081" localPort="8081" />
+      <InternalEndpoint name="All" protocol="tcp" port="*" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="10240" />
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+    </LocalResources>
+  </WorkerRole>
+  <WorkerRole name="SparkSlave" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InternalEndpoint name="All" protocol="tcp" port="*" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="10240" />
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+    </LocalResources>
+  </WorkerRole>
+</ServiceDefinition>
