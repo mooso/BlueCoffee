@@ -85,6 +85,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiveMetastore", "TestServic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrestoCommon", "TestServices\BlobbySpeed\PrestoCommon\PrestoCommon.csproj", "{DCA015EE-27FD-4084-B0EA-595273BBC1E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Experimental.Azure.Spark", "Libraries\Microsoft.Experimental.Azure.Spark\Microsoft.Experimental.Azure.Spark.csproj", "{D1B7CAAC-BAFA-49E7-A93E-5C6B3CF7DC77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Experimental.Azure.Spark.Tests", "Tests\Microsoft.Experimental.Azure.Spark.Tests\Microsoft.Experimental.Azure.Spark.Tests.csproj", "{182FBDB2-EA9F-4117-B91C-CC64A44C1BDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -223,6 +227,14 @@ Global
 		{DCA015EE-27FD-4084-B0EA-595273BBC1E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCA015EE-27FD-4084-B0EA-595273BBC1E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCA015EE-27FD-4084-B0EA-595273BBC1E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1B7CAAC-BAFA-49E7-A93E-5C6B3CF7DC77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1B7CAAC-BAFA-49E7-A93E-5C6B3CF7DC77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1B7CAAC-BAFA-49E7-A93E-5C6B3CF7DC77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1B7CAAC-BAFA-49E7-A93E-5C6B3CF7DC77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{182FBDB2-EA9F-4117-B91C-CC64A44C1BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{182FBDB2-EA9F-4117-B91C-CC64A44C1BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{182FBDB2-EA9F-4117-B91C-CC64A44C1BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{182FBDB2-EA9F-4117-B91C-CC64A44C1BDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -266,5 +278,7 @@ Global
 		{203B0973-B595-4E12-9A7B-86558964CC8A} = {603BF4FC-61BC-4161-96F5-157817F00E53}
 		{C7F679C2-EABC-46DA-9E96-DFCEBE91140E} = {603BF4FC-61BC-4161-96F5-157817F00E53}
 		{DCA015EE-27FD-4084-B0EA-595273BBC1E4} = {603BF4FC-61BC-4161-96F5-157817F00E53}
+		{D1B7CAAC-BAFA-49E7-A93E-5C6B3CF7DC77} = {318F2A6E-0A16-4C36-A5C3-47686CFE49E9}
+		{182FBDB2-EA9F-4117-B91C-CC64A44C1BDD} = {718E312B-F3CA-45DF-A091-E847CEF03946}
 	EndGlobalSection
 EndGlobal
