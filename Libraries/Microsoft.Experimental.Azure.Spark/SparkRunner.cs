@@ -16,6 +16,7 @@ namespace Microsoft.Experimental.Azure.Spark
 	{
 		private readonly string _jarsDirectory;
 		private readonly string _binDirectory;
+		private readonly string _hadoopConfDirectory;
 		private readonly string _javaHome;
 		private readonly string _sparkHome;
 		private readonly string _fakeHadoopHome;
@@ -35,6 +36,7 @@ namespace Microsoft.Experimental.Azure.Spark
 			_jarsDirectory = Path.Combine(_sparkHome, "lib");
 			_binDirectory = Path.Combine(_sparkHome, "bin");
 			_fakeHadoopHome = Path.Combine(_sparkHome, "hadoop");
+			_hadoopConfDirectory = Path.Combine(_fakeHadoopHome, "conf");
 		}
 
 		/// <summary>
@@ -43,11 +45,12 @@ namespace Microsoft.Experimental.Azure.Spark
 		public void Setup()
 		{
 			foreach (var dir in
-				new[] { _jarsDirectory, _binDirectory })
+				new[] { _jarsDirectory, _binDirectory, _hadoopConfDirectory })
 			{
 				Directory.CreateDirectory(dir);
 			}
 			ExtractJars();
+			_config.WriteHadoopCoreSiteXml(_hadoopConfDirectory);
 		}
 
 		/// <summary>
@@ -59,11 +62,10 @@ namespace Microsoft.Experimental.Azure.Spark
 		{
 			var runner = new JavaRunner(_javaHome);
 			const string className = "org.apache.spark.deploy.master.Master";
-			var classPathEntries = JavaRunner.GetClassPathForJarsInDirectories(_jarsDirectory);
 			runner.RunClass(className,
 				String.Format("--ip {0} --port {1} --webui-port {2}",
 					_config.MasterAddress, _config.MasterPort, _config.MasterWebUIPort),
-				classPathEntries,
+				ClassPath(),
 				extraJavaOptions: new[]
 				{
 					"-XX:+UseParNewGC",
@@ -88,10 +90,9 @@ namespace Microsoft.Experimental.Azure.Spark
 		{
 			var runner = new JavaRunner(_javaHome);
 			const string className = "org.apache.spark.deploy.worker.Worker";
-			var classPathEntries = JavaRunner.GetClassPathForJarsInDirectories(_jarsDirectory);
 			runner.RunClass(className,
 				_config.SparkMasterUri,
-				classPathEntries,
+				ClassPath(),
 				extraJavaOptions: new[]
 				{
 					"-XX:+UseParNewGC",
@@ -120,12 +121,11 @@ namespace Microsoft.Experimental.Azure.Spark
 			var exampleClassName = "org.apache.spark.examples." + exampleName;
 			const string exampleJarName = "spark-examples-1.0.1-hadoop2.2.0.jar";
 			var exampleJarPath = Path.Combine(_jarsDirectory, exampleJarName);
-			var classPathEntries = JavaRunner.GetClassPathForJarsInDirectories(_jarsDirectory);
 			var processOutputTracer = new StringProcessOutputTracer();
 			runner.RunClass(submitterClassName,
 				String.Format("--master {0} --class {1} \"{2}\" {3}",
 					_config.SparkMasterUri, exampleClassName, exampleJarPath, exampleArgs),
-				classPathEntries,
+				ClassPath(),
 				extraJavaOptions: new[]
 				{
 					"-XX:+UseParNewGC",
@@ -142,6 +142,12 @@ namespace Microsoft.Experimental.Azure.Spark
 			return processOutputTracer.GetOutputSoFar();
 		}
 
+		private IEnumerable<string> ClassPath()
+		{
+			return new[] { _hadoopConfDirectory }
+				.Concat(JavaRunner.GetClassPathForJarsInDirectories(_jarsDirectory));
+		}
+
 		private Dictionary<string, string> SparkEnvironmentVariables()
 		{
 			return new Dictionary<string, string>()
@@ -149,6 +155,7 @@ namespace Microsoft.Experimental.Azure.Spark
 					{ "SPARK_HOME", _sparkHome },
 					{ "HADOOP_HOME", _fakeHadoopHome },
 					{ "JAVA_HOME", _javaHome },
+					{ "HADOOP_CONF_DIR", _hadoopConfDirectory },
 				};
 		}
 
