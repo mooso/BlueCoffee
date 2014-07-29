@@ -15,20 +15,26 @@ namespace Microsoft.Experimental.Azure.Spark
 	public sealed class SparkRunner
 	{
 		private readonly string _jarsDirectory;
+		private readonly string _binDirectory;
 		private readonly string _javaHome;
+		private readonly string _sparkHome;
+		private readonly string _fakeHadoopHome;
 		private readonly SparkConfig _config;
 
 		/// <summary>
 		/// Create a new runner.
 		/// </summary>
-		/// <param name="jarsDirectory">The directory to use for jar files.</param>
+		/// <param name="sparkHome">The directory to use for Spark home.</param>
 		/// <param name="javaHome">The directory where Java is isntalled.</param>
 		/// <param name="config">The configuration.</param>
-		public SparkRunner(string jarsDirectory, string javaHome, SparkConfig config)
+		public SparkRunner(string sparkHome, string javaHome, SparkConfig config)
 		{
-			_jarsDirectory = jarsDirectory;
+			_sparkHome = sparkHome;
 			_javaHome = javaHome;
 			_config = config;
+			_jarsDirectory = Path.Combine(_sparkHome, "lib");
+			_binDirectory = Path.Combine(_sparkHome, "bin");
+			_fakeHadoopHome = Path.Combine(_sparkHome, "hadoop");
 		}
 
 		/// <summary>
@@ -37,7 +43,7 @@ namespace Microsoft.Experimental.Azure.Spark
 		public void Setup()
 		{
 			foreach (var dir in
-				new[] { _jarsDirectory })
+				new[] { _jarsDirectory, _binDirectory })
 			{
 				Directory.CreateDirectory(dir);
 			}
@@ -48,7 +54,8 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// Run Spark Master.
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
-		public void RunMaster(bool runContinuous = true)
+		/// <param name="monitor">Optional process monitor.</param>
+		public void RunMaster(bool runContinuous = true, ProcessMonitor monitor = null)
 		{
 			var runner = new JavaRunner(_javaHome);
 			const string className = "org.apache.spark.deploy.master.Master";
@@ -67,14 +74,17 @@ namespace Microsoft.Experimental.Azure.Spark
 				defines: new Dictionary<string, string>
 				{
 				},
-				runContinuous: runContinuous);
+				runContinuous: runContinuous,
+				monitor: monitor,
+				environmentVariables: SparkEnvironmentVariables());
 		}
 
 		/// <summary>
 		/// Run Spark Slave.
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
-		public void RunSlave(bool runContinuous = true)
+		/// <param name="monitor">Optional process monitor.</param>
+		public void RunSlave(bool runContinuous = true, ProcessMonitor monitor = null)
 		{
 			var runner = new JavaRunner(_javaHome);
 			const string className = "org.apache.spark.deploy.worker.Worker";
@@ -92,7 +102,54 @@ namespace Microsoft.Experimental.Azure.Spark
 				defines: new Dictionary<string, string>
 				{
 				},
-				runContinuous: runContinuous);
+				runContinuous: runContinuous,
+				monitor: monitor,
+				environmentVariables: SparkEnvironmentVariables());
+		}
+
+		/// <summary>
+		/// Runs a Spark example.
+		/// </summary>
+		/// <param name="exampleName">The name of the example (e.g. SparkPi).</param>
+		/// <param name="exampleArgs">Arguments given to the example.</param>
+		/// <returns>The stdout/stderr from running the example.</returns>
+		public ProcessOutput RunExample(string exampleName, string exampleArgs)
+		{
+			var runner = new JavaRunner(_javaHome);
+			const string submitterClassName = "org.apache.spark.deploy.SparkSubmit";
+			var exampleClassName = "org.apache.spark.examples." + exampleName;
+			const string exampleJarName = "spark-examples-1.0.1-hadoop2.2.0.jar";
+			var exampleJarPath = Path.Combine(_jarsDirectory, exampleJarName);
+			var classPathEntries = JavaRunner.GetClassPathForJarsInDirectories(_jarsDirectory);
+			var processOutputTracer = new StringProcessOutputTracer();
+			runner.RunClass(submitterClassName,
+				String.Format("--master {0} --class {1} \"{2}\" {3}",
+					_config.SparkMasterUri, exampleClassName, exampleJarPath, exampleArgs),
+				classPathEntries,
+				extraJavaOptions: new[]
+				{
+					"-XX:+UseParNewGC",
+					"-XX:+UseConcMarkSweepGC",
+					"-XX:CMSInitiatingOccupancyFraction=75",
+					"-XX:+UseCMSInitiatingOccupancyOnly",
+				},
+				defines: new Dictionary<string, string>
+				{
+				},
+				runContinuous: false,
+				tracer: processOutputTracer,
+				environmentVariables: SparkEnvironmentVariables());
+			return processOutputTracer.GetOutputSoFar();
+		}
+
+		private Dictionary<string, string> SparkEnvironmentVariables()
+		{
+			return new Dictionary<string, string>()
+				{
+					{ "SPARK_HOME", _sparkHome },
+					{ "HADOOP_HOME", _fakeHadoopHome },
+					{ "JAVA_HOME", _javaHome },
+				};
 		}
 
 		private void ExtractResourceArchive(string resourceName, string targetDirectory)
@@ -108,6 +165,14 @@ namespace Microsoft.Experimental.Azure.Spark
 		private void ExtractJars()
 		{
 			ExtractResourceArchive("Jars", _jarsDirectory);
+			const string classPathScriptName = "compute-classpath.cmd";
+			File.Move(
+				Path.Combine(_jarsDirectory, classPathScriptName),
+				Path.Combine(_binDirectory, classPathScriptName));
+			File.WriteAllBytes(Path.Combine(_sparkHome, "RELEASE"), new byte[] { });
+			var binDirectory = Directory.CreateDirectory(Path.Combine(_fakeHadoopHome, "bin"));
+			const string winutils = "winutils.exe";
+			File.Move(Path.Combine(_jarsDirectory, winutils), Path.Combine(binDirectory.FullName, winutils));
 		}
 	}
 }

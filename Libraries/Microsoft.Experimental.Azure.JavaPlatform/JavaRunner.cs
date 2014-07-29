@@ -58,11 +58,15 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		/// <param name="extraJavaOptions">Any other command-line arguments to give to the Java virtual machine.</param>
 		/// <param name="tracer">The output tracer to use to trace the output of the program as it's running.</param>
 		/// <param name="runContinuous">If set, we will restart the program any time it exits.</param>
+		/// <param name="monitor">If given, this monitor will be notified when the Java process is started.</param>
+		/// <param name="environmentVariables">The environment variables to use for the Java process.</param>
 		/// <returns></returns>
 		public int RunClass(string className, string arguments, IEnumerable<string> classPathEntries, int maxMemoryMb = 512, bool server = true,
 			IEnumerable<KeyValuePair<string, string>> defines = null,
 			IEnumerable<string> extraJavaOptions = null,
-			ProcessOutputTracer tracer = null, bool runContinuous = true)
+			ProcessOutputTracer tracer = null, bool runContinuous = true,
+			ProcessMonitor monitor = null,
+			IEnumerable<KeyValuePair<string, string>> environmentVariables = null)
 		{
 			var simpleClassName = className.Split('.').Last();
 			tracer = tracer ?? new DefaultProcessOutputTracer(simpleClassName + ": ");
@@ -93,6 +97,20 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 				RedirectStandardOutput = true,
 				FileName = _javaExePath
 			};
+			if (environmentVariables != null)
+			{
+				foreach (var variable in environmentVariables)
+				{
+					if (javaStartInfo.EnvironmentVariables.ContainsKey(variable.Key))
+					{
+						javaStartInfo.EnvironmentVariables[variable.Key] = variable.Value;
+					}
+					else
+					{
+						javaStartInfo.EnvironmentVariables.Add(variable.Key, variable.Value);
+					}
+				}
+			}
 			while (true)
 			{
 				Trace.TraceInformation("About to run: " + javaStartInfo.FileName + " " + javaStartInfo.Arguments);
@@ -103,6 +121,10 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 					javaProcess.Start();
 					javaProcess.BeginOutputReadLine();
 					javaProcess.BeginErrorReadLine();
+					if (monitor != null)
+					{
+						monitor.ProcessStarted(javaProcess);
+					}
 					javaProcess.WaitForExit(Int32.MaxValue);
 					if (!runContinuous)
 					{

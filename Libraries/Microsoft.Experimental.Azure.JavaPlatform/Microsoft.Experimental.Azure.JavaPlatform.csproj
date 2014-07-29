@@ -62,9 +62,12 @@
     <Compile Include="Log4j\Log4jTraceLevel.cs" />
     <Compile Include="Log4j\LoggerDefinition.cs" />
     <Compile Include="Log4j\RootLoggerDefinition.cs" />
+    <Compile Include="ProcessMonitor.cs" />
+    <Compile Include="ProcessOutput.cs" />
     <Compile Include="ProcessOutputTracer.cs" />
     <Compile Include="PropertiesFileConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StringProcessOutputTracer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\openjdk7.zip" />
