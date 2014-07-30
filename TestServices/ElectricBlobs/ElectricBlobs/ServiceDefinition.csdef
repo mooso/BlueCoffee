@@ -11,7 +11,7 @@
     </Endpoints>
     <LocalResources>
       <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="10240" />
-      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="10240" />
     </LocalResources>
   </WorkerRole>
   <WorkerRole name="SparkSlave" vmsize="Small">
@@ -23,7 +23,7 @@
     </Endpoints>
     <LocalResources>
       <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="10240" />
-      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="10240" />
     </LocalResources>
   </WorkerRole>
 </ServiceDefinition>
