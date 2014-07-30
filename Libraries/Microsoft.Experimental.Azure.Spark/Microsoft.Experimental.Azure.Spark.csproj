@@ -62,6 +62,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Microsoft.Experimental.Azure.Spark.nuspec" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\Jars.zip" />
   </ItemGroup>
