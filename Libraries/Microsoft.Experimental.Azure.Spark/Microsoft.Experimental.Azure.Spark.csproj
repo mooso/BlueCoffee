@@ -67,11 +67,11 @@
     <EmbeddedResource Include="Resources\Jars.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <Target Name="BeforeBuild" Outputs="Resources\Jars.zip" Inputs="Resources\Jars.zip.1;Resources\Jars.zip.2">
+    <Csc Sources="Resources\CombineJar.cs" OutputAssembly="$(OutputPath)\CombineJar.exe" />
+    <Exec Command="$(OutputPath)\CombineJar.exe Resources\Jars.zip" />
+    <Delete Files="$(OutputPath)\CombineJar.exe" />
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  -->
 </Project>

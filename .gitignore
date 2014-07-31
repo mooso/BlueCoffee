@@ -130,3 +130,6 @@ TestConf/
 
 # Final nuget packages
 FinalPackages/
+
+# Big zip file we merge on the spot
+Libraries/Microsoft.Experimental.Azure.Spark/Resources/Jars.zip
