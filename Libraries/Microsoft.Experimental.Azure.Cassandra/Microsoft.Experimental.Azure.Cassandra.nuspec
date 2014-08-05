@@ -15,7 +15,7 @@
     <dependencies>
       <dependency id="Microsoft.Bcl.Immutable" version="[1.0.34,)"/>
       <dependency id="YamlDotNet" version="[3.2.1,)"/>
-      <dependency id="Microsoft.Experimental.Azure.JavaPlatform" version="0.1.0-alpha"/>
+      <dependency id="Microsoft.Experimental.Azure.JavaPlatform" version="0.1.5-alpha"/>
     </dependencies>
   </metadata>
 </package>
