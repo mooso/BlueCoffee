@@ -81,6 +81,10 @@
       <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
       <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\Microsoft.Experimental.Azure.Spark\Microsoft.Experimental.Azure.Spark.csproj">
+      <Project>{d1b7caac-bafa-49e7-a93e-5c6b3cf7dc77}</Project>
+      <Name>Microsoft.Experimental.Azure.Spark</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SparkCommon\SparkCommon.csproj">
       <Project>{a65b758a-6eac-49fc-860c-ea2d5adc6d74}</Project>
       <Name>SparkCommon</Name>
