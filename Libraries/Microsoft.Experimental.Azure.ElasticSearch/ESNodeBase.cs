@@ -8,36 +8,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.Experimental.Azure.Cassandra
+namespace Microsoft.Experimental.Azure.ElasticSearch
 {
 	/// <summary>
-	/// The base class for a typical Azure Cassandra node.
+	/// The base class for a typical Azure Elastic Search node.
 	/// </summary>
-	public abstract class CassandraNodeBase : NodeWithJavaBase
+	public abstract class ESNodeBase : NodeWithJavaBase
 	{
-		private CassandraNodeRunner _cassandraRunner;
+		private ESNodeRunner _esRunner;
 
 		/// <summary>
-		/// Overrides the Run method to run Cassandra.
+		/// Overrides the Run method to run ES.
 		/// </summary>
 		protected sealed override void GuardedRun()
 		{
-			_cassandraRunner.Run();
+			_esRunner.Run();
 		}
 
 		/// <summary>
-		/// Overrides initialization to setup Cassandra.
+		/// Overrides initialization to setup ES.
 		/// </summary>
 		protected sealed override void PostJavaInstallInitialize()
 		{
-			InstallCassandra();
+			InstallES();
 		}
 
 		/// <summary>
-		/// Get the list of IP addresses for all the Cassandra nodes in the cluster.
+		/// Get the list of IP addresses for all the ES nodes in the cluster.
 		/// </summary>
 		/// <returns>Default implementation returns the addresses of all the instances in this role.</returns>
-		protected virtual IEnumerable<string> DiscoverCassandraNodes()
+		protected virtual IEnumerable<string> DiscoverESNodes()
 		{
 			return RoleEnvironment.CurrentRoleInstance.Role.Instances.Select(GetIPAddress);
 		}
@@ -50,25 +50,24 @@ namespace Microsoft.Experimental.Azure.Cassandra
 			get { return RoleEnvironment.GetLocalResource("DataDirectory").RootPath; }
 		}
 
-		private void InstallCassandra()
+		private void InstallES()
 		{
-			var nodes = DiscoverCassandraNodes();
-			Trace.WriteLine("Cassandra nodes we'll use: " + String.Join(",", nodes));
-			var config = new CassandraConfig(
+			var nodes = DiscoverESNodes();
+			Trace.WriteLine("ES nodes we'll use: " + String.Join(",", nodes));
+			var config = new ESConfig(
 				clusterName: "AzureCluster",
-				clusterNodes: nodes,
-				dataDirectories: new[] { Path.Combine(DataDirectory, "Data") },
-				commitLogDirectory: Path.Combine(DataDirectory, "CommitLog"),
-				savedCachesDirectory: Path.Combine(DataDirectory, "SavedCaches"),
-				ringDelay: TimeSpan.FromMinutes(5) // Role instances can start up at different times, 30 seconds is not enough.
+				enableMulticastDiscovery: false,
+				masterNodes: nodes,
+				dataDirectories: new[] { Path.Combine(DataDirectory, "Data") }
 			);
-			_cassandraRunner = new CassandraNodeRunner(
+			_esRunner = new ESNodeRunner(
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
+				homeDirectory: InstallDirectory,
 				javaHome: JavaHome,
 				logsDirctory: Path.Combine(DataDirectory, "Logs"),
 				configDirectory: Path.Combine(InstallDirectory, "conf"),
 				config: config);
-			_cassandraRunner.Setup();
+			_esRunner.Setup();
 		}
 	}
 }
