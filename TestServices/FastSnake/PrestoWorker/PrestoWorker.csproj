@@ -80,6 +80,10 @@
       <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
       <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\Microsoft.Experimental.Azure.Presto\Microsoft.Experimental.Azure.Presto.csproj">
+      <Project>{67f8d532-1835-4141-a0bb-406575b56e00}</Project>
+      <Name>Microsoft.Experimental.Azure.Presto</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PrestoCommon\PrestoCommon.csproj">
       <Project>{f80a7e97-4cae-489a-a3a6-11270fada108}</Project>
       <Name>PrestoCommon</Name>

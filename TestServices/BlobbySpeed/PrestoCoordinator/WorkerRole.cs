@@ -2,7 +2,7 @@ using PrestoCommon;
 
 namespace PrestoCoordinator
 {
-	public class WorkerRole : PrestoNodeBase
+	public class WorkerRole : PrestoWithHiveNodeBase
 	{
 		protected override bool IsCoordinator { get { return true; } }
 	}

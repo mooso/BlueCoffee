@@ -12,28 +12,10 @@ using System.Threading.Tasks;
 
 namespace PrestoCommon
 {
-	public abstract class PrestoNodeBase : NodeWithJavaBase
+	public abstract class PrestoWithHiveNodeBase : PrestoNodeBase
 	{
-		private PrestoNodeRunner _prestoRunner;
-
-		protected override void GuardedRun()
+		protected override IEnumerable<PrestoCatalogConfig> ConfigurePrestoCatalogs()
 		{
-			_prestoRunner.Run();
-		}
-
-		protected override void PostJavaInstallInitialize()
-		{
-			InstallPresto();
-		}
-
-		protected abstract bool IsCoordinator { get; }
-
-		private void InstallPresto()
-		{
-			var coordinator = RoleEnvironment.Roles["PrestoCoordinator"].Instances
-				.Select(GetIPAddress)
-				.First();
-			Trace.TraceInformation("Coordinator node we'll use: " + coordinator);
 			var hiveNode = RoleEnvironment.Roles["HiveMetastore"].Instances
 				.Select(GetIPAddress)
 				.First();
@@ -44,26 +26,7 @@ namespace PrestoCommon
 				{
 					{ "fs.azure.skip.metrics", "true" },
 				}.Concat(GetWasbConfigKeys()));
-			var config = new PrestoConfig(
-				environmentName: "azurecluster",
-				nodeId: RoleEnvironment.CurrentRoleInstance.Id,
-				dataDirectory: Path.Combine(DataDirectory, "Data"),
-				pluginConfigDirectory: Path.Combine(InstallDirectory, "etc"),
-				pluginInstallDirectory: Path.Combine(InstallDirectory, "plugin"),
-				discoveryServerUri: "http://" + coordinator + ":8080",
-				catalogs: new[] { hiveCatalogConfig },
-				isCoodrinator: IsCoordinator,
-				isWorker: !IsCoordinator,
-				isDiscoveryServer: IsCoordinator,
-				maxNodeMemoryMb: 3 * 1024,
-				maxTaskMemoryMb: (int)(2.5 * 1024));
-			_prestoRunner = new PrestoNodeRunner(
-				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
-				javaHome: JavaHome,
-				logsDirctory: Path.Combine(DataDirectory, "Logs"),
-				configDirectory: Path.Combine(InstallDirectory, "conf"),
-				config: config);
-			_prestoRunner.Setup();
+			return new PrestoCatalogConfig[] { hiveCatalogConfig };
 		}
 
 		private List<KeyValuePair<string, string>> GetWasbConfigKeys()
@@ -83,15 +46,10 @@ namespace PrestoCommon
 			return wasbConfigKeys;
 		}
 
-		private static string DataDirectory
-		{
-			get { return RoleEnvironment.GetLocalResource("DataDir").RootPath; }
-		}
-
 		private static IEnumerable<string> ReadWasbAccountsFile()
 		{
 			using (Stream resourceStream =
-				typeof(PrestoNodeBase).Assembly.GetManifestResourceStream("PrestoCommon.WasbAccounts.txt"))
+				typeof(PrestoWithHiveNodeBase).Assembly.GetManifestResourceStream("PrestoCommon.WasbAccounts.txt"))
 			{
 				StreamReader reader = new StreamReader(resourceStream);
 				string currentLine;

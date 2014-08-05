@@ -9,7 +9,7 @@
       <InternalEndpoint name="Dummy" protocol="tcp" port="8020" />
     </Endpoints>
     <LocalResources>
-      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="102400" />
+      <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="102400" />
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
   </WorkerRole>
@@ -21,7 +21,7 @@
       <InternalEndpoint name="HTTP" protocol="tcp" port="8080" />
     </Endpoints>
     <LocalResources>
-      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="102400" />
+      <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="102400" />
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
   </WorkerRole>
