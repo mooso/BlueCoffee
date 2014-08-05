@@ -70,7 +70,8 @@ function Deploy-TestService(
 	[Parameter(Mandatory=$true)]$testServiceName,
 	[Parameter(Mandatory=$true)]$serviceName,
 	[Microsoft.WindowsAzure.Commands.ServiceManagement.Model.StorageServicePropertiesOperationContext]$storageAccount = $null,
-	$flavor = 'Release')
+	$flavor = 'Release',
+	[Switch]$upgradeInPlace)
 {
 	Trap
 	{
@@ -92,9 +93,16 @@ function Deploy-TestService(
 	}
 	Get-Content "$publishDirectory\ServiceConfiguration.Cloud.cscfg" |
 		%{$_ -replace "UseDevelopmentStorage=true",$connectionString} > $tempConfigFile
-	Delete-ExistingDeployments $serviceName
 	Write-Host "Deploying..."
-	$deployment = New-AzureDeployment -ServiceName $serviceName -Package "$publishDirectory\$testServiceName.cspkg" -Configuration $tempConfigFile -Label "Deployment on $(Get-Date)" -Slot Production
+	if ($upgradeInPlace -and ($existingDeployment = Get-AzureDeployment $serviceName -Sl Production -ErrorAction Ignore))
+	{
+		$deployment = Set-AzureDeployment -ServiceName $serviceName -Package "$publishDirectory\$testServiceName.cspkg" -Configuration $tempConfigFile -Label "Deployment on $(Get-Date)" -Slot Production -Upgrade -Force
+	}
+	else
+	{
+		Delete-ExistingDeployments $serviceName
+		$deployment = New-AzureDeployment -ServiceName $serviceName -Package "$publishDirectory\$testServiceName.cspkg" -Configuration $tempConfigFile -Label "Deployment on $(Get-Date)" -Slot Production
+	}
 }
 
 function BuildAndDeploy([Parameter(Mandatory=$true)]$testServiceName,
