@@ -14,44 +14,20 @@ using System.IO;
 
 namespace HiveMetastore
 {
-	public class WorkerRole : NodeWithJavaBase
+	public class WorkerRole : HiveMetastoreNodeBase
 	{
-		private HiveRunner _hiveRunner;
-		private HiveSqlServerMetastoreConfig _metastoreConfig;
-
-		protected override void GuardedRun()
-		{
-			_hiveRunner.RunMetastore(_metastoreConfig);
-		}
-
-		protected override void PostJavaInstallInitialize()
+		protected override HiveMetastoreConfig GetMetastoreConfig()
 		{
 			var metastoreConfigInfo = ReadMetastoreFile().ToList();
 			if (metastoreConfigInfo.Count != 4)
 			{
 				throw new InvalidOperationException("Invalid metastore configuration.");
 			}
-			_metastoreConfig = new HiveSqlServerMetastoreConfig(
+			return new HiveSqlServerMetastoreConfig(
 				serverUri: metastoreConfigInfo[0],
 				databaseName: metastoreConfigInfo[1],
 				userName: metastoreConfigInfo[2],
 				password: metastoreConfigInfo[3]);
-			InstallHive();
-		}
-
-		private void InstallHive()
-		{
-			_hiveRunner = new HiveRunner(
-				jarsDirectory: Path.Combine(InstallDirectory, "jars"),
-				javaHome: JavaHome,
-				logsDirctory: Path.Combine(DataDirectory, "logs"),
-				configDirectory: Path.Combine(InstallDirectory, "conf"));
-			_hiveRunner.Setup();
-		}
-
-		private static string DataDirectory
-		{
-			get { return RoleEnvironment.GetLocalResource("DataDir").RootPath; }
 		}
 
 		private IEnumerable<string> ReadMetastoreFile()
