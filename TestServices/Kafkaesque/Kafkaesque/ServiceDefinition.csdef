@@ -21,7 +21,7 @@
     </Endpoints>
     <LocalResources>
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="250" />
-      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
+      <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
     </LocalResources>
   </WorkerRole>
 </ServiceDefinition>
