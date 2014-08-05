@@ -76,6 +76,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj">
+      <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
+      <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PrestoCommon\PrestoCommon.csproj">
       <Project>{f80a7e97-4cae-489a-a3a6-11270fada108}</Project>
       <Name>PrestoCommon</Name>

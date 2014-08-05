@@ -5,7 +5,7 @@
       <Import moduleName="Diagnostics" />
     </Imports>
     <LocalResources>
-      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="250" />
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="250" />
       <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
     </LocalResources>
     <Endpoints>
@@ -20,7 +20,7 @@
       <InternalEndpoint name="ZooKeeperEndpoint" protocol="tcp" port="2181" />
     </Endpoints>
     <LocalResources>
-      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="250" />
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="250" />
       <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
     </LocalResources>
   </WorkerRole>

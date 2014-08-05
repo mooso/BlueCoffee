@@ -13,53 +13,28 @@ using System.Threading.Tasks;
 
 namespace SparkCommon
 {
-	public abstract class SparkNodeBase : RoleEntryPoint
+	public abstract class SparkNodeBase : NodeWithJavaBase
 	{
-		private JavaInstaller _javaInstaller;
 		private SparkRunner _sparkRunner;
 
-		public override void Run()
+		protected override void GuardedRun()
 		{
-			try
+			if (IsMaster)
 			{
-				if (IsMaster)
-				{
-					_sparkRunner.RunMaster();
-				}
-				else
-				{
-					_sparkRunner.RunSlave();
-				}
+				_sparkRunner.RunMaster();
 			}
-			catch (Exception ex)
+			else
 			{
-				UploadExceptionToBlob(ex);
-				throw;
+				_sparkRunner.RunSlave();
 			}
 		}
 
-		public override bool OnStart()
+		protected override void PostJavaInstallInitialize()
 		{
-			try
-			{
-				InstallJava();
-				InstallSpark();
-			}
-			catch (Exception ex)
-			{
-				UploadExceptionToBlob(ex);
-				throw;
-			}
-			return base.OnStart();
+			InstallSpark();
 		}
 
 		protected abstract bool IsMaster { get; }
-
-		private void InstallJava()
-		{
-			_javaInstaller = new JavaInstaller(Path.Combine(InstallDirectory, "Java"));
-			_javaInstaller.Setup();
-		}
 
 		private void InstallSpark()
 		{
@@ -74,7 +49,7 @@ namespace SparkCommon
 				hadoopConfigProperties: GetWasbConfigKeys().ToImmutableDictionary());
 			_sparkRunner = new SparkRunner(
 				sparkHome: Path.Combine(InstallDirectory, "Spark"),
-				javaHome: _javaInstaller.JavaHome,
+				javaHome: JavaHome,
 				config: config);
 			_sparkRunner.Setup();
 		}
@@ -96,31 +71,9 @@ namespace SparkCommon
 			return wasbConfigKeys;
 		}
 
-		private static string GetIPAddress(RoleInstance i)
-		{
-			return i.InstanceEndpoints.First().Value.IPEndpoint.Address.ToString();
-		}
-
-		private static string InstallDirectory
-		{
-			get { return RoleEnvironment.GetLocalResource("InstallDir").RootPath; }
-		}
-
 		private static string DataDirectory
 		{
 			get { return RoleEnvironment.GetLocalResource("DataDir").RootPath; }
-		}
-
-		private void UploadExceptionToBlob(Exception ex)
-		{
-			var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString"));
-			var container = storageAccount
-					.CreateCloudBlobClient()
-					.GetContainerReference("logs");
-			container.CreateIfNotExists();
-			container
-					.GetBlockBlobReference("Exception from " + RoleEnvironment.CurrentRoleInstance.Id + " on " + DateTime.Now)
-					.UploadText(ex.ToString());
 		}
 
 		private static IEnumerable<string> ReadWasbAccountsFile()

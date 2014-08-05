@@ -15,49 +15,24 @@ using System.Threading;
 
 namespace KafkaBroker
 {
-	public class WorkerRole : RoleEntryPoint
+	public class WorkerRole : NodeWithJavaBase
 	{
-		private JavaInstaller _javaInstaller;
 		private KafkaBrokerRunner _kafkaRunner;
 		private const int ZooKeeperPort = 2181;
 
-		public override void Run()
+		protected override void GuardedRun()
 		{
-			try
-			{
-				_kafkaRunner.Run();
-			}
-			catch (Exception ex)
-			{
-				UploadExceptionToBlob(ex);
-				throw;
-			}
+			_kafkaRunner.Run();
 		}
 
-		public override bool OnStart()
+		protected override void PostJavaInstallInitialize()
 		{
-			try
-			{
-				InstallJava();
-				InstallKafka();
-			}
-			catch (Exception ex)
-			{
-				UploadExceptionToBlob(ex);
-				throw;
-			}
-			return base.OnStart();
-		}
-
-		private void InstallJava()
-		{
-			_javaInstaller = new JavaInstaller(Path.Combine(InstallDirectory, "Java"));
-			_javaInstaller.Setup();
+			InstallKafka();
 		}
 
 		private void InstallKafka()
 		{
-			var zookeeperRole = RoleEnvironment.Roles["Zookeeper"];
+			var zookeeperRole = RoleEnvironment.Roles["ZooKeeperNode"];
 			var zookeeperHosts = zookeeperRole.Instances.Select(i => i.InstanceEndpoints.First().Value.IPEndpoint.Address.ToString());
 			var myBrokerId = Int32.Parse(RoleEnvironment.CurrentRoleInstance.Id.Split('_').Last());
 			_kafkaRunner = new KafkaBrokerRunner(
@@ -68,30 +43,13 @@ namespace KafkaBroker
 				zooKeeperHosts: zookeeperHosts,
 				zooKeeperPort: ZooKeeperPort,
 				brokerId: myBrokerId,
-				javaHome: _javaInstaller.JavaHome);
+				javaHome: JavaHome);
 			_kafkaRunner.Setup();
-		}
-
-		private static string InstallDirectory
-		{
-			get { return RoleEnvironment.GetLocalResource("InstallDir").RootPath; }
 		}
 
 		private static string DataDirectory
 		{
 			get { return RoleEnvironment.GetLocalResource("DataDir").RootPath; }
-		}
-
-		private void UploadExceptionToBlob(Exception ex)
-		{
-			var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString"));
-			var container = storageAccount
-					.CreateCloudBlobClient()
-					.GetContainerReference("logs");
-			container.CreateIfNotExists();
-			container
-					.GetBlockBlobReference("Exception from " + RoleEnvironment.CurrentRoleInstance.Id + " on " + DateTime.Now)
-					.UploadText(ex.ToString());
 		}
 	}
 }

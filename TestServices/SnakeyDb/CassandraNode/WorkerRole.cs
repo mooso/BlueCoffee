@@ -14,43 +14,18 @@ using System.IO;
 
 namespace CassandraNode
 {
-	public class WorkerRole : RoleEntryPoint
+	public class WorkerRole : NodeWithJavaBase
 	{
-		private JavaInstaller _javaInstaller;
 		private CassandraNodeRunner _cassandraRunner;
 
-		public override void Run()
+		protected override void GuardedRun()
 		{
-			try
-			{
-				_cassandraRunner.Run();
-			}
-			catch (Exception ex)
-			{
-				UploadExceptionToBlob(ex);
-				throw;
-			}
+			_cassandraRunner.Run();
 		}
 
-		public override bool OnStart()
+		protected override void PostJavaInstallInitialize()
 		{
-			try
-			{
-				InstallJava();
-				InstallCassandra();
-			}
-			catch (Exception ex)
-			{
-				UploadExceptionToBlob(ex);
-				throw;
-			}
-			return base.OnStart();
-		}
-
-		private void InstallJava()
-		{
-			_javaInstaller = new JavaInstaller(Path.Combine(InstallDirectory, "Java"));
-			_javaInstaller.Setup();
+			InstallCassandra();
 		}
 
 		private void InstallCassandra()
@@ -67,33 +42,16 @@ namespace CassandraNode
 			);
 			_cassandraRunner = new CassandraNodeRunner(
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
-				javaHome: _javaInstaller.JavaHome,
+				javaHome: JavaHome,
 				logsDirctory: Path.Combine(DataDirectory, "Logs"),
 				configDirectory: Path.Combine(InstallDirectory, "conf"),
 				config: config);
 			_cassandraRunner.Setup();
 		}
 
-		private static string InstallDirectory
-		{
-			get { return RoleEnvironment.GetLocalResource("InstallDir").RootPath; }
-		}
-
 		private static string DataDirectory
 		{
 			get { return RoleEnvironment.GetLocalResource("DataDir").RootPath; }
-		}
-
-		private void UploadExceptionToBlob(Exception ex)
-		{
-			var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString"));
-			var container = storageAccount
-					.CreateCloudBlobClient()
-					.GetContainerReference("logs");
-			container.CreateIfNotExists();
-			container
-					.GetBlockBlobReference("Exception from " + RoleEnvironment.CurrentRoleInstance.Id + " on " + DateTime.Now)
-					.UploadText(ex.ToString());
 		}
 	}
 }

@@ -12,46 +12,21 @@ using System.Threading.Tasks;
 
 namespace PrestoCommon
 {
-	public abstract class PrestoNodeBase : RoleEntryPoint
+	public abstract class PrestoNodeBase : NodeWithJavaBase
 	{
-		private JavaInstaller _javaInstaller;
 		private PrestoNodeRunner _prestoRunner;
 
-		public override void Run()
+		protected override void GuardedRun()
 		{
-			try
-			{
-				_prestoRunner.Run();
-			}
-			catch (Exception ex)
-			{
-				UploadExceptionToBlob(ex);
-				throw;
-			}
+			_prestoRunner.Run();
 		}
 
-		public override bool OnStart()
+		protected override void PostJavaInstallInitialize()
 		{
-			try
-			{
-				InstallJava();
-				InstallPresto();
-			}
-			catch (Exception ex)
-			{
-				UploadExceptionToBlob(ex);
-				throw;
-			}
-			return base.OnStart();
+			InstallPresto();
 		}
 
 		protected abstract bool IsCoordinator { get; }
-
-		private void InstallJava()
-		{
-			_javaInstaller = new JavaInstaller(Path.Combine(InstallDirectory, "Java"));
-			_javaInstaller.Setup();
-		}
 
 		private void InstallPresto()
 		{
@@ -64,7 +39,7 @@ namespace PrestoCommon
 			Trace.TraceInformation("Cassandra nodes we'll use: " + String.Join(",", cassandraNodes));
 			var config = new PrestoConfig(
 				environmentName: "azurecluster",
-				nodeId: RoleEnvironment.CurrentRoleInstance.Id,
+				nodeId: RoleEnvironment.CurrentRoleInstance.Id.Replace('(', '_').Replace(')', '_').Replace('.', '_'),
 				dataDirectory: Path.Combine(DataDirectory, "Data"),
 				pluginConfigDirectory: Path.Combine(InstallDirectory, "etc"),
 				pluginInstallDirectory: Path.Combine(InstallDirectory, "plugin"),
@@ -75,38 +50,16 @@ namespace PrestoCommon
 				isDiscoveryServer: IsCoordinator);
 			_prestoRunner = new PrestoNodeRunner(
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
-				javaHome: _javaInstaller.JavaHome,
+				javaHome: JavaHome,
 				logsDirctory: Path.Combine(DataDirectory, "Logs"),
 				configDirectory: Path.Combine(InstallDirectory, "conf"),
 				config: config);
 			_prestoRunner.Setup();
 		}
 
-		private static string GetIPAddress(RoleInstance i)
-		{
-			return i.InstanceEndpoints.First().Value.IPEndpoint.Address.ToString();
-		}
-
-		private static string InstallDirectory
-		{
-			get { return RoleEnvironment.GetLocalResource("InstallDir").RootPath; }
-		}
-
 		private static string DataDirectory
 		{
 			get { return RoleEnvironment.GetLocalResource("DataDir").RootPath; }
-		}
-
-		private void UploadExceptionToBlob(Exception ex)
-		{
-			var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString"));
-			var container = storageAccount
-					.CreateCloudBlobClient()
-					.GetContainerReference("logs");
-			container.CreateIfNotExists();
-			container
-					.GetBlockBlobReference("Exception from " + RoleEnvironment.CurrentRoleInstance.Id + " on " + DateTime.Now)
-					.UploadText(ex.ToString());
 		}
 	}
 }

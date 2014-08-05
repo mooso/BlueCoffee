@@ -10,7 +10,7 @@
     </Endpoints>
     <LocalResources>
       <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="102400" />
-      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
   </WorkerRole>
   <WorkerRole name="PrestoWorker" vmsize="Medium">
@@ -22,7 +22,7 @@
     </Endpoints>
     <LocalResources>
       <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="102400" />
-      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
   </WorkerRole>
   <WorkerRole name="HiveMetastore" vmsize="Small">
@@ -34,7 +34,7 @@
     </Endpoints>
     <LocalResources>
       <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />
-      <LocalStorage name="InstallDir" cleanOnRoleRecycle="true" sizeInMB="256" />
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
   </WorkerRole>
 </ServiceDefinition>
