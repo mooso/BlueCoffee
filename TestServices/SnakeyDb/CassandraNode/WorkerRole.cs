@@ -14,44 +14,7 @@ using System.IO;
 
 namespace CassandraNode
 {
-	public class WorkerRole : NodeWithJavaBase
+	public class WorkerRole : CassandraNodeBase
 	{
-		private CassandraNodeRunner _cassandraRunner;
-
-		protected override void GuardedRun()
-		{
-			_cassandraRunner.Run();
-		}
-
-		protected override void PostJavaInstallInitialize()
-		{
-			InstallCassandra();
-		}
-
-		private void InstallCassandra()
-		{
-			var nodes = RoleEnvironment.CurrentRoleInstance.Role.Instances.Select(i => i.InstanceEndpoints.First().Value.IPEndpoint.Address.ToString());
-			Trace.WriteLine("Cassandra nodes we'll use: " + String.Join(",", nodes));
-			var config = new CassandraConfig(
-				clusterName: "AzureCluster",
-				clusterNodes: nodes,
-				dataDirectories: new[] { Path.Combine(DataDirectory, "Data") },
-				commitLogDirectory: Path.Combine(DataDirectory, "CommitLog"),
-				savedCachesDirectory: Path.Combine(DataDirectory, "SavedCaches"),
-				ringDelay: TimeSpan.FromMinutes(5) // Role instances can start up at different times, 30 seconds is not enough.
-			);
-			_cassandraRunner = new CassandraNodeRunner(
-				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
-				javaHome: JavaHome,
-				logsDirctory: Path.Combine(DataDirectory, "Logs"),
-				configDirectory: Path.Combine(InstallDirectory, "conf"),
-				config: config);
-			_cassandraRunner.Setup();
-		}
-
-		private static string DataDirectory
-		{
-			get { return RoleEnvironment.GetLocalResource("DataDir").RootPath; }
-		}
 	}
 }
