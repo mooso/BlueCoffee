@@ -20,7 +20,7 @@
     <ConfigurationSettings>
     </ConfigurationSettings>
     <Endpoints>
-      <InternalEndpoint name="HTTP" protocol="tcp" port="8080" />
+      <InternalEndpoint name="HTTP" protocol="tcp" port="8081" />
     </Endpoints>
     <LocalResources>
       <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="1024" />

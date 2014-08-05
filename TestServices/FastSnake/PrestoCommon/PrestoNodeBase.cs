@@ -47,7 +47,8 @@ namespace PrestoCommon
 				catalogs: new[] { new PrestoCassandraCatalogConfig(cassandraNodes) },
 				isCoodrinator: IsCoordinator,
 				isWorker: !IsCoordinator,
-				isDiscoveryServer: IsCoordinator);
+				isDiscoveryServer: IsCoordinator,
+				httpPort: IsCoordinator ? 8080 : 8081);
 			_prestoRunner = new PrestoNodeRunner(
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
 				javaHome: JavaHome,
