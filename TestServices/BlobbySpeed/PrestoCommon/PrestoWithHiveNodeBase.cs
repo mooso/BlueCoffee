@@ -25,6 +25,7 @@ namespace PrestoCommon
 				hiveConfigurationProperties: new Dictionary<string, string>()
 				{
 					{ "fs.azure.skip.metrics", "true" },
+					{ "fs.azure.check.block.md5", "false" },
 				}.Concat(GetWasbConfigKeys()));
 			return new PrestoCatalogConfig[] { hiveCatalogConfig };
 		}

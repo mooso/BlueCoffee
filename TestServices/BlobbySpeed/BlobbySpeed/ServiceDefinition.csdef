@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="BlobbySpeed" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
-  <WorkerRole name="PrestoCoordinator" vmsize="Medium">
+  <WorkerRole name="PrestoCoordinator" vmsize="Large">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
@@ -13,12 +13,12 @@
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
   </WorkerRole>
-  <WorkerRole name="PrestoWorker" vmsize="Medium">
+  <WorkerRole name="PrestoWorker" vmsize="A6">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
     <Endpoints>
-      <InternalEndpoint name="HTTP" protocol="tcp" port="8080" />
+      <InternalEndpoint name="HTTP" protocol="tcp" port="8081" />
     </Endpoints>
     <LocalResources>
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="102400" />
