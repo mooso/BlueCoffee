@@ -106,7 +106,8 @@ function Deploy-TestService(
 }
 
 function BuildAndDeploy([Parameter(Mandatory=$true)]$testServiceName,
-	[Parameter(Mandatory=$true)]$serviceName)
+	[Parameter(Mandatory=$true)]$serviceName,
+	[Switch]$upgradeInPlace)
 {
 	Trap
 	{
@@ -115,6 +116,6 @@ function BuildAndDeploy([Parameter(Mandatory=$true)]$testServiceName,
 	Build-TestService $testServiceName
 	if ($LASTEXITCODE -eq 0)
 	{
-		Deploy-TestService $testServiceName $serviceName
+		Deploy-TestService $testServiceName $serviceName -upgradeInPlace:$upgradeInPlace
 	}
 }
