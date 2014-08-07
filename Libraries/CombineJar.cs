@@ -5,14 +5,14 @@ using System.Text.RegularExpressions;
 
 namespace SplitAndMerge
 {
-	class Program
+	public class Program
 	{
 		static void Main(string[] args)
 		{
 			Combine(args[0]);
 		}
 
-		private static void Split(string filePath, int parts = 2)
+		public static void Split(string filePath, int parts = 2)
 		{
 			var fileLength = new FileInfo(filePath).Length;
 			var basePartLength = fileLength / parts;
@@ -31,7 +31,7 @@ namespace SplitAndMerge
 			}
 		}
 
-		private static void Combine(string baseFilePath)
+		public static void Combine(string baseFilePath)
 		{
 			var parts = Directory.EnumerateFiles(Path.GetDirectoryName(baseFilePath), Path.GetFileName(baseFilePath) + "*")
 				.Where(f => Regex.IsMatch(f, @".*\.[\d]+"));

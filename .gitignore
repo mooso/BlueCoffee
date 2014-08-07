@@ -133,3 +133,5 @@ FinalPackages/
 
 # Big zip file we merge on the spot
 Libraries/Microsoft.Experimental.Azure.Spark/Resources/Jars.zip
+Libraries/Microsoft.Experimental.Azure.Shark/Resources/Jars.zip
+
