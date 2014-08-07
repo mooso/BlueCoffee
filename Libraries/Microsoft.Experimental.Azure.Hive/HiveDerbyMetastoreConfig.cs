@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +19,10 @@ namespace Microsoft.Experimental.Azure.Hive
 		/// </summary>
 		/// <param name="derbyDataDirectory">The local directory where the Derby DB files for the metastore will be stored.</param>
 		/// <param name="port">The port.</param>
-		public HiveDerbyMetastoreConfig(string derbyDataDirectory, int port = 9083)
-			: base(port)
+		/// <param name="extraProperties">Any extra configuration properties to set.</param>
+		public HiveDerbyMetastoreConfig(string derbyDataDirectory, int port = 9083,
+			ImmutableDictionary<string, string> extraProperties = null)
+			: base(port, extraProperties)
 		{
 			_derbyDataDirectory = derbyDataDirectory;
 		}
@@ -27,7 +30,7 @@ namespace Microsoft.Experimental.Azure.Hive
 		/// <summary>
 		/// The configuration properties.
 		/// </summary>
-		protected override IEnumerable<KeyValuePair<string, string>> ConfigurationProperties
+		protected override IEnumerable<KeyValuePair<string, string>> MetastoreSpecificProperties
 		{
 			get
 			{

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Experimental.Azure.JavaPlatform;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,10 +28,12 @@ namespace Microsoft.Experimental.Azure.Shark
 		/// <param name="maxMemoryMb">The maximum memory of the Shark server.</param>
 		/// <param name="sparkHome">The home directory where Spark is installed.</param>
 		/// <param name="sparkMaster">The Spark master URI.</param>
-		public SharkConfig(int serverPort, string metastoreUris, string sparkHome, string sparkMaster, int maxMemoryMb = 1024)
+		/// <param name="extraHiveConfig">Optional extra configuration parameters for Hive.</param>
+		public SharkConfig(int serverPort, string metastoreUris, string sparkHome, string sparkMaster, int maxMemoryMb = 1024,
+			ImmutableDictionary<string, string> extraHiveConfig = null)
 		{
 			_serverPort = serverPort;
-			_hiveConfig = new FakeHiveConfig(metastoreUris);
+			_hiveConfig = new FakeHiveConfig(metastoreUris, extraHiveConfig ?? ImmutableDictionary<string, string>.Empty);
 			_maxMemoryMb = maxMemoryMb;
 			_sparkHome = sparkHome;
 			_sparkMaster = sparkMaster;
@@ -64,10 +67,12 @@ namespace Microsoft.Experimental.Azure.Shark
 		private sealed class FakeHiveConfig : HadoopStyleXmlConfig
 		{
 			private readonly string _metastoreUris;
+			private readonly ImmutableDictionary<string, string> _extraHiveConfig;
 
-			public FakeHiveConfig(string metastoreUris)
+			public FakeHiveConfig(string metastoreUris, ImmutableDictionary<string, string> extraHiveConfig)
 			{
 				_metastoreUris = metastoreUris;
+				_extraHiveConfig = extraHiveConfig;
 			}
 
 			/// <summary>
@@ -80,7 +85,7 @@ namespace Microsoft.Experimental.Azure.Shark
 					return new Dictionary<string, string>()
 					{
 						{ "hive.metastore.uris", _metastoreUris },
-					};
+					}.Concat(_extraHiveConfig);
 				}
 			}
 		}

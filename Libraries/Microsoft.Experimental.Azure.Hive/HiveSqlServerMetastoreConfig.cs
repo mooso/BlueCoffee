@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,9 +25,11 @@ namespace Microsoft.Experimental.Azure.Hive
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
 		/// <param name="port">The port.</param>
+		/// <param name="extraProperties">Any extra configuration properties to set.</param>
 		public HiveSqlServerMetastoreConfig(string serverUri, string databaseName,
-			string userName, string password, int port = 9083)
-			: base(port)
+			string userName, string password, int port = 9083,
+			ImmutableDictionary<string, string> extraProperties = null)
+			: base(port, extraProperties)
 		{
 			_serverUri = serverUri;
 			_databaseName = databaseName;
@@ -37,7 +40,7 @@ namespace Microsoft.Experimental.Azure.Hive
 		/// <summary>
 		/// The configuration properties.
 		/// </summary>
-		protected override IEnumerable<KeyValuePair<string, string>> ConfigurationProperties
+		protected override IEnumerable<KeyValuePair<string, string>> MetastoreSpecificProperties
 		{
 			get
 			{

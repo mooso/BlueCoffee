@@ -3,7 +3,9 @@ using Microsoft.Experimental.Azure.JavaPlatform;
 using Microsoft.Experimental.Azure.Spark;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -33,7 +35,8 @@ namespace Microsoft.Experimental.Azure.Shark.Tests
 			var killer = new ProcessKiller();
 			var hiveRunner = SetupHive(hiveRoot);
 			var metastoreConfig = new HiveDerbyMetastoreConfig(
-				derbyDataDirectory: Path.Combine(hiveRoot, "metastore"));
+				derbyDataDirectory: Path.Combine(hiveRoot, "metastore"),
+				extraProperties: WasbProperties());
 			var hiveTask = Task.Factory.StartNew(() => hiveRunner.RunMetastore(metastoreConfig, runContinuous: false, monitor: killer));
 			var sparkRunner = SetupSpark(sparkRoot);
 			var masterTask = Task.Factory.StartNew(() => sparkRunner.RunMaster(runContinuous: false, monitor: killer));
@@ -60,19 +63,23 @@ namespace Microsoft.Experimental.Azure.Shark.Tests
 
 			public void KillAll()
 			{
-				_processes.ForEach(p =>
-				{
-					if (!p.WaitForExit(0))
-					{
-						p.Kill();
-					}
-				});
+				Parallel.ForEach(_processes, p => p.Kill());
 			}
 
 			public override void ProcessStarted(Process process)
 			{
 				_processes.Add(process);
+				process.Disposed += (s, e) => _processes.Remove(process);
 			}
+		}
+
+		private static ImmutableDictionary<string, string> WasbProperties()
+		{
+			return new Dictionary<string, string>()
+				{
+					{ "fs.azure.skip.metrics", "true" },
+					// Add account keys here.
+				}.ToImmutableDictionary();
 		}
 
 		private static SharkRunner SetupShark(string sharkRoot, string sparkRoot)
@@ -81,7 +88,8 @@ namespace Microsoft.Experimental.Azure.Shark.Tests
 				serverPort: 9444,
 				metastoreUris: "thrift://localhost:9083",
 				sparkHome: sparkRoot,
-				sparkMaster: "spark://localhost:7234");
+				sparkMaster: "spark://localhost:7234",
+				extraHiveConfig: WasbProperties());
 			var runner = new SharkRunner(
 				sharkHome: sharkRoot,
 				javaHome: JavaHome,
@@ -106,7 +114,8 @@ namespace Microsoft.Experimental.Azure.Shark.Tests
 			var config = new SparkConfig(
 				masterAddress: "localhost",
 				masterPort: 7234,
-				masterWebUIPort: 7235);
+				masterWebUIPort: 7235,
+				hadoopConfigProperties: WasbProperties());
 			var runner = new SparkRunner(
 				sparkHome: Path.Combine(sparkRoot, "spark"),
 				javaHome: JavaHome,
