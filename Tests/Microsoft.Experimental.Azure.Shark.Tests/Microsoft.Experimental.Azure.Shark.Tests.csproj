@@ -54,11 +54,16 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharkRunnerEndToEndTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.Hive\Microsoft.Experimental.Azure.Hive.csproj">
+      <Project>{b079654a-5589-4530-80b4-272a34e2c636}</Project>
+      <Name>Microsoft.Experimental.Azure.Hive</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj">
       <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
       <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
@@ -66,6 +71,14 @@
     <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.Shark\Microsoft.Experimental.Azure.Shark.csproj">
       <Project>{831b93a9-e395-41b0-af13-486ccda2c5b8}</Project>
       <Name>Microsoft.Experimental.Azure.Shark</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.Spark\Microsoft.Experimental.Azure.Spark.csproj">
+      <Project>{d1b7caac-bafa-49e7-a93e-5c6b3cf7dc77}</Project>
+      <Name>Microsoft.Experimental.Azure.Spark</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharkCliShell\SharkCliShell.csproj">
+      <Project>{52878ab1-98af-44c1-b266-7138e00af32b}</Project>
+      <Name>SharkCliShell</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Microsoft.Experimental.Azure.Hive
+namespace Microsoft.Experimental.Azure.JavaPlatform
 {
 	/// <summary>
-	/// A hive service configuration.
+	/// A Hadoop-style XML configuration.
 	/// </summary>
-	public abstract class HiveConfig
+	public abstract class HadoopStyleXmlConfig
 	{
 		/// <summary>
 		/// Create the XML representation of this configuration.

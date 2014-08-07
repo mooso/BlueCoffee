@@ -5,7 +5,7 @@ $Invocation = (Get-Variable MyInvocation).Value
 $scriptLocation = Split-Path $Invocation.MyCommand.Path
 
 # Put all the jars in a single directory
-$jars = Get-ChildItem "$SharkHome\lib","$SharkHome\lib_managed\jars","$SharkHome\lib_managed\bundles","$scriptLocation\..\CommonJars" -Recurse -Include *.jar
+$jars = Get-ChildItem "$SharkHome\lib","$SharkHome\lib_managed\jars","$SharkHome\lib_managed\bundles","$SharkHome\target\scala-2.10","$scriptLocation\..\CommonJars" -Recurse -Include *.jar,*.exe
 $tempDir = md "$env:TEMP\SharkJarsToZip"
 $jars | %{Copy-Item $_ $tempDir}
 

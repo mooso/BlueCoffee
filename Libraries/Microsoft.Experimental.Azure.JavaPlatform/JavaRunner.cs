@@ -47,6 +47,38 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		}
 
 		/// <summary>
+		/// Runs a Java class as a separate program as a console program.
+		/// </summary>
+		/// <param name="className">The fully qualified name of the Java class to run.</param>
+		/// <param name="arguments">The command-line arguments given to the Java class.</param>
+		/// <param name="classPathEntries">The class path to use.</param>
+		/// <param name="maxMemoryMb">Maximum memory allowed for the Java virtual machine.</param>
+		/// <param name="server">If set, we use the server flag for the Java virtual machine.</param>
+		/// <param name="defines">List of system properties to define.</param>
+		/// <param name="extraJavaOptions">Any other command-line arguments to give to the Java virtual machine.</param>
+		/// <param name="environmentVariables">The environment variables to use for the Java process.</param>
+		/// <returns>The Java process started.</returns>
+		public Process RunClassAsConsole(string className, string arguments, IEnumerable<string> classPathEntries, int maxMemoryMb = 512, bool server = true,
+			IEnumerable<KeyValuePair<string, string>> defines = null,
+			IEnumerable<string> extraJavaOptions = null,
+			IEnumerable<KeyValuePair<string, string>> environmentVariables = null)
+		{
+			var javaToolArguments = GetJavaArguments(className, arguments, classPathEntries, maxMemoryMb, server, defines, extraJavaOptions);
+
+			var javaStartInfo = new ProcessStartInfo()
+			{
+				Arguments = javaToolArguments,
+				UseShellExecute = false,
+				FileName = _javaExePath
+			};
+			AddEnvironmentVariables(environmentVariables, javaStartInfo);
+			Trace.TraceInformation("About to run: " + javaStartInfo.FileName + " " + javaStartInfo.Arguments);
+			var javaProcess = new Process() { StartInfo = javaStartInfo };
+			javaProcess.Start();
+			return javaProcess;
+		}
+
+		/// <summary>
 		/// Runs a Java class as a separate program.
 		/// </summary>
 		/// <param name="className">The fully qualified name of the Java class to run.</param>
@@ -71,46 +103,17 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 			var simpleClassName = className.Split('.').Last();
 			tracer = tracer ?? new DefaultProcessOutputTracer(simpleClassName + ": ");
 
-			var javaToolArgumentList = new List<string>();
-			javaToolArgumentList.Add("-cp " + String.Join(";", classPathEntries));
-			if (defines != null)
-			{
-				javaToolArgumentList.Add(String.Join(" ", defines.Select(FormatDefineString)));
-			}
-			javaToolArgumentList.Add(String.Format(CultureInfo.InvariantCulture, "-Xmx{0}M", maxMemoryMb));
-			if (extraJavaOptions != null)
-			{
-				javaToolArgumentList.AddRange(extraJavaOptions);
-			}
-			if (server)
-			{
-				javaToolArgumentList.Add("-server");
-			}
-			javaToolArgumentList.Add(className);
-			javaToolArgumentList.Add(arguments);
+			var javaToolArguments = GetJavaArguments(className, arguments, classPathEntries, maxMemoryMb, server, defines, extraJavaOptions);
 
 			var javaStartInfo = new ProcessStartInfo()
 			{
-				Arguments = String.Join(" ", javaToolArgumentList),
+				Arguments = javaToolArguments,
 				UseShellExecute = false,
 				RedirectStandardError = true,
 				RedirectStandardOutput = true,
 				FileName = _javaExePath
 			};
-			if (environmentVariables != null)
-			{
-				foreach (var variable in environmentVariables)
-				{
-					if (javaStartInfo.EnvironmentVariables.ContainsKey(variable.Key))
-					{
-						javaStartInfo.EnvironmentVariables[variable.Key] = variable.Value;
-					}
-					else
-					{
-						javaStartInfo.EnvironmentVariables.Add(variable.Key, variable.Value);
-					}
-				}
-			}
+			AddEnvironmentVariables(environmentVariables, javaStartInfo);
 			while (true)
 			{
 				Trace.TraceInformation("About to run: " + javaStartInfo.FileName + " " + javaStartInfo.Arguments);
@@ -131,6 +134,47 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 						return javaProcess.ExitCode;
 					}
 					Trace.TraceInformation("Class " + className + " exited with code " + javaProcess.ExitCode + ". Restarting...");
+				}
+			}
+		}
+
+		private static string GetJavaArguments(string className, string arguments, IEnumerable<string> classPathEntries, int maxMemoryMb, bool server,
+			IEnumerable<KeyValuePair<string, string>> defines, IEnumerable<string> extraJavaOptions)
+		{
+			var javaToolArgumentList = new List<string>();
+			javaToolArgumentList.Add("-cp " + String.Join(";", classPathEntries));
+			if (defines != null)
+			{
+				javaToolArgumentList.Add(String.Join(" ", defines.Select(FormatDefineString)));
+			}
+			javaToolArgumentList.Add(String.Format(CultureInfo.InvariantCulture, "-Xmx{0}M", maxMemoryMb));
+			if (extraJavaOptions != null)
+			{
+				javaToolArgumentList.AddRange(extraJavaOptions);
+			}
+			if (server)
+			{
+				javaToolArgumentList.Add("-server");
+			}
+			javaToolArgumentList.Add(className);
+			javaToolArgumentList.Add(arguments);
+			return String.Join(" ", javaToolArgumentList);
+		}
+
+		private static void AddEnvironmentVariables(IEnumerable<KeyValuePair<string, string>> environmentVariables, ProcessStartInfo javaStartInfo)
+		{
+			if (environmentVariables != null)
+			{
+				foreach (var variable in environmentVariables)
+				{
+					if (javaStartInfo.EnvironmentVariables.ContainsKey(variable.Key))
+					{
+						javaStartInfo.EnvironmentVariables[variable.Key] = variable.Value;
+					}
+					else
+					{
+						javaStartInfo.EnvironmentVariables.Add(variable.Key, variable.Value);
+					}
 				}
 			}
 		}

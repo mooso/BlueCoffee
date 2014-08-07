@@ -26,7 +26,7 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// Create a new runner.
 		/// </summary>
 		/// <param name="sparkHome">The directory to use for Spark home.</param>
-		/// <param name="javaHome">The directory where Java is isntalled.</param>
+		/// <param name="javaHome">The directory where Java is installed.</param>
 		/// <param name="config">The configuration.</param>
 		public SparkRunner(string sparkHome, string javaHome, SparkConfig config)
 		{

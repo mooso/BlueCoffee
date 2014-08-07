@@ -57,7 +57,8 @@ namespace Microsoft.Experimental.Azure.Hive
 		/// </summary>
 		/// <param name="config">The configuration.</param>
 		/// <param name="runContinuous">If set, this method will keep restarting the metastore whenver it exits and will never return.</param>
-		public void RunMetastore(HiveMetastoreConfig config, bool runContinuous = true)
+		/// <param name="monitor">Optional process monitor.</param>
+		public void RunMetastore(HiveMetastoreConfig config, bool runContinuous = true, ProcessMonitor monitor = null)
 		{
 			const string className = "org.apache.hadoop.hive.metastore.HiveMetaStore";
 			const string fileName = "hive-metastore";
@@ -67,7 +68,8 @@ namespace Microsoft.Experimental.Azure.Hive
 				runContinuous: runContinuous,
 				className: className,
 				arguments: "-p " + config.Port,
-				configSubdirectory: fileName);
+				configSubdirectory: fileName,
+				monitor: monitor);
 		}
 
 		/// <summary>
@@ -75,7 +77,8 @@ namespace Microsoft.Experimental.Azure.Hive
 		/// </summary>
 		/// <param name="config">The configuration.</param>
 		/// <param name="runContinuous">If set, this method will keep restarting the metastore whenver it exits and will never return.</param>
-		public void RunHiveServer(HiveServerConfig config, bool runContinuous = true)
+		/// <param name="monitor">Optional process monitor.</param>
+		public void RunHiveServer(HiveServerConfig config, bool runContinuous = true, ProcessMonitor monitor = null)
 		{
 			const string className = "org.apache.hive.service.server.HiveServer2";
 			const string fileName = "hive-server2";
@@ -85,10 +88,11 @@ namespace Microsoft.Experimental.Azure.Hive
 				runContinuous: runContinuous,
 				className: className,
 				arguments: "",
-				configSubdirectory: fileName);
+				configSubdirectory: fileName,
+				monitor: monitor);
 		}
 
-		private void RunClass(bool runContinuous, string className, string arguments, string configSubdirectory)
+		private void RunClass(bool runContinuous, string className, string arguments, string configSubdirectory, ProcessMonitor monitor)
 		{
 			var runner = new JavaRunner(_javaHome);
 			var classPathEntries = new[] { Path.Combine(_configDirectory, configSubdirectory) }
@@ -113,10 +117,11 @@ namespace Microsoft.Experimental.Azure.Hive
 						},
 						{ "hadoop.home.dir", _fakeHadoopHome },
 				},
-				runContinuous: runContinuous);
+				runContinuous: runContinuous,
+				monitor: monitor);
 		}
 
-		private void WriteHiveConfigFile(string configSubdirectory, HiveConfig config)
+		private void WriteHiveConfigFile(string configSubdirectory, HadoopStyleXmlConfig config)
 		{
 			var directory = EnsureConfigSubdirectoryExists(configSubdirectory);
 			config.ToXml().Save(Path.Combine(directory, _configFileName));

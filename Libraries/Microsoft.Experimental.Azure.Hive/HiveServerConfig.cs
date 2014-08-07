@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Experimental.Azure.JavaPlatform;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Microsoft.Experimental.Azure.Hive
 	/// <summary>
 	/// Configuration for a Hive server.
 	/// </summary>
-	public sealed class HiveServerConfig : HiveConfig
+	public sealed class HiveServerConfig : HadoopStyleXmlConfig
 	{
 		private readonly int _port;
 		private readonly string _metastoreUris;
