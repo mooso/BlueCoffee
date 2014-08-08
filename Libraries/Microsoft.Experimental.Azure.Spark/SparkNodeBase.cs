@@ -8,7 +8,7 @@ using System.Linq;
 namespace Microsoft.Experimental.Azure.Spark
 {
 	/// <summary>
-	/// The base class for a typical Azure Elastic Search node.
+	/// The base class for a typical Azure Spark node.
 	/// </summary>
 	public abstract class SparkNodeBase : NodeWithJavaBase
 	{

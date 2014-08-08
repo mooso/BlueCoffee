@@ -37,6 +37,22 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\BlobbySpeed\HiveMetastore\HiveMetastore.csproj">
+      <Name>HiveMetastore</Name>
+      <Project>{c7f679c2-eabc-46da-9e96-dfcebe91140e}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>HiveMetastore</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
+    <ProjectReference Include="..\Shark\Shark.csproj">
+      <Name>Shark</Name>
+      <Project>{9ee93b39-cb1f-422c-a5fe-558993a3869f}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>Shark</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\SparkMaster\SparkMaster.csproj">
       <Name>SparkMaster</Name>
       <Project>{60334621-732e-48fa-a313-b74a624ef12b}</Project>
@@ -55,10 +71,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="HiveMetastoreContent\" />
+    <Folder Include="SharkContent\" />
     <Folder Include="SparkMasterContent\" />
     <Folder Include="SparkSlaveContent\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="HiveMetastoreContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="SharkContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="SparkMasterContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>

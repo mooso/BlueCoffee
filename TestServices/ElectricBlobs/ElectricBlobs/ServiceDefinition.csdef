@@ -10,7 +10,6 @@
       <InternalEndpoint name="All" protocol="tcp" port="*" />
     </Endpoints>
     <LocalResources>
-      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="10240" />
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
     </LocalResources>
   </WorkerRole>
@@ -22,7 +21,29 @@
       <InternalEndpoint name="All" protocol="tcp" port="*" />
     </Endpoints>
     <LocalResources>
-      <LocalStorage name="DataDir" cleanOnRoleRecycle="false" sizeInMB="10240" />
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
+    </LocalResources>
+  </WorkerRole>
+  <WorkerRole name="Shark" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InputEndpoint name="Shark" protocol="tcp" port="8082" localPort="8082" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
+    </LocalResources>
+  </WorkerRole>
+  <WorkerRole name="HiveMetastore" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InternalEndpoint name="Thrift" protocol="tcp" port="9083" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="10240" />
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
     </LocalResources>
   </WorkerRole>
