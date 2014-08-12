@@ -75,6 +75,10 @@
       <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
       <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\Microsoft.Experimental.Azure.Shark\Microsoft.Experimental.Azure.Shark.csproj">
+      <Project>{831b93a9-e395-41b0-af13-486ccda2c5b8}</Project>
+      <Name>Microsoft.Experimental.Azure.Shark</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Libraries\Microsoft.Experimental.Azure.Spark\Microsoft.Experimental.Azure.Spark.csproj">
       <Project>{d1b7caac-bafa-49e7-a93e-5c6b3cf7dc77}</Project>
       <Name>Microsoft.Experimental.Azure.Spark</Name>

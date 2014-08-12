@@ -12,7 +12,7 @@ namespace SharkCliShell
 		static void Main(string[] args)
 		{
 			var runner = CreateRunner(args[0], args[1], args[2]);
-			runner.RunSharkCli().WaitForExit();
+			runner.RunBeeline().WaitForExit();
 		}
 
 		private static SharkRunner CreateRunner(string sharkRoot, string sparkRoot, string javaHome)

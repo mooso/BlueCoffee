@@ -1,4 +1,5 @@
 ﻿using Microsoft.Experimental.Azure.JavaPlatform;
+using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,10 +18,13 @@ namespace Microsoft.Experimental.Azure.Shark
 	{
 		private readonly string _jarsDirectory;
 		private readonly string _confDirectory;
+		private readonly string _logsDirectory;
 		private readonly string _javaHome;
 		private readonly string _sharkHome;
 		private readonly string _fakeHadoopHome;
+		private const string _log4jPropertiesFileName = "log4j.properties";
 		private readonly SharkConfig _config;
+		private readonly Log4jTraceLevel _traceLevel;
 
 		/// <summary>
 		/// Create a new runner.
@@ -28,13 +32,17 @@ namespace Microsoft.Experimental.Azure.Shark
 		/// <param name="sharkHome">The directory to use for Shark home.</param>
 		/// <param name="javaHome">The directory where Java is installed.</param>
 		/// <param name="config">The configuration.</param>
-		public SharkRunner(string sharkHome, string javaHome, SharkConfig config)
+		/// <param name="traceLevel">The trace level to use.</param>
+		public SharkRunner(string sharkHome, string javaHome, SharkConfig config,
+			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO)
 		{
 			_sharkHome = sharkHome;
 			_javaHome = javaHome;
 			_config = config;
+			_traceLevel = traceLevel;
 			_jarsDirectory = Path.Combine(_sharkHome, "lib");
 			_confDirectory = Path.Combine(_sharkHome, "conf");
+			_logsDirectory = Path.Combine(_sharkHome, "logs");
 			_fakeHadoopHome = Path.Combine(_sharkHome, "hadoop");
 		}
 
@@ -44,12 +52,13 @@ namespace Microsoft.Experimental.Azure.Shark
 		public void Setup()
 		{
 			foreach (var dir in
-				new[] { _jarsDirectory, _confDirectory, _fakeHadoopHome })
+				new[] { _jarsDirectory, _confDirectory, _fakeHadoopHome, _logsDirectory })
 			{
 				Directory.CreateDirectory(dir);
 			}
 			ExtractJars();
 			_config.GetHiveConfigXml().Save(Path.Combine(_confDirectory, "hive-site.xml"));
+			CreateLog4jConfig().ToPropertiesFile().WriteToFile(Path.Combine(_confDirectory, _log4jPropertiesFileName));
 		}
 
 		/// <summary>
@@ -74,6 +83,12 @@ namespace Microsoft.Experimental.Azure.Shark
 				},
 				defines: new Dictionary<string, string>
 				{
+					{
+						"log4j.configuration",
+						"file:\"" +
+							Path.Combine(_confDirectory, _log4jPropertiesFileName) +
+							"\""
+					},
 					{ "hadoop.home.dir", _fakeHadoopHome },
 				},
 				runContinuous: runContinuous,
@@ -87,40 +102,61 @@ namespace Microsoft.Experimental.Azure.Shark
 		}
 
 		/// <summary>
-		/// Runs the Shark CLI as a console application.
+		/// Runs beeline as a console application.
 		/// </summary>
-		/// <returns>The Shark CLI process.</returns>
-		public Process RunSharkCli()
+		/// <returns>The beeline process.</returns>
+		public Process RunBeeline(string serverAddress = "localhost")
 		{
 			var runner = new JavaRunner(_javaHome);
-			const string className = "shark.SharkCliDriver";
+			const string className = "org.apache.hive.beeline.BeeLine";
 			return runner.RunClassAsConsole(className,
-				"",
+				String.Format("-u jdbc:hive2://{0}:{1}", serverAddress, _config.ServerPort),
 				ClassPath(),
 				maxMemoryMb: _config.MaxMemoryMb,
 				defines: new Dictionary<string, string>
 				{
-					{ "hadoop.home.dir", _fakeHadoopHome },
 				},
 				environmentVariables: new Dictionary<string, string>()
 				{
-					{ "HIVE_SERVER2_THRIFT_PORT", _config.ServerPort.ToString() },
 				});
 		}
 
 		private IEnumerable<string> ClassPath()
 		{
 			return new[] { _confDirectory }
-				.Concat(JavaRunner.GetClassPathForJarsInDirectories(_jarsDirectory));
+				.Concat(JavaRunner.GetClassPathForJarsInDirectories(_jarsDirectory))
+				.Concat(Directory.EnumerateFiles(Path.Combine(_config.SparkHome, "lib")).Where(p => Path.GetFileName(p).StartsWith("spark")));
 		}
 
-		private void ExtractResourceArchive(string resourceName, string targetDirectory)
+		private Log4jConfig CreateLog4jConfig()
 		{
-			using (var rawStream = GetType().Assembly.GetManifestResourceStream(
+			var layout = LayoutDefinition.PatternLayout("[%d{ISO8601}][%-5p][%-25c] %m%n");
+
+			var consoleAppender = AppenderDefinitionFactory.ConsoleAppender("console",
+				layout: layout);
+			var fileAppender = AppenderDefinitionFactory.DailyRollingFileAppender("file",
+				Path.Combine(_logsDirectory, "SharkLog.log"),
+				layout: layout);
+
+			var rootLogger = new RootLoggerDefinition(_traceLevel, consoleAppender, fileAppender);
+
+			return new Log4jConfig(rootLogger, Enumerable.Empty<ChildLoggerDefinition>());
+		}
+
+		private static void ExtractResourceArchive(string resourceName, string targetDirectory)
+		{
+			using (var rawStream = typeof(SharkRunner).Assembly.GetManifestResourceStream(
 				"Microsoft.Experimental.Azure.Shark.Resources." + resourceName + ".zip"))
 			using (var archive = new ZipArchive(rawStream))
 			{
-				archive.ExtractToDirectory(targetDirectory);
+				foreach (var entry in archive.Entries)
+				{
+					var targetFile = Path.Combine(targetDirectory, entry.FullName);
+					if (!File.Exists(targetFile))
+					{
+						entry.ExtractToFile(targetFile);
+					}
+				}
 			}
 		}
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Experimental.Azure.JavaPlatform;
+using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,9 +18,12 @@ namespace Microsoft.Experimental.Azure.Spark
 		private readonly string _jarsDirectory;
 		private readonly string _binDirectory;
 		private readonly string _hadoopConfDirectory;
+		private readonly string _logsDirectory;
 		private readonly string _javaHome;
 		private readonly string _sparkHome;
 		private readonly string _fakeHadoopHome;
+		private readonly Log4jTraceLevel _traceLevel;
+		private const string _log4jPropertiesFileName = "log4j.properties";
 		private readonly SparkConfig _config;
 
 		/// <summary>
@@ -28,13 +32,17 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <param name="sparkHome">The directory to use for Spark home.</param>
 		/// <param name="javaHome">The directory where Java is installed.</param>
 		/// <param name="config">The configuration.</param>
-		public SparkRunner(string sparkHome, string javaHome, SparkConfig config)
+		/// <param name="traceLevel">The trace level to use.</param>
+		public SparkRunner(string sparkHome, string javaHome, SparkConfig config,
+			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO)
 		{
 			_sparkHome = sparkHome;
 			_javaHome = javaHome;
 			_config = config;
+			_traceLevel = traceLevel;
 			_jarsDirectory = Path.Combine(_sparkHome, "lib");
 			_binDirectory = Path.Combine(_sparkHome, "bin");
+			_logsDirectory = Path.Combine(_sparkHome, "logs");
 			_fakeHadoopHome = Path.Combine(_sparkHome, "hadoop");
 			_hadoopConfDirectory = Path.Combine(_fakeHadoopHome, "conf");
 		}
@@ -45,12 +53,13 @@ namespace Microsoft.Experimental.Azure.Spark
 		public void Setup()
 		{
 			foreach (var dir in
-				new[] { _jarsDirectory, _binDirectory, _hadoopConfDirectory })
+				new[] { _jarsDirectory, _binDirectory, _hadoopConfDirectory, _logsDirectory })
 			{
 				Directory.CreateDirectory(dir);
 			}
 			ExtractJars();
 			_config.WriteHadoopCoreSiteXml(_hadoopConfDirectory);
+			CreateLog4jConfig().ToPropertiesFile().WriteToFile(Path.Combine(_hadoopConfDirectory, _log4jPropertiesFileName));
 		}
 
 		/// <summary>
@@ -73,9 +82,7 @@ namespace Microsoft.Experimental.Azure.Spark
 					"-XX:CMSInitiatingOccupancyFraction=75",
 					"-XX:+UseCMSInitiatingOccupancyOnly",
 				},
-				defines: new Dictionary<string, string>
-				{
-				},
+				defines: SparkDefines(),
 				runContinuous: runContinuous,
 				monitor: monitor,
 				environmentVariables: SparkEnvironmentVariables());
@@ -100,9 +107,7 @@ namespace Microsoft.Experimental.Azure.Spark
 					"-XX:CMSInitiatingOccupancyFraction=75",
 					"-XX:+UseCMSInitiatingOccupancyOnly",
 				},
-				defines: new Dictionary<string, string>
-				{
-				},
+				defines: SparkDefines(),
 				runContinuous: runContinuous,
 				monitor: monitor,
 				environmentVariables: SparkEnvironmentVariables());
@@ -142,6 +147,34 @@ namespace Microsoft.Experimental.Azure.Spark
 			return processOutputTracer.GetOutputSoFar();
 		}
 
+		private Log4jConfig CreateLog4jConfig()
+		{
+			var layout = LayoutDefinition.PatternLayout("[%d{ISO8601}][%-5p][%-25c] %m%n");
+
+			var consoleAppender = AppenderDefinitionFactory.ConsoleAppender("console",
+				layout: layout);
+			var fileAppender = AppenderDefinitionFactory.DailyRollingFileAppender("file",
+				Path.Combine(_logsDirectory, "SparkLog.log"),
+				layout: layout);
+
+			var rootLogger = new RootLoggerDefinition(_traceLevel, consoleAppender, fileAppender);
+
+			return new Log4jConfig(rootLogger, Enumerable.Empty<ChildLoggerDefinition>());
+		}
+
+		private Dictionary<string, string> SparkDefines()
+		{
+			return new Dictionary<string, string>
+				{
+					{
+						"log4j.configuration",
+						"file:\"" +
+							Path.Combine(_hadoopConfDirectory, _log4jPropertiesFileName) +
+							"\""
+					},
+				};
+		}
+
 		private IEnumerable<string> ClassPath()
 		{
 			return new[] { _hadoopConfDirectory }
@@ -156,6 +189,7 @@ namespace Microsoft.Experimental.Azure.Spark
 					{ "HADOOP_HOME", _fakeHadoopHome },
 					{ "JAVA_HOME", _javaHome },
 					{ "HADOOP_CONF_DIR", _hadoopConfDirectory },
+					{ "SPARK_JAVA_OPTS", String.Format("\"-Dhadoop.home.dir={0}\"", _fakeHadoopHome.Replace('\\', '/')) },
 				};
 		}
 

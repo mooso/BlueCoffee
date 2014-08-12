@@ -43,7 +43,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		/// <returns>The classpath entry list.</returns>
 		public static IEnumerable<String> GetClassPathForJarsInDirectories(params string[] directoryList)
 		{
-			return directoryList.SelectMany(d => Directory.EnumerateFiles(d, "*.jar"));
+			return directoryList.Select(d => Path.Combine(d, "*"));
 		}
 
 		/// <summary>

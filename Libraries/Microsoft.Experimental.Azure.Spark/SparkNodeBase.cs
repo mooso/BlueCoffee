@@ -35,12 +35,20 @@ namespace Microsoft.Experimental.Azure.Spark
 		protected sealed override void PostJavaInstallInitialize()
 		{
 			InstallSpark();
+			AddExtraJarsIfNeeded(Path.Combine(InstallDirectory, "Spark", "lib"));
 		}
 
 		/// <summary>
 		/// true if this is a master node, false if it's a worker node.
 		/// </summary>
 		protected abstract bool IsMaster { get; }
+
+		/// <summary>
+		/// Add any extra Jar files Spark needs.
+		/// </summary>
+		/// <param name="jarsDirectory">The jars directory.</param>
+		protected virtual void AddExtraJarsIfNeeded(string jarsDirectory)
+		{ }
 
 		/// <summary>
 		/// Configure the Hadoop-side properties of Spark, to e.g. give WASB keys.

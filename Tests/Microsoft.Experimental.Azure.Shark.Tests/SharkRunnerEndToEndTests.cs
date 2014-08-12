@@ -37,6 +37,7 @@ namespace Microsoft.Experimental.Azure.Shark.Tests
 			var metastoreConfig = new HiveDerbyMetastoreConfig(
 				derbyDataDirectory: Path.Combine(hiveRoot, "metastore"),
 				extraProperties: WasbProperties());
+
 			var hiveTask = Task.Factory.StartNew(() => hiveRunner.RunMetastore(metastoreConfig, runContinuous: false, monitor: killer));
 			var sparkRunner = SetupSpark(sparkRoot);
 			var masterTask = Task.Factory.StartNew(() => sparkRunner.RunMaster(runContinuous: false, monitor: killer));
@@ -117,7 +118,7 @@ namespace Microsoft.Experimental.Azure.Shark.Tests
 				masterWebUIPort: 7235,
 				hadoopConfigProperties: WasbProperties());
 			var runner = new SparkRunner(
-				sparkHome: Path.Combine(sparkRoot, "spark"),
+				sparkHome: sparkRoot,
 				javaHome: JavaHome,
 				config: config);
 			runner.Setup();
