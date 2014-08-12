@@ -45,17 +45,36 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 			var sharkRunner = SetupShark(sharkRoot);
 			var sharkTask = Task.Factory.StartNew(() => sharkRunner.RunSharkServer2(runContinuous: false, monitor: killer));
 
-			var sharkCliStartInfo = new ProcessStartInfo(
-				Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SharkCliShell.exe"),
-				String.Format("\"{0}\" \"{1}\"", sharkRoot, JavaHome)
-			);
-
-			using (Process cliProcess = Process.Start(sharkCliStartInfo))
+			try
 			{
-				cliProcess.WaitForExit();
+				var sharkLogFile = Path.Combine(sharkRoot, "logs", "SharkLog.log");
+				WaitForCondition(() => File.Exists(sharkLogFile), TimeSpan.FromSeconds(30));
+				WaitForCondition(() => SharedRead(sharkLogFile).Contains("SharkServer2 started"), TimeSpan.FromSeconds(30));
+				var dataFilePath = Path.Combine(tempDirectory, "TestData.txt");
+				File.WriteAllText(dataFilePath, String.Join("\n", 501, 623, 713), Encoding.ASCII);
+				var beelineOutput = sharkRunner.RunBeeline(new[]
+				{
+					"CREATE TABLE t(a int);",
+					String.Format("LOAD DATA LOCAL INPATH 'file:///{0}' INTO TABLE t;", dataFilePath.Replace('\\', '/')),
+					"SELECT * FROM t WHERE a > 700;",
+				});
+				Trace.WriteLine("Stderr: " + beelineOutput.StandardError);
+				StringAssert.Contains(beelineOutput.StandardOutput, "713");
 			}
-			killer.KillAll();
-			Task.WaitAll(hiveTask, sharkTask, masterTask, slaveTask);
+			finally
+			{
+				killer.KillAll();
+				Task.WaitAll(hiveTask, sharkTask, masterTask, slaveTask);
+			}
+		}
+
+		private static string SharedRead(string sharkLogFile)
+		{
+			using (var fileStream = new FileStream(sharkLogFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			using (var textReader = new StreamReader(fileStream))
+			{
+				return textReader.ReadToEnd();
+			}
 		}
 
 		private sealed class ProcessKiller : ProcessMonitor
@@ -72,6 +91,20 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 				_processes.Add(process);
 				process.Disposed += (s, e) => _processes.Remove(process);
 			}
+		}
+
+		private static void WaitForCondition(Func<bool> condition, TimeSpan timeout)
+		{
+			var timer = Stopwatch.StartNew();
+			do
+			{
+				if (condition())
+				{
+					return;
+				}
+				Thread.Sleep(100);
+			} while (timer.Elapsed < timeout);
+			Assert.Fail("Timed out.");
 		}
 
 		private static ImmutableDictionary<string, string> WasbProperties()

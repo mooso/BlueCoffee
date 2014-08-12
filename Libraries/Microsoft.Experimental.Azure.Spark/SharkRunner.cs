@@ -80,15 +80,19 @@ namespace Microsoft.Experimental.Azure.Spark
 		}
 
 		/// <summary>
-		/// Runs beeline as a console application.
+		/// Runs beeline.
 		/// </summary>
-		/// <returns>The beeline process.</returns>
-		public Process RunBeeline(string serverAddress = "localhost")
+		/// <param name="commands">The SQL commands to execute.</param>
+		/// <param name="serverAddress">The server IP address.</param>
+		/// <returns>The process output.</returns>
+		public ProcessOutput RunBeeline(IEnumerable<string> commands, string serverAddress = "localhost")
 		{
 			var runner = CreateJavaRunner();
 			const string className = "org.apache.hive.beeline.BeeLine";
-			return runner.RunClassAsConsole(className,
-				String.Format("-u jdbc:hive2://{0}:{1}", serverAddress, _config.ServerPort),
+			var tracer = new StringProcessOutputTracer();
+			var exitCode = runner.RunClass(className,
+				String.Format("-u jdbc:hive2://{0}:{1} {2}", serverAddress, _config.ServerPort,
+					String.Join(" ", commands.Select(c => String.Format("-e \"{0}\"", c)))),
 				ClassPath(),
 				maxMemoryMb: _config.MaxMemoryMb,
 				defines: new Dictionary<string, string>
@@ -96,7 +100,10 @@ namespace Microsoft.Experimental.Azure.Spark
 				},
 				environmentVariables: new Dictionary<string, string>()
 				{
-				});
+				},
+				tracer: tracer,
+				runContinuous: false);
+			return tracer.GetOutputSoFar();
 		}
 	}
 }

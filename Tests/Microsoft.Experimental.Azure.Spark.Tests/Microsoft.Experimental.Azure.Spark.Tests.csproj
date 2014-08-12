@@ -71,10 +71,6 @@
       <Project>{d1b7caac-bafa-49e7-a93e-5c6b3cf7dc77}</Project>
       <Name>Microsoft.Experimental.Azure.Spark</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SharkCliShell\SharkCliShell.csproj">
-      <Project>{52878ab1-98af-44c1-b266-7138e00af32b}</Project>
-      <Name>SharkCliShell</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
