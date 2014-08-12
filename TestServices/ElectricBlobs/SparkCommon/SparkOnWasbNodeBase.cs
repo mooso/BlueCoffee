@@ -1,5 +1,4 @@
-﻿using Microsoft.Experimental.Azure.Shark;
-using Microsoft.Experimental.Azure.Spark;
+﻿using Microsoft.Experimental.Azure.Spark;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;

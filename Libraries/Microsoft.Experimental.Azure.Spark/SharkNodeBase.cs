@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.Experimental.Azure.Shark
+namespace Microsoft.Experimental.Azure.Spark
 {
 	/// <summary>
 	/// The base class for a typical Azure Shark node.
@@ -18,7 +18,6 @@ namespace Microsoft.Experimental.Azure.Shark
 	public abstract class SharkNodeBase : NodeWithJavaBase
 	{
 		private SharkRunner _sharkRunner;
-		private SparkRunner _sparkRunner;
 
 		/// <summary>
 		/// Overrides the Run method to run Shark.
@@ -34,7 +33,6 @@ namespace Microsoft.Experimental.Azure.Shark
 		protected sealed override void PostJavaInstallInitialize()
 		{
 			InstallShark();
-			InstallSpark();
 		}
 
 		/// <summary>
@@ -52,7 +50,6 @@ namespace Microsoft.Experimental.Azure.Shark
 			var config = new SharkConfig(
 				serverPort: 8082,
 				metastoreUris: "thrift://" + metastore + ":9083",
-				sparkHome: Path.Combine(InstallDirectory, "Spark"),
 				sparkMaster: "spark://" + master + ":8081",
 				extraHiveConfig: GetHadoopConfigProperties());
 			_sharkRunner = new SharkRunner(
@@ -60,21 +57,6 @@ namespace Microsoft.Experimental.Azure.Shark
 				javaHome: JavaHome,
 				config: config);
 			_sharkRunner.Setup();
-		}
-
-		private void InstallSpark()
-		{
-			var master = DiscoverMasterNode();
-			var config = new SparkConfig(
-				masterAddress: master,
-				masterPort: 8081,
-				masterWebUIPort: 8080,
-				hadoopConfigProperties: GetHadoopConfigProperties());
-			_sparkRunner = new SparkRunner(
-				sparkHome: Path.Combine(InstallDirectory, "Spark"),
-				javaHome: JavaHome,
-				config: config);
-			_sparkRunner.Setup();
 		}
 
 		/// <summary>

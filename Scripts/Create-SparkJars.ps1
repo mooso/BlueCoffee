@@ -5,7 +5,7 @@ $Invocation = (Get-Variable MyInvocation).Value
 $scriptLocation = Split-Path $Invocation.MyCommand.Path
 
 # Put all the jars in a single directory
-$jars = Get-ChildItem "$SparkHome\assembly\target\scala-2.10","$SparkHome\examples\target\scala-2.10","$SparkHome\lib_managed\jars\datanucleus-*.jar","$SharkHome\target\scala-2.10","$SharkHome\lib_managed\jars\edu.berkeley.cs.shark","$scriptLocation\..\CommonJars" -Recurse -Include *.jar,*.exe
+$jars = Get-ChildItem "$SparkHome\assembly\target\scala-2.10","$SparkHome\examples\target\scala-2.10","$SparkHome\lib_managed\jars\datanucleus-*.jar","$SharkHome\target\scala-2.10","$SharkHome\lib_managed\jars\edu.berkeley.cs.shark","$SharkHome\lib_managed\jars\org.apache.thrift","$scriptLocation\..\CommonJars" -Recurse -Include *.jar,*.exe
 $tempDir = md "$env:TEMP\SparkJarsToZip"
 $jars | %{Copy-Item $_ $tempDir}
 

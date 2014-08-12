@@ -1,4 +1,4 @@
-﻿using Microsoft.Experimental.Azure.Shark;
+﻿using Microsoft.Experimental.Azure.Spark;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +11,15 @@ namespace SharkCliShell
 	{
 		static void Main(string[] args)
 		{
-			var runner = CreateRunner(args[0], args[1], args[2]);
+			var runner = CreateRunner(args[0], args[1]);
 			runner.RunBeeline().WaitForExit();
 		}
 
-		private static SharkRunner CreateRunner(string sharkRoot, string sparkRoot, string javaHome)
+		private static SharkRunner CreateRunner(string sharkRoot, string javaHome)
 		{
 			var config = new SharkConfig(
 				serverPort: 9444,
 				metastoreUris: "thrift://localhost:9083",
-				sparkHome: sparkRoot,
 				sparkMaster: "spark://localhost:7234");
 			var runner = new SharkRunner(
 				sharkHome: sharkRoot,

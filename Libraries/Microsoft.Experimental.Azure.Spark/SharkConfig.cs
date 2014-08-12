@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Microsoft.Experimental.Azure.Shark
+namespace Microsoft.Experimental.Azure.Spark
 {
 	/// <summary>
 	/// Configuration for Shark.
@@ -17,7 +17,6 @@ namespace Microsoft.Experimental.Azure.Shark
 		private readonly int _serverPort;
 		private readonly FakeHiveConfig _hiveConfig;
 		private readonly int _maxMemoryMb;
-		private readonly string _sparkHome;
 		private readonly string _sparkMaster;
 
 		/// <summary>
@@ -26,16 +25,14 @@ namespace Microsoft.Experimental.Azure.Shark
 		/// <param name="serverPort">The port for the Shark server to listen on.</param>
 		/// <param name="metastoreUris">The URI of the metastore service to connect to.</param>
 		/// <param name="maxMemoryMb">The maximum memory of the Shark server.</param>
-		/// <param name="sparkHome">The home directory where Spark is installed.</param>
 		/// <param name="sparkMaster">The Spark master URI.</param>
 		/// <param name="extraHiveConfig">Optional extra configuration parameters for Hive.</param>
-		public SharkConfig(int serverPort, string metastoreUris, string sparkHome, string sparkMaster, int maxMemoryMb = 1024,
+		public SharkConfig(int serverPort, string metastoreUris, string sparkMaster, int maxMemoryMb = 1024,
 			ImmutableDictionary<string, string> extraHiveConfig = null)
 		{
 			_serverPort = serverPort;
 			_hiveConfig = new FakeHiveConfig(metastoreUris, extraHiveConfig ?? ImmutableDictionary<string, string>.Empty);
 			_maxMemoryMb = maxMemoryMb;
-			_sparkHome = sparkHome;
 			_sparkMaster = sparkMaster;
 		}
 
@@ -53,11 +50,6 @@ namespace Microsoft.Experimental.Azure.Shark
 		/// The Spark master URI;
 		/// </summary>
 		public string SparkMaster { get { return _sparkMaster; } }
-
-		/// <summary>
-		/// The home directory where Spark is installed.
-		/// </summary>
-		public string SparkHome { get { return _sparkHome; } }
 
 		internal XDocument GetHiveConfigXml()
 		{

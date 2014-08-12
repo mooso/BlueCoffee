@@ -8,7 +8,7 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Diagnostics;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.Storage;
-using Microsoft.Experimental.Azure.Shark;
+using Microsoft.Experimental.Azure.Spark;
 using System.Collections.Immutable;
 using System.IO;
 

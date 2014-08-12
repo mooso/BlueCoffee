@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.Experimental.Azure.Shark.Tests
+namespace Microsoft.Experimental.Azure.Spark.Tests
 {
 	[TestClass]
 	public class SharkNodeRunnerTest
@@ -42,12 +42,12 @@ namespace Microsoft.Experimental.Azure.Shark.Tests
 			var sparkRunner = SetupSpark(sparkRoot);
 			var masterTask = Task.Factory.StartNew(() => sparkRunner.RunMaster(runContinuous: false, monitor: killer));
 			var slaveTask = Task.Factory.StartNew(() => sparkRunner.RunSlave(runContinuous: false, monitor: killer));
-			var sharkRunner = SetupShark(sharkRoot, sparkRoot);
+			var sharkRunner = SetupShark(sharkRoot);
 			var sharkTask = Task.Factory.StartNew(() => sharkRunner.RunSharkServer2(runContinuous: false, monitor: killer));
 
 			var sharkCliStartInfo = new ProcessStartInfo(
 				Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SharkCliShell.exe"),
-				String.Format("\"{0}\" \"{1}\" \"{2}\"", sharkRoot, sparkRoot, JavaHome)
+				String.Format("\"{0}\" \"{1}\"", sharkRoot, JavaHome)
 			);
 
 			using (Process cliProcess = Process.Start(sharkCliStartInfo))
@@ -83,12 +83,11 @@ namespace Microsoft.Experimental.Azure.Shark.Tests
 				}.ToImmutableDictionary();
 		}
 
-		private static SharkRunner SetupShark(string sharkRoot, string sparkRoot)
+		private static SharkRunner SetupShark(string sharkRoot)
 		{
 			var config = new SharkConfig(
 				serverPort: 9444,
 				metastoreUris: "thrift://localhost:9083",
-				sparkHome: sparkRoot,
 				sparkMaster: "spark://localhost:7234",
 				extraHiveConfig: WasbProperties());
 			var runner = new SharkRunner(
