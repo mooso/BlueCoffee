@@ -16,6 +16,8 @@ namespace Microsoft.Experimental.Azure.Spark
 	public sealed class SparkRunner : SharkSparkRunnerBase
 	{
 		private readonly SparkConfig _config;
+		private const string _childTaskLog4jPropertiesFileName = "child-log4j.properties";
+		private readonly Log4jTraceLevel _childTaskTraceLevel;
 
 		/// <summary>
 		/// Create a new runner.
@@ -24,11 +26,14 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <param name="javaHome">The directory where Java is installed.</param>
 		/// <param name="config">The configuration.</param>
 		/// <param name="traceLevel">The trace level to use.</param>
+		/// <param name="childTaskTraceLevel">The child task trace level to use.</param>
 		public SparkRunner(string sparkHome, string javaHome, SparkConfig config,
-			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO)
+			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO,
+			Log4jTraceLevel childTaskTraceLevel = Log4jTraceLevel.INFO)
 			: base(sparkHome, javaHome, traceLevel)
 		{
 			_config = config;
+			_childTaskTraceLevel = childTaskTraceLevel;
 		}
 
 		/// <summary>
@@ -37,6 +42,19 @@ namespace Microsoft.Experimental.Azure.Spark
 		protected override void WriteConfig()
 		{
 			_config.WriteHadoopCoreSiteXml(ConfDirectory);
+			CreateChildTaskLog4jConfig().ToPropertiesFile().WriteToFile(Path.Combine(ConfDirectory, _childTaskLog4jPropertiesFileName));
+		}
+
+		private Log4jConfig CreateChildTaskLog4jConfig()
+		{
+			var layout = LayoutDefinition.PatternLayout("[%d{ISO8601}][%-5p][%-25c] %m%n");
+
+			var consoleAppender = AppenderDefinitionFactory.ConsoleAppender("console",
+				layout: layout);
+
+			var rootLogger = new RootLoggerDefinition(_childTaskTraceLevel, consoleAppender);
+
+			return new Log4jConfig(rootLogger, Enumerable.Empty<ChildLoggerDefinition>());
 		}
 
 		/// <summary>
@@ -140,7 +158,9 @@ namespace Microsoft.Experimental.Azure.Spark
 					{ "HADOOP_HOME", FakeHadoopHome },
 					{ "JAVA_HOME", JavaHome },
 					{ "HADOOP_CONF_DIR", ConfDirectory },
-					{ "SPARK_JAVA_OPTS", String.Format("\"-Dhadoop.home.dir={0}\"", FakeHadoopHome.Replace('\\', '/')) },
+					{ "SPARK_JAVA_OPTS", String.Format("\"-Dhadoop.home.dir={0}\" \"-Dlog4j.configuration=file:{1}\"",
+						FakeHadoopHome.Replace('\\', '/'),
+						Path.Combine(ConfDirectory, _childTaskLog4jPropertiesFileName).Replace('\\', '/')) },
 				};
 		}
 	}
