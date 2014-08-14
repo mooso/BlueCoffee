@@ -1,0 +1,40 @@
+﻿:100644 100644 58710cd... 0000000... M	bin/compute-classpath.cmd
+:100644 100644 4af5bc3... 0000000... M	core/src/main/scala/org/apache/spark/deploy/worker/CommandUtils.scala
+
+diff --git a/bin/compute-classpath.cmd b/bin/compute-classpath.cmd
+index 58710cd..6420c9e 100644
+--- a/bin/compute-classpath.cmd
++++ b/bin/compute-classpath.cmd
+@@ -38,17 +38,11 @@ if exist "%FWDIR%conf\spark-env.cmd" call "%FWDIR%conf\spark-env.cmd"
+ rem Build up classpath
+ set CLASSPATH=%FWDIR%conf
+ if exist "%FWDIR%RELEASE" (
+-  for %%d in ("%FWDIR%lib\spark-assembly*.jar") do (
+-    set ASSEMBLY_JAR=%%d
+-  )
++  set CLASSPATH=%CLASSPATH%;%FWDIR%lib\*
+ ) else (
+-  for %%d in ("%FWDIR%assembly\target\scala-%SCALA_VERSION%\spark-assembly*hadoop*.jar") do (
+-    set ASSEMBLY_JAR=%%d
+-  )
++  set CLASSPATH=%CLASSPATH%;%FWDIR%assembly\target\scala-%SCALA_VERSION%\*
+ )
+ 
+-set CLASSPATH=%CLASSPATH%;%ASSEMBLY_JAR%
+-
+ rem When Hive support is needed, Datanucleus jars must be included on the classpath.
+ rem Datanucleus jars do not work if only included in the uber jar as plugin.xml metadata is lost.
+ rem Both sbt and maven will populate "lib_managed/jars/" with the datanucleus jars when Spark is
+diff --git a/core/src/main/scala/org/apache/spark/deploy/worker/CommandUtils.scala b/core/src/main/scala/org/apache/spark/deploy/worker/CommandUtils.scala
+index 4af5bc3..9ff1c7b 100644
+--- a/core/src/main/scala/org/apache/spark/deploy/worker/CommandUtils.scala
++++ b/core/src/main/scala/org/apache/spark/deploy/worker/CommandUtils.scala
+@@ -30,7 +30,7 @@ import org.apache.spark.util.Utils
+ private[spark]
+ object CommandUtils extends Logging {
+   def buildCommandSeq(command: Command, memory: Int, sparkHome: String): Seq[String] = {
+-    val runner = getEnv("JAVA_HOME", command).map(_ + "/bin/java").getOrElse("java")
++    val runner = Option(System.getenv("JAVA_HOME")).map(_ + "/bin/java").getOrElse("java")
+ 
+     // SPARK-698: do not call the run.cmd script, as process.destroy()
+     // fails to kill a process tree on Windows
