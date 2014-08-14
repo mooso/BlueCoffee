@@ -37,7 +37,6 @@ function Discover-AccountsForLocation($location)
 	{
 		return $_
 	}
-	$service = Get-AzureService $serviceName
 	Get-AzureStorageAccount | ?{$_.GeoPrimaryLocation -eq $location}
 }
 
