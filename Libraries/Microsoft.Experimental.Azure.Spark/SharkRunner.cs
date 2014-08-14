@@ -74,7 +74,6 @@ namespace Microsoft.Experimental.Azure.Spark
 				environmentVariables: new Dictionary<string, string>()
 				{
 					{ "HIVE_SERVER2_THRIFT_PORT", _config.ServerPort.ToString() },
-					{ "SPARK_HOME", HomeDirectory },
 					{ "MASTER", _config.SparkMaster },
 				});
 		}
