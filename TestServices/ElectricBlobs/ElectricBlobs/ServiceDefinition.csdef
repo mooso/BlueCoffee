@@ -1,39 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceDefinition name="ElectricBlobs" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
-  <WorkerRole name="SparkMaster" vmsize="Small">
+  <WorkerRole name="Spark" vmsize="Large">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
     <Endpoints>
-      <InputEndpoint name="HTTP" protocol="tcp" port="8080" localPort="8080" />
-      <InputEndpoint name="Native" protocol="tcp" port="8081" localPort="8081" />
-      <InternalEndpoint name="All" protocol="tcp" port="*" />
+      <InternalEndpoint name="All" protocol="any" />
+      <InternalEndpoint name="Master" protocol="tcp" port="8081" />
     </Endpoints>
     <LocalResources>
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
     </LocalResources>
+    <Startup>
+      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
+    </Startup>
   </WorkerRole>
-  <WorkerRole name="SparkSlave" vmsize="Small">
+  <WorkerRole name="Shark" vmsize="Large">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
     <Endpoints>
-      <InternalEndpoint name="All" protocol="tcp" port="*" />
-    </Endpoints>
-    <LocalResources>
-      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
-    </LocalResources>
-  </WorkerRole>
-  <WorkerRole name="Shark" vmsize="Small">
-    <Imports>
-      <Import moduleName="Diagnostics" />
-    </Imports>
-    <Endpoints>
+      <InternalEndpoint name="All" protocol="any" />
       <InputEndpoint name="Shark" protocol="tcp" port="8082" localPort="8082" />
     </Endpoints>
     <LocalResources>
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
     </LocalResources>
+    <Startup>
+      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
+    </Startup>
   </WorkerRole>
   <WorkerRole name="HiveMetastore" vmsize="Small">
     <Imports>

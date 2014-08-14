@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{394BB6A1-B360-44C5-87A5-8E29048A081E}</ProjectGuid>
+    <ProjectGuid>{60334621-732E-48FA-A313-B74A624EF12B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SparkSlave</RootNamespace>
-    <AssemblyName>SparkSlave</AssemblyName>
+    <RootNamespace>Spark</RootNamespace>
+    <AssemblyName>Spark</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <RoleType>Worker</RoleType>
@@ -57,6 +57,10 @@
       <HintPath>..\..\..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.0.34.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Microsoft.Bcl.Immutable.1.0.34\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services.Client" />
     <Reference Include="System.Spatial, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -85,17 +89,17 @@
       <Project>{d1b7caac-bafa-49e7-a93e-5c6b3cf7dc77}</Project>
       <Name>Microsoft.Experimental.Azure.Spark</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SparkCommon\SparkCommon.csproj">
-      <Project>{a65b758a-6eac-49fc-860c-ea2d5adc6d74}</Project>
-      <Name>SparkCommon</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\..\TestConf\WasbAccounts.txt">
+      <Link>WasbAccounts.txt</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <Target Name="BeforeBuild" Outputs="..\..\..\TestConf\WasbAccounts.txt">
+    <MakeDir Condition="!Exists('..\..\..\TestConf')" Directories="..\..\..\TestConf" />
+    <WriteLinesToFile Condition="!Exists('..\..\..\TestConf\WasbAccounts.txt')" File="..\..\..\TestConf\WasbAccounts.txt" Lines="# WASB accounts to include, as pairs of lines: account name, key." Encoding="Ascii" />
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  -->
 </Project>

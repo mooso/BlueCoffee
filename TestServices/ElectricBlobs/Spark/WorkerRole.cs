@@ -1,14 +1,30 @@
 ﻿using Microsoft.Experimental.Azure.Spark;
+using Microsoft.WindowsAzure.ServiceRuntime;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 
-namespace SparkCommon
+namespace Spark
 {
-	public abstract class SparkOnWasbNodeBase : SparkNodeBase
+	public class WorkerRole : SparkNodeBase
 	{
+		protected override bool IsMaster
+		{
+			get { return IsMasterInstance(RoleEnvironment.CurrentRoleInstance); }
+		}
+
+		protected override string DiscoverMasterNode()
+		{
+			return GetIPAddress(RoleEnvironment.CurrentRoleInstance.Role.Instances.Single(IsMasterInstance));
+		}
+
+		private static bool IsMasterInstance(RoleInstance instance)
+		{
+			return instance.Id.EndsWith("_0");
+		}
+
 		protected override ImmutableDictionary<string, string> GetHadoopConfigProperties()
 		{
 			var wasbAccountsInfo = ReadWasbAccountsFile().ToList();
@@ -29,7 +45,7 @@ namespace SparkCommon
 		private static IEnumerable<string> ReadWasbAccountsFile()
 		{
 			using (Stream resourceStream =
-				typeof(SparkOnWasbNodeBase).Assembly.GetManifestResourceStream("SparkCommon.WasbAccounts.txt"))
+				typeof(WorkerRole).Assembly.GetManifestResourceStream("Spark.WasbAccounts.txt"))
 			{
 				StreamReader reader = new StreamReader(resourceStream);
 				string currentLine;

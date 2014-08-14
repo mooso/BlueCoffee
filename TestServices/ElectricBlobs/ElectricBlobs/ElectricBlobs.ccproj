@@ -53,28 +53,19 @@
       <RoleName>Shark</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
-    <ProjectReference Include="..\SparkMaster\SparkMaster.csproj">
-      <Name>SparkMaster</Name>
-      <Project>{60334621-732e-48fa-a313-b74a624ef12b}</Project>
+    <ProjectReference Include="..\Spark\Spark.csproj">
+      <Name>Spark</Name>
+      <Project>{60334621-732E-48FA-A313-B74A624EF12B}</Project>
       <Private>True</Private>
       <RoleType>Worker</RoleType>
-      <RoleName>SparkMaster</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
-    <ProjectReference Include="..\SparkSlave\SparkSlave.csproj">
-      <Name>SparkSlave</Name>
-      <Project>{394bb6a1-b360-44c5-87a5-8e29048a081e}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>SparkSlave</RoleName>
+      <RoleName>Spark</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="HiveMetastoreContent\" />
     <Folder Include="SharkContent\" />
-    <Folder Include="SparkMasterContent\" />
-    <Folder Include="SparkSlaveContent\" />
+    <Folder Include="SparkContent\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="HiveMetastoreContent\diagnostics.wadcfg">
@@ -83,10 +74,7 @@
     <Content Include="SharkContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="SparkMasterContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="SparkSlaveContent\diagnostics.wadcfg">
+    <Content Include="SparkContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>

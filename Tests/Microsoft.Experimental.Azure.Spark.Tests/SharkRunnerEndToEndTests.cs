@@ -21,7 +21,7 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 		private const string JavaHome = @"C:\Program Files\Java\jdk1.7.0_21";
 
 		[TestMethod]
-		[Ignore]
+		//[Ignore]
 		public void EndToEndTest()
 		{
 			var tempDirectory = @"C:\SharkTestOutput";
@@ -43,6 +43,9 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 			var masterTask = Task.Factory.StartNew(() => sparkRunner.RunMaster(runContinuous: false, monitor: killer));
 			var slaveTask = Task.Factory.StartNew(() => sparkRunner.RunSlave(runContinuous: false, monitor: killer));
 			var sharkRunner = SetupShark(sharkRoot);
+			var metastoreLogFile = Path.Combine(hiveRoot, "logs", "hive-metastore.log");
+			WaitForCondition(() => File.Exists(metastoreLogFile), TimeSpan.FromSeconds(30));
+			WaitForCondition(() => SharedRead(metastoreLogFile).Contains("Initialized ObjectStore"), TimeSpan.FromSeconds(30));
 			var sharkTask = Task.Factory.StartNew(() => sharkRunner.RunSharkServer2(runContinuous: false, monitor: killer));
 
 			try
@@ -60,6 +63,7 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 				});
 				Trace.WriteLine("Stderr: " + beelineOutput.StandardError);
 				StringAssert.Contains(beelineOutput.StandardOutput, "713");
+				WaitForCondition(() => File.Exists(Path.Combine(tempDirectory, "X")), TimeSpan.FromDays(1));
 			}
 			finally
 			{
