@@ -77,8 +77,26 @@ namespace Microsoft.Experimental.Azure.Spark
 					return new Dictionary<string, string>()
 					{
 						{ "hive.metastore.uris", _metastoreUris },
-					}.Concat(_extraHiveConfig);
+					}.Concat(ExtraHiveConfigWithFixedProperties());
 				}
+			}
+
+			private ImmutableDictionary<string, string> ExtraHiveConfigWithFixedProperties()
+			{
+				// In the Hive jars we're using, the some defaults are hard-coded to /tmp instead of
+				// using ${system.java.io.tmpdir} as the newer Hive code does. Fix that.
+				const string localScratchDirKey = "hive.exec.local.scratchdir";
+				const string queryLogKey = "hive.querylog.location";
+				var ret = _extraHiveConfig;
+				ret = AddIfNotExists(ret, localScratchDirKey, @"${java.io.tmpdir}/${user.name}/HiveSratch");
+				ret = AddIfNotExists(ret, queryLogKey, @"${java.io.tmpdir}/${user.name}/QueryLog");
+				return ret;
+			}
+
+			private static ImmutableDictionary<string, string> AddIfNotExists(
+				ImmutableDictionary<string, string> dict, string key, string value)
+			{
+				return dict.ContainsKey(key) ? dict : dict.Add(key, value);
 			}
 		}
 	}

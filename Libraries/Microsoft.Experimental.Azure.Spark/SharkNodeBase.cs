@@ -51,7 +51,10 @@ namespace Microsoft.Experimental.Azure.Spark
 				serverPort: 8082,
 				metastoreUris: "thrift://" + metastore + ":9083",
 				sparkMaster: "spark://" + master + ":8081",
-				extraHiveConfig: GetHadoopConfigProperties());
+				extraHiveConfig:
+					GetHadoopConfigProperties()
+					.Add("hive.exec.local.scratchdir", "C:/Resources/temp/HiveScratch")
+					.Add("hive.querylog.location", Path.Combine(InstallDirectory, "Shark", "QueryHistory")));
 			_sharkRunner = new SharkRunner(
 				sharkHome: Path.Combine(InstallDirectory, "Shark"),
 				javaHome: JavaHome,
