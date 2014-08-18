@@ -16,6 +16,7 @@ namespace Microsoft.Experimental.Azure.Kafka
 	/// </summary>
 	public class KafkaBrokerRunner
 	{
+		private readonly string _resourceFileDirectory;
 		private readonly string _dataDirectory;
 		private readonly string _configsDirectory;
 		private readonly string _logsDirectory;
@@ -30,6 +31,7 @@ namespace Microsoft.Experimental.Azure.Kafka
 		/// <summary>
 		/// Creates a new runner.
 		/// </summary>
+		/// <param name="resourceFileDirectory">The directory that contains my resource files.</param>
 		/// <param name="dataDirectory">The directory to use for Kafka data.</param>
 		/// <param name="configsDirectory">The directory to use for Kafka configuration.</param>
 		/// <param name="logsDirectory">The directory to use for logs.</param>
@@ -38,9 +40,10 @@ namespace Microsoft.Experimental.Azure.Kafka
 		/// <param name="zooKeeperPort">The TCP port to use to communicate to the ZooKeeper nodes.</param>
 		/// <param name="brokerId">A unique ID of this broker in the cluster.</param>
 		/// <param name="javaHome">The directory where Java is installed.</param>
-		public KafkaBrokerRunner(string dataDirectory, string configsDirectory, string logsDirectory, string jarsDirectory,
+		public KafkaBrokerRunner(string resourceFileDirectory, string dataDirectory, string configsDirectory, string logsDirectory, string jarsDirectory,
 			IEnumerable<string> zooKeeperHosts, int zooKeeperPort, int brokerId, string javaHome)
 		{
+			_resourceFileDirectory = resourceFileDirectory;
 			_dataDirectory = dataDirectory;
 			_configsDirectory = configsDirectory;
 			_logsDirectory = logsDirectory;
@@ -108,7 +111,7 @@ namespace Microsoft.Experimental.Azure.Kafka
 
 		private void ExtractJars()
 		{
-			using (var rawStream = typeof(KafkaBrokerRunner).Assembly.GetManifestResourceStream("Microsoft.Experimental.Azure.Kafka.Resources.Jars.zip"))
+			using (var rawStream = File.OpenRead(Path.Combine(_resourceFileDirectory, "Jars.zip")))
 			using (var archive = new ZipArchive(rawStream))
 			{
 				archive.ExtractToDirectory(_jarsDirectory);

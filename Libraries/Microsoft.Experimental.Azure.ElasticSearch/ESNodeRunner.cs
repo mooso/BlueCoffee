@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Microsoft.Experimental.Azure.ElasticSearch
 {
 	/// <summary>
-	/// A runner class that can run a Cassandra node in Azure (or any machine).
+	/// A runner class that can run an Elastic Search node in Azure (or any machine).
 	/// </summary>
 	public class ESNodeRunner
 	{

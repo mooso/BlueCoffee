@@ -15,6 +15,18 @@ namespace Microsoft.Experimental.Azure.Kafka
 	public abstract class KafkaBrokerNodeBase : NodeWithJavaBase
 	{
 		private KafkaBrokerRunner _kafkaRunner;
+		private const string KafkaDirectory = "Kafka";
+
+		/// <summary>
+		/// The resource directories to download.
+		/// </summary>
+		protected override IEnumerable<string> ResourceDirectoriesToDownload
+		{
+			get
+			{
+				return new[] { KafkaDirectory }.Concat(base.ResourceDirectoriesToDownload);
+			}
+		}
 
 		/// <summary>
 		/// The port that the ZooKeeper nodes are listening on. Defaults to 2181.
@@ -70,6 +82,7 @@ namespace Microsoft.Experimental.Azure.Kafka
 			var zookeeperHosts = DiscoverZooKeeperHosts();
 			var myBrokerId = Int32.Parse(RoleEnvironment.CurrentRoleInstance.Id.Split('_').Last());
 			_kafkaRunner = new KafkaBrokerRunner(
+				resourceFileDirectory: GetResourcesDirectory(KafkaDirectory),
 				dataDirectory: Path.Combine(DataDirectory, "Data"),
 				configsDirectory: Path.Combine(DataDirectory, "Config"),
 				logsDirectory: Path.Combine(DataDirectory, "Logs"),
