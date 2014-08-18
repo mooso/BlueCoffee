@@ -11,6 +11,10 @@
     <Endpoints>
       <InternalEndpoint name="BrokerEndpiont" protocol="tcp" port="9092" />
     </Endpoints>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="ZooKeeperNode" vmsize="Small">
     <Imports>
@@ -23,5 +27,9 @@
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="250" />
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
     </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>
