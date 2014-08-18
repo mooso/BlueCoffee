@@ -11,7 +11,7 @@
     </Endpoints>
     <LocalResources>
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
-      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="1024" />
     </LocalResources>
     <ConfigurationSettings>
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
