@@ -12,12 +12,18 @@
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="PrestoWorker" vmsize="Small">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
     <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
     </ConfigurationSettings>
     <Endpoints>
       <InternalEndpoint name="HTTP" protocol="tcp" port="8081" />
@@ -40,6 +46,10 @@
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="Populator" vmsize="Small">
     <Imports>

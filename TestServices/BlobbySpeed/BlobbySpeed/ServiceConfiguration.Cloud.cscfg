@@ -4,18 +4,24 @@
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
     </ConfigurationSettings>
   </Role>
   <Role name="PrestoWorker">
     <Instances count="8" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
     </ConfigurationSettings>
   </Role>
   <Role name="HiveMetastore">
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

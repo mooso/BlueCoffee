@@ -14,6 +14,10 @@
     <Startup>
       <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
     </Startup>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="Shark" vmsize="Large">
     <Imports>
@@ -29,6 +33,10 @@
     <Startup>
       <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
     </Startup>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="HiveMetastore" vmsize="Small">
     <Imports>
@@ -41,5 +49,9 @@
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="10240" />
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
     </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>

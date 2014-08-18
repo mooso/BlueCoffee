@@ -12,6 +12,10 @@
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="102400" />
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="PrestoWorker" vmsize="A6">
     <Imports>
@@ -24,6 +28,10 @@
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="102400" />
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="HiveMetastore" vmsize="Small">
     <Imports>
@@ -36,5 +44,9 @@
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
     </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>
