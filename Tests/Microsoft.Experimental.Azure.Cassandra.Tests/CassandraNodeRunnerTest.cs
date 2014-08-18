@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Experimental.Azure.CommonTestUtilities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +17,10 @@ namespace Microsoft.Experimental.Azure.Cassandra.Tests
 		public void EndToEndTest()
 		{
 			var tempDirectory = @"C:\CassandraTestOutput";
-			Directory.Delete(tempDirectory, recursive: true);
+			if (Directory.Exists(tempDirectory))
+			{
+				Directory.Delete(tempDirectory, recursive: true);
+			}
 			var config = new CassandraConfig(
 				clusterName: "Test cluster",
 				clusterNodes: new[] { "127.0.0.1" },
@@ -24,6 +28,7 @@ namespace Microsoft.Experimental.Azure.Cassandra.Tests
 				commitLogDirectory: Path.Combine(tempDirectory, "commitlog"),
 				savedCachesDirectory: Path.Combine(tempDirectory, "savedcaches"));
 			var runner = new CassandraNodeRunner(
+				resourceFileDirectory: ResourcePaths.CassandraResourcesPath,
 				jarsDirectory: Path.Combine(tempDirectory, "jars"),
 				javaHome: @"C:\Program Files\Java\jdk1.7.0_21",
 				logsDirctory: Path.Combine(tempDirectory, "logs"),

@@ -16,6 +16,18 @@ namespace Microsoft.Experimental.Azure.Cassandra
 	public abstract class CassandraNodeBase : NodeWithJavaBase
 	{
 		private CassandraNodeRunner _cassandraRunner;
+		private const string CassandraDirectory = "Cassandra";
+
+		/// <summary>
+		/// The resouce directories to download.
+		/// </summary>
+		protected override IEnumerable<string> ResourceDirectoriesToDownload
+		{
+			get
+			{
+				return new[] { CassandraDirectory }.Concat(base.ResourceDirectoriesToDownload);
+			}
+		}
 
 		/// <summary>
 		/// Overrides the Run method to run Cassandra.
@@ -63,6 +75,7 @@ namespace Microsoft.Experimental.Azure.Cassandra
 				ringDelay: TimeSpan.FromMinutes(5) // Role instances can start up at different times, 30 seconds is not enough.
 			);
 			_cassandraRunner = new CassandraNodeRunner(
+				resourceFileDirectory: GetResourcesDirectory(CassandraDirectory),
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
 				javaHome: JavaHome,
 				logsDirctory: Path.Combine(DataDirectory, "Logs"),

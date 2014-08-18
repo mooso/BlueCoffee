@@ -63,7 +63,7 @@
   <ItemGroup>
     <None Include="Microsoft.Experimental.Azure.ZooKeeper.nuspec" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\Jars.zip" />
+    <None Include="Resources\Jars.zip" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj">

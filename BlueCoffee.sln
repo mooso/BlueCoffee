@@ -97,6 +97,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spark", "TestServices\Elect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shark", "TestServices\ElectricBlobs\Shark\Shark.csproj", "{9EE93B39-CB1F-422C-A5FE-558993A3869F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Experimental.Azure.CommonTestUtilities", "Tests\Microsoft.Experimental.Azure.CommonTestUtilities\Microsoft.Experimental.Azure.CommonTestUtilities.csproj", "{DB465E94-5E9C-4019-921D-75881E514749}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -255,6 +257,10 @@ Global
 		{9EE93B39-CB1F-422C-A5FE-558993A3869F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EE93B39-CB1F-422C-A5FE-558993A3869F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EE93B39-CB1F-422C-A5FE-558993A3869F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB465E94-5E9C-4019-921D-75881E514749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB465E94-5E9C-4019-921D-75881E514749}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB465E94-5E9C-4019-921D-75881E514749}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB465E94-5E9C-4019-921D-75881E514749}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -304,5 +310,6 @@ Global
 		{48CCE96E-430F-4E27-A68B-1A2A548D61D9} = {2A85EC81-8A26-4773-8221-CE5D1EAA00F1}
 		{60334621-732E-48FA-A313-B74A624EF12B} = {2A85EC81-8A26-4773-8221-CE5D1EAA00F1}
 		{9EE93B39-CB1F-422C-A5FE-558993A3869F} = {2A85EC81-8A26-4773-8221-CE5D1EAA00F1}
+		{DB465E94-5E9C-4019-921D-75881E514749} = {718E312B-F3CA-45DF-A091-E847CEF03946}
 	EndGlobalSection
 EndGlobal

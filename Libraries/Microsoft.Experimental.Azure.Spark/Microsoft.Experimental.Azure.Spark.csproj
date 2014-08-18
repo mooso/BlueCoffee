@@ -72,7 +72,7 @@
   <ItemGroup>
     <None Include="Microsoft.Experimental.Azure.Spark.nuspec" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\Jars.zip" />
+    <None Include="Resources\Jars.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild" Outputs="Resources\Jars.zip" Inputs="Resources\Jars.zip.1;Resources\Jars.zip.2">

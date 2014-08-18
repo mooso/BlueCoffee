@@ -14,14 +14,17 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 	public sealed class JavaInstaller
 	{
 		private readonly string _installDirectory;
+		private readonly string _resourceFileDirectory;
 
 		/// <summary>
 		/// Creates a new installer.
 		/// </summary>
 		/// <param name="installDirectory">The directory in which to lay down the bits.</param>
-		public JavaInstaller(string installDirectory)
+		/// <param name="resourceFileDirectory">The directory that contains my resource files.</param>
+		public JavaInstaller(string installDirectory, string resourceFileDirectory)
 		{
 			_installDirectory = installDirectory;
+			_resourceFileDirectory = resourceFileDirectory;
 		}
 
 		/// <summary>
@@ -29,7 +32,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		/// </summary>
 		public void Setup()
 		{
-			using (var rawStream = typeof(JavaInstaller).Assembly.GetManifestResourceStream("Microsoft.Experimental.Azure.JavaPlatform.Resources.openjdk7.zip"))
+			using (var rawStream = File.OpenRead(Path.Combine(_resourceFileDirectory, "openjdk7.zip")))
 			using (var archive = new ZipArchive(rawStream))
 			{
 				archive.ExtractToDirectory(_installDirectory);

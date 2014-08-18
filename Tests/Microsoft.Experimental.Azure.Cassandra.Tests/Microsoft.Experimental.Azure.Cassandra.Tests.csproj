@@ -68,6 +68,10 @@
       <Project>{aafc6c12-f8d1-44a4-a723-91b26db7dc96}</Project>
       <Name>Microsoft.Experimental.Azure.JavaPlatform</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Experimental.Azure.CommonTestUtilities\Microsoft.Experimental.Azure.CommonTestUtilities.csproj">
+      <Project>{db465e94-5e9c-4019-921d-75881e514749}</Project>
+      <Name>Microsoft.Experimental.Azure.CommonTestUtilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

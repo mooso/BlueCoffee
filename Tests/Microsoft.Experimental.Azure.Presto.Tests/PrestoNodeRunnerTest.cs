@@ -1,5 +1,6 @@
 ﻿using Cassandra;
 using Microsoft.Experimental.Azure.Cassandra;
+using Microsoft.Experimental.Azure.CommonTestUtilities;
 using Microsoft.Experimental.Azure.Hive;
 using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -118,6 +119,7 @@ namespace Microsoft.Experimental.Azure.Presto.Tests
 				commitLogDirectory: Path.Combine(cassandraRoot, "commitlog"),
 				savedCachesDirectory: Path.Combine(cassandraRoot, "savedcaches"));
 			var cassandraRunner = new CassandraNodeRunner(
+				resourceFileDirectory: ResourcePaths.CassandraResourcesPath,
 				jarsDirectory: Path.Combine(cassandraRoot, "jars"),
 				javaHome: JavaHome,
 				logsDirctory: Path.Combine(cassandraRoot, "logs"),

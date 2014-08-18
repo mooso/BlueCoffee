@@ -70,15 +70,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Jars.zip" />
+    <None Include="Resources\Jars.zip" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\CassandraPlugin.zip" />
+    <None Include="Resources\CassandraPlugin.zip" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Microsoft.Experimental.Azure.Presto.nuspec" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\HivePlugin.zip" />
+    <None Include="Resources\HivePlugin.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

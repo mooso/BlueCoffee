@@ -1,5 +1,6 @@
 ﻿using Microsoft.WindowsAzure.ServiceRuntime;
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,8 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 	public abstract class NodeWithJavaBase : RoleEntryPoint
 	{
 		private JavaInstaller _javaInstaller;
+		private const string JavaPlatformDirectory = "JavaPlatform";
+		private string _rootResourcesDirectory;
 
 		/// <summary>
 		/// Overrides the Run() method to do the run logic while always logging exceptions before rethrowing them.
@@ -40,6 +43,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		{
 			try
 			{
+				DownloadResources();
 				InstallJava();
 				PostJavaInstallInitialize();
 			}
@@ -87,6 +91,48 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		}
 
 		/// <summary>
+		/// Gets the resources directory for hte given component.
+		/// </summary>
+		/// <param name="componentName">The component (directory name) for which we want resources.
+		/// It should've been included in <see cref="ResourceDirectoriesToDownload"/>.</param>
+		/// <returns>The local directory where the component's resources are located.</returns>
+		protected string GetResourcesDirectory(string componentName)
+		{
+			return Path.Combine(_rootResourcesDirectory, componentName);
+		}
+
+		/// <summary>
+		/// The resource directories to download. By default it's just JavaPlatform.
+		/// </summary>
+		protected virtual IEnumerable<string> ResourceDirectoriesToDownload
+		{
+			get
+			{
+				yield return JavaPlatformDirectory;
+			}
+		}
+
+		/// <summary>
+		/// Gets the container that has all the resource files for the components used in this node.
+		/// </summary>
+		/// <returns>The container reference.</returns>
+		/// <remarks>
+		/// By default we get it using the connection string and container name specified in the role
+		/// settings:
+		/// "BlueCoffee.Resources.Account.ConnectionString" and
+		/// "BlueCoffee.Resources.Container.Name".
+		/// </remarks>
+		protected virtual CloudBlobContainer GetResourcesContainer()
+		{
+			var connectionString = RoleEnvironment.GetConfigurationSettingValue(
+				"BlueCoffee.Resources.Account.ConnectionString");
+			var containerName = RoleEnvironment.GetConfigurationSettingValue(
+				"BlueCoffee.Resources.Container.Name");
+			var storageAccount = CloudStorageAccount.Parse(connectionString);
+			return storageAccount.CreateCloudBlobClient().GetContainerReference(containerName);
+		}
+
+		/// <summary>
 		/// Log the given exception. By default we upload it to a specialized container in the Diagnostics storage account.
 		/// </summary>
 		/// <param name="ex">The exception.</param>
@@ -102,9 +148,28 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 					.UploadText(ex.ToString());
 		}
 
+		private void DownloadResources()
+		{
+			_rootResourcesDirectory = Path.Combine(InstallDirectory, "Resources");
+			var resourcesContainer = GetResourcesContainer();
+			Parallel.ForEach(ResourceDirectoriesToDownload, directory =>
+			{
+				var cloudDirectory = resourcesContainer.GetDirectoryReference(directory);
+				var localDirectory = Path.Combine(_rootResourcesDirectory, directory);
+				Directory.CreateDirectory(localDirectory);
+				Parallel.ForEach(cloudDirectory.ListBlobs().OfType<CloudBlockBlob>(), blob =>
+					{
+						var blobSimpleName = blob.Name.Substring(blob.Name.LastIndexOf('/') + 1);
+						blob.DownloadToFile(Path.Combine(localDirectory, blobSimpleName), FileMode.Create);
+					});
+			});
+		}
+
 		private void InstallJava()
 		{
-			_javaInstaller = new JavaInstaller(Path.Combine(InstallDirectory, "Java"));
+			_javaInstaller = new JavaInstaller(
+				installDirectory: Path.Combine(InstallDirectory, "Java"),
+				resourceFileDirectory: Path.Combine(_rootResourcesDirectory, JavaPlatformDirectory));
 			_javaInstaller.Setup();
 		}
 	}

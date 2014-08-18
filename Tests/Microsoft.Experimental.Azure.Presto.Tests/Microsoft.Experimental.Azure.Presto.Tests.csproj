@@ -90,6 +90,10 @@
       <Project>{67f8d532-1835-4141-a0bb-406575b56e00}</Project>
       <Name>Microsoft.Experimental.Azure.Presto</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Experimental.Azure.CommonTestUtilities\Microsoft.Experimental.Azure.CommonTestUtilities.csproj">
+      <Project>{db465e94-5e9c-4019-921d-75881e514749}</Project>
+      <Name>Microsoft.Experimental.Azure.CommonTestUtilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

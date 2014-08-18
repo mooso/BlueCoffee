@@ -16,6 +16,7 @@ namespace Microsoft.Experimental.Azure.Cassandra
 	/// </summary>
 	public class CassandraNodeRunner
 	{
+		private readonly string _resourceFileDirectory;
 		private readonly string _jarsDirectory;
 		private readonly string _javaHome;
 		private readonly string _logsDirectory;
@@ -27,14 +28,16 @@ namespace Microsoft.Experimental.Azure.Cassandra
 		/// <summary>
 		/// Create a new runner.
 		/// </summary>
+		/// <param name="resourceFileDirectory">The directory that contains my resource files.</param>
 		/// <param name="jarsDirectory">The directory to use for jar files.</param>
 		/// <param name="javaHome">The directory where Java is isntalled.</param>
 		/// <param name="logsDirctory">The directory to use for logs.</param>
 		/// <param name="configDirectory">The directory to use for configuration.</param>
 		/// <param name="config">The Cassandra configuration to use.</param>
-		public CassandraNodeRunner(string jarsDirectory, string javaHome, string logsDirctory,
+		public CassandraNodeRunner(string resourceFileDirectory, string jarsDirectory, string javaHome, string logsDirctory,
 			string configDirectory, CassandraConfig config)
 		{
+			_resourceFileDirectory = resourceFileDirectory;
 			_jarsDirectory = jarsDirectory;
 			_javaHome = javaHome;
 			_logsDirectory = logsDirctory;
@@ -107,7 +110,7 @@ namespace Microsoft.Experimental.Azure.Cassandra
 
 		private void ExtractJars()
 		{
-			using (var rawStream = GetType().Assembly.GetManifestResourceStream("Microsoft.Experimental.Azure.Cassandra.Resources.Jars.zip"))
+			using (var rawStream = File.OpenRead(Path.Combine(_resourceFileDirectory, "Jars.zip")))
 			using (var archive = new ZipArchive(rawStream))
 			{
 				archive.ExtractToDirectory(_jarsDirectory);
