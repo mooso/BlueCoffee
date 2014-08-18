@@ -19,7 +19,7 @@ namespace Microsoft.Experimental.Azure.Cassandra
 		private const string CassandraDirectory = "Cassandra";
 
 		/// <summary>
-		/// The resouce directories to download.
+		/// The resource directories to download.
 		/// </summary>
 		protected override IEnumerable<string> ResourceDirectoriesToDownload
 		{

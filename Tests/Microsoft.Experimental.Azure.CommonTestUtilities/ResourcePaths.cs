@@ -16,5 +16,8 @@ namespace Microsoft.Experimental.Azure.CommonTestUtilities
 		public static readonly string CassandraResourcesPath =
 			Path.Combine(RootLibrariesPath,
 			"Microsoft.Experimental.Azure.Cassandra", "Resources");
+		public static readonly string ElasticSearchResourcesPath =
+			Path.Combine(RootLibrariesPath,
+			"Microsoft.Experimental.Azure.ElasticSearch", "Resources");
 	}
 }

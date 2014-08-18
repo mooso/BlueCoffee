@@ -16,6 +16,18 @@ namespace Microsoft.Experimental.Azure.ElasticSearch
 	public abstract class ESNodeBase : NodeWithJavaBase
 	{
 		private ESNodeRunner _esRunner;
+		private const string ElasticSearchDirectory = "ElasticSearch";
+
+		/// <summary>
+		/// The resource directories to download.
+		/// </summary>
+		protected override IEnumerable<string> ResourceDirectoriesToDownload
+		{
+			get
+			{
+				return new[] { ElasticSearchDirectory }.Concat(base.ResourceDirectoriesToDownload);
+			}
+		}
 
 		/// <summary>
 		/// Overrides the Run method to run ES.
@@ -61,6 +73,7 @@ namespace Microsoft.Experimental.Azure.ElasticSearch
 				dataDirectories: new[] { Path.Combine(DataDirectory, "Data") }
 			);
 			_esRunner = new ESNodeRunner(
+				resourceFileDirectory: GetResourcesDirectory(ElasticSearchDirectory),
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
 				homeDirectory: InstallDirectory,
 				javaHome: JavaHome,

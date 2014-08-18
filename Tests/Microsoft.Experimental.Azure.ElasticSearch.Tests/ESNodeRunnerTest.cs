@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Experimental.Azure.CommonTestUtilities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +25,7 @@ namespace Microsoft.Experimental.Azure.ElasticSearch.Tests
 				clusterName: "Test cluster",
 				enableMulticastDiscovery: false);
 			var runner = new ESNodeRunner(
+				resourceFileDirectory: ResourcePaths.ElasticSearchResourcesPath,
 				jarsDirectory: Path.Combine(tempDirectory, "jars"),
 				javaHome: @"C:\Program Files\Java\jdk1.7.0_21",
 				logsDirctory: Path.Combine(tempDirectory, "logs"),
