@@ -102,6 +102,7 @@ namespace Microsoft.Experimental.Azure.Presto.Tests
 		private static HiveRunner SetupHive(string hiveRoot)
 		{
 			var runner = new HiveRunner(
+				resourceFileDirectory: ResourcePaths.HiveResourcesPath,
 				jarsDirectory: Path.Combine(hiveRoot, "jars"),
 				javaHome: JavaHome,
 				logsDirctory: Path.Combine(hiveRoot, "logs"),

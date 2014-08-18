@@ -14,6 +14,7 @@ namespace Microsoft.Experimental.Azure.Hive
 	/// </summary>
 	public sealed class HiveRunner
 	{
+		private readonly string _resourceFileDirectory;
 		private readonly string _jarsDirectory;
 		private readonly string _javaHome;
 		private readonly string _logsDirectory;
@@ -25,13 +26,15 @@ namespace Microsoft.Experimental.Azure.Hive
 		/// <summary>
 		/// Create a new runner.
 		/// </summary>
+		/// <param name="resourceFileDirectory">The directory that contains my resource files.</param>
 		/// <param name="jarsDirectory">The directory to use for jar files.</param>
 		/// <param name="javaHome">The directory where Java is isntalled.</param>
 		/// <param name="logsDirctory">The directory to use for logs.</param>
 		/// <param name="configDirectory">The directory to use for configuration.</param>
-		public HiveRunner(string jarsDirectory, string javaHome, string logsDirctory,
+		public HiveRunner(string resourceFileDirectory, string jarsDirectory, string javaHome, string logsDirctory,
 			string configDirectory)
 		{
+			_resourceFileDirectory = resourceFileDirectory;
 			_jarsDirectory = jarsDirectory;
 			_javaHome = javaHome;
 			_logsDirectory = logsDirctory;
@@ -146,7 +149,7 @@ namespace Microsoft.Experimental.Azure.Hive
 
 		private void ExtractJars()
 		{
-			using (var rawStream = GetType().Assembly.GetManifestResourceStream("Microsoft.Experimental.Azure.Hive.Resources.Jars.zip"))
+			using (var rawStream = File.OpenRead(Path.Combine(_resourceFileDirectory, "Jars.zip")))
 			using (var archive = new ZipArchive(rawStream))
 			{
 				archive.ExtractToDirectory(_jarsDirectory);

@@ -15,6 +15,18 @@ namespace Microsoft.Experimental.Azure.Hive
 	public abstract class HiveMetastoreNodeBase : NodeWithJavaBase
 	{
 		private HiveRunner _hiveRunner;
+		private const string HiveDirectory = "Hive";
+
+		/// <summary>
+		/// The resource directories to download.
+		/// </summary>
+		protected override IEnumerable<string> ResourceDirectoriesToDownload
+		{
+			get
+			{
+				return new[] { HiveDirectory }.Concat(base.ResourceDirectoriesToDownload);
+			}
+		}
 
 		/// <summary>
 		/// Gets the metastore configuration (e.g. a HiveSqlServerMetastoreConfig for SQL Server-backed metastore).
@@ -41,6 +53,7 @@ namespace Microsoft.Experimental.Azure.Hive
 		private void InstallHive()
 		{
 			_hiveRunner = new HiveRunner(
+				resourceFileDirectory: GetResourcesDirectory(HiveDirectory),
 				jarsDirectory: Path.Combine(InstallDirectory, "jars"),
 				javaHome: JavaHome,
 				logsDirctory: Path.Combine(DataDirectory, "logs"),

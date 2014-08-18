@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Experimental.Azure.CommonTestUtilities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,6 +35,7 @@ namespace Microsoft.Experimental.Azure.Hive.Tests
 		private static HiveRunner SetupHive(string hiveRoot)
 		{
 			var runner = new HiveRunner(
+				resourceFileDirectory: ResourcePaths.HiveResourcesPath,
 				jarsDirectory: Path.Combine(hiveRoot, "jars"),
 				javaHome: JavaHome,
 				logsDirctory: Path.Combine(hiveRoot, "logs"),

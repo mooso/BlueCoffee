@@ -19,5 +19,8 @@ namespace Microsoft.Experimental.Azure.CommonTestUtilities
 		public static readonly string ElasticSearchResourcesPath =
 			Path.Combine(RootLibrariesPath,
 			"Microsoft.Experimental.Azure.ElasticSearch", "Resources");
+		public static readonly string HiveResourcesPath =
+			Path.Combine(RootLibrariesPath,
+			"Microsoft.Experimental.Azure.Hive", "Resources");
 	}
 }
