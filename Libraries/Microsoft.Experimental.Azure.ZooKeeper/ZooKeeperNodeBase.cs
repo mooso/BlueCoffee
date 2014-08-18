@@ -12,7 +12,7 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 	public abstract class ZooKeeperNodeBase : NodeWithJavaBase
 	{
 		private ZooKeeperNodeRunner _nodeRunner;
-		private const string ZooKeeperDirectory = "ElasticSearch";
+		private const string ZooKeeperDirectory = "ZooKeeper";
 
 		/// <summary>
 		/// The resource directories to download.
