@@ -58,6 +58,7 @@
     <Compile Include="SharkConfig.cs" />
     <Compile Include="SharkNodeBase.cs" />
     <Compile Include="SharkRunner.cs" />
+    <Compile Include="SharkSparkNodeBase.cs" />
     <Compile Include="SharkSparkRunnerBase.cs" />
     <Compile Include="SparkConfig.cs" />
     <Compile Include="SparkNodeBase.cs" />

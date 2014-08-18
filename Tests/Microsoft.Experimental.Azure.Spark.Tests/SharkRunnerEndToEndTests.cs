@@ -128,6 +128,7 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 				sparkMaster: "spark://localhost:7234",
 				extraHiveConfig: WasbProperties());
 			var runner = new SharkRunner(
+				resourceFileDirectory: ResourcePaths.SparkResourcesPath,
 				sharkHome: sharkRoot,
 				javaHome: JavaHome,
 				config: config);
@@ -155,6 +156,7 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 				masterWebUIPort: 7235,
 				hadoopConfigProperties: WasbProperties());
 			var runner = new SparkRunner(
+				resourceFileDirectory: ResourcePaths.SparkResourcesPath,
 				sparkHome: sparkRoot,
 				javaHome: JavaHome,
 				config: config);

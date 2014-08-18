@@ -22,5 +22,11 @@ namespace Microsoft.Experimental.Azure.CommonTestUtilities
 		public static readonly string HiveResourcesPath =
 			Path.Combine(RootLibrariesPath,
 			"Microsoft.Experimental.Azure.Hive", "Resources");
+		public static readonly string PrestoResourcesPath =
+			Path.Combine(RootLibrariesPath,
+			"Microsoft.Experimental.Azure.Presto", "Resources");
+		public static readonly string SparkResourcesPath =
+			Path.Combine(RootLibrariesPath,
+			"Microsoft.Experimental.Azure.Spark", "Resources");
 	}
 }

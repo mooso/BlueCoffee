@@ -10,7 +10,7 @@ namespace Microsoft.Experimental.Azure.Spark
 	/// <summary>
 	/// The base class for a typical Azure Spark node.
 	/// </summary>
-	public abstract class SparkNodeBase : NodeWithJavaBase
+	public abstract class SparkNodeBase : SharkSparkNodeBase
 	{
 		private SparkRunner _sparkRunner;
 
@@ -66,6 +66,7 @@ namespace Microsoft.Experimental.Azure.Spark
 				masterWebUIPort: 8080,
 				hadoopConfigProperties: GetHadoopConfigProperties());
 			_sparkRunner = new SparkRunner(
+				resourceFileDirectory: SparkResourceDirectory,
 				sparkHome: Path.Combine(InstallDirectory, "Spark"),
 				javaHome: JavaHome,
 				config: config);

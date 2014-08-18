@@ -16,6 +16,18 @@ namespace Microsoft.Experimental.Azure.Presto
 	public abstract class PrestoNodeBase : NodeWithJavaBase
 	{
 		private PrestoNodeRunner _prestoRunner;
+		private const string PrestoDirectory = "Presto";
+
+		/// <summary>
+		/// The resource directories to download.
+		/// </summary>
+		protected override IEnumerable<string> ResourceDirectoriesToDownload
+		{
+			get
+			{
+				return new[] { PrestoDirectory }.Concat(base.ResourceDirectoriesToDownload);
+			}
+		}
 
 		/// <summary>
 		/// Configure the catalogs to use for this Presto node.
@@ -94,6 +106,7 @@ namespace Microsoft.Experimental.Azure.Presto
 				maxTaskMemoryMb: MachineTotalMemoryMb - 1024,
 				httpPort: IsCoordinator ? CoordinatorHttpPort : WorkerHttpPort);
 			_prestoRunner = new PrestoNodeRunner(
+				resourceFileDirectory: GetResourcesDirectory(PrestoDirectory),
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
 				javaHome: JavaHome,
 				logsDirctory: Path.Combine(DataDirectory, "Logs"),

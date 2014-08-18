@@ -16,6 +16,7 @@ namespace Microsoft.Experimental.Azure.Spark
 	/// </summary>
 	public abstract class SharkSparkRunnerBase
 	{
+		private readonly string _resourceFileDirectory;
 		private readonly string _jarsDirectory;
 		private readonly string _binDirectory;
 		private readonly string _confDirectory;
@@ -29,12 +30,14 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <summary>
 		/// Create a new runner.
 		/// </summary>
+		/// <param name="resourceFileDirectory">The directory that contains my resource files.</param>
 		/// <param name="homeDirectory">The directory to use for home.</param>
 		/// <param name="javaHome">The directory where Java is installed.</param>
 		/// <param name="traceLevel">The trace level to use.</param>
-		protected SharkSparkRunnerBase(string homeDirectory, string javaHome,
+		protected SharkSparkRunnerBase(string resourceFileDirectory, string homeDirectory, string javaHome,
 			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO)
 		{
+			_resourceFileDirectory = resourceFileDirectory;
 			_homeDirectory = homeDirectory;
 			_javaHome = javaHome;
 			_traceLevel = traceLevel;
@@ -149,10 +152,9 @@ namespace Microsoft.Experimental.Azure.Spark
 			return new Log4jConfig(rootLogger, Enumerable.Empty<ChildLoggerDefinition>());
 		}
 
-		private static void ExtractResourceArchive(string resourceName, string targetDirectory)
+		private void ExtractResourceArchive(string resourceName, string targetDirectory)
 		{
-			using (var rawStream = typeof(SharkRunner).Assembly.GetManifestResourceStream(
-				"Microsoft.Experimental.Azure.Spark.Resources." + resourceName + ".zip"))
+			using (var rawStream = File.OpenRead(Path.Combine(_resourceFileDirectory, resourceName + ".zip")))
 			using (var archive = new ZipArchive(rawStream))
 			{
 				foreach (var entry in archive.Entries)

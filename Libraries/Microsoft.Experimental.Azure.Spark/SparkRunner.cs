@@ -22,15 +22,16 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <summary>
 		/// Create a new runner.
 		/// </summary>
+		/// <param name="resourceFileDirectory">The directory that contains my resource files.</param>
 		/// <param name="sparkHome">The directory to use for Spark home.</param>
 		/// <param name="javaHome">The directory where Java is installed.</param>
 		/// <param name="config">The configuration.</param>
 		/// <param name="traceLevel">The trace level to use.</param>
 		/// <param name="childTaskTraceLevel">The child task trace level to use.</param>
-		public SparkRunner(string sparkHome, string javaHome, SparkConfig config,
+		public SparkRunner(string resourceFileDirectory, string sparkHome, string javaHome, SparkConfig config,
 			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO,
 			Log4jTraceLevel childTaskTraceLevel = Log4jTraceLevel.INFO)
-			: base(sparkHome, javaHome, traceLevel)
+			: base(resourceFileDirectory, sparkHome, javaHome, traceLevel)
 		{
 			_config = config;
 			_childTaskTraceLevel = childTaskTraceLevel;

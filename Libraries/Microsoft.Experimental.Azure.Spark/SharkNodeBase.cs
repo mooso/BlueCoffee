@@ -15,7 +15,7 @@ namespace Microsoft.Experimental.Azure.Spark
 	/// <summary>
 	/// The base class for a typical Azure Shark node.
 	/// </summary>
-	public abstract class SharkNodeBase : NodeWithJavaBase
+	public abstract class SharkNodeBase : SharkSparkNodeBase
 	{
 		private SharkRunner _sharkRunner;
 
@@ -56,6 +56,7 @@ namespace Microsoft.Experimental.Azure.Spark
 					.Add("hive.exec.local.scratchdir", "C:/Resources/temp/HiveScratch")
 					.Add("hive.querylog.location", Path.Combine(InstallDirectory, "Shark", "QueryHistory")));
 			_sharkRunner = new SharkRunner(
+				resourceFileDirectory: SparkResourceDirectory,
 				sharkHome: Path.Combine(InstallDirectory, "Shark"),
 				javaHome: JavaHome,
 				config: config);

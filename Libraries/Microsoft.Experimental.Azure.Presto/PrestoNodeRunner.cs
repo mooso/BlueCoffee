@@ -15,6 +15,7 @@ namespace Microsoft.Experimental.Azure.Presto
 	/// </summary>
 	public sealed class PrestoNodeRunner
 	{
+		private readonly string _resourceFileDirectory;
 		private readonly string _jarsDirectory;
 		private readonly string _javaHome;
 		private readonly string _logsDirectory;
@@ -27,16 +28,18 @@ namespace Microsoft.Experimental.Azure.Presto
 		/// <summary>
 		/// Create a new runner.
 		/// </summary>
+		/// <param name="resourceFileDirectory">The directory that contains my resource files.</param>
 		/// <param name="jarsDirectory">The directory to use for jar files.</param>
 		/// <param name="javaHome">The directory where Java is isntalled.</param>
 		/// <param name="logsDirctory">The directory to use for logs.</param>
 		/// <param name="config">The Presto configuration to use.</param>
 		/// <param name="configDirectory">The directory to use for configuration.</param>
 		/// <param name="traceLevel">The trace level.</param>
-		public PrestoNodeRunner(string jarsDirectory, string javaHome, string logsDirctory,
+		public PrestoNodeRunner(string resourceFileDirectory, string jarsDirectory, string javaHome, string logsDirctory,
 			PrestoConfig config, string configDirectory,
 			Log4jTraceLevel? traceLevel = null)
 		{
+			_resourceFileDirectory = resourceFileDirectory;
 			_jarsDirectory = jarsDirectory;
 			_javaHome = javaHome;
 			_logsDirectory = logsDirctory;
@@ -115,8 +118,7 @@ namespace Microsoft.Experimental.Azure.Presto
 
 		private void ExtractResourceArchive(string resourceName, string targetDirectory)
 		{
-			using (var rawStream = GetType().Assembly.GetManifestResourceStream(
-				"Microsoft.Experimental.Azure.Presto.Resources." + resourceName + ".zip"))
+			using (var rawStream = File.OpenRead(Path.Combine(_resourceFileDirectory, resourceName + ".zip")))
 			using (var archive = new ZipArchive(rawStream))
 			{
 				archive.ExtractToDirectory(targetDirectory);

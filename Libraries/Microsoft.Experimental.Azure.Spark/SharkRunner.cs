@@ -21,13 +21,14 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <summary>
 		/// Create a new runner.
 		/// </summary>
+		/// <param name="resourceFileDirectory">The directory that contains my resource files.</param>
 		/// <param name="sharkHome">The directory to use for Shark home.</param>
 		/// <param name="javaHome">The directory where Java is installed.</param>
 		/// <param name="config">The configuration.</param>
 		/// <param name="traceLevel">The trace level to use.</param>
-		public SharkRunner(string sharkHome, string javaHome, SharkConfig config,
+		public SharkRunner(string resourceFileDirectory, string sharkHome, string javaHome, SharkConfig config,
 			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO)
-			: base(sharkHome, javaHome, traceLevel)
+			: base(resourceFileDirectory, sharkHome, javaHome, traceLevel)
 		{
 			_config = config;
 		}

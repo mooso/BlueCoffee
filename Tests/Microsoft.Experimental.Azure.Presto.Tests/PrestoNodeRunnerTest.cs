@@ -89,6 +89,7 @@ namespace Microsoft.Experimental.Azure.Presto.Tests
 				discoveryServerUri: "http://localhost:8080",
 				catalogs: catalogs);
 			var runner = new PrestoNodeRunner(
+				resourceFileDirectory: ResourcePaths.PrestoResourcesPath,
 				jarsDirectory: Path.Combine(prestoRoot, "jars"),
 				javaHome: JavaHome,
 				logsDirctory: Path.Combine(prestoRoot, "logs"),

@@ -1,4 +1,5 @@
-﻿using Microsoft.Experimental.Azure.JavaPlatform;
+﻿using Microsoft.Experimental.Azure.CommonTestUtilities;
+using Microsoft.Experimental.Azure.JavaPlatform;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -57,6 +58,7 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 				masterPort: 7234,
 				masterWebUIPort: 7235);
 			var runner = new SparkRunner(
+				resourceFileDirectory: ResourcePaths.SparkResourcesPath,
 				sparkHome: Path.Combine(sparkRoot, "spark"),
 				javaHome: JavaHome,
 				config: config);
