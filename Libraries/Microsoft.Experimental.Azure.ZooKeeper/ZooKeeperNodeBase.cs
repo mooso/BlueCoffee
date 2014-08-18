@@ -1,6 +1,8 @@
 ﻿using Microsoft.Experimental.Azure.JavaPlatform;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Microsoft.Experimental.Azure.ZooKeeper
 {
@@ -10,6 +12,18 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 	public abstract class ZooKeeperNodeBase : NodeWithJavaBase
 	{
 		private ZooKeeperNodeRunner _nodeRunner;
+		private const string ZooKeeperDirectory = "ElasticSearch";
+
+		/// <summary>
+		/// The resource directories to download.
+		/// </summary>
+		protected override IEnumerable<string> ResourceDirectoriesToDownload
+		{
+			get
+			{
+				return new[] { ZooKeeperDirectory }.Concat(base.ResourceDirectoriesToDownload);
+			}
+		}
 
 		/// <summary>
 		/// Overrides the Run method to run Zoo Keeper.
@@ -38,6 +52,7 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		private void InstallZooKeeper()
 		{
 			_nodeRunner = new ZooKeeperNodeRunner(
+				resourceFileDirectory: GetResourcesDirectory(ZooKeeperDirectory),
 				dataDirectory: Path.Combine(DataDirectory, "Data"),
 				configsDirectory: Path.Combine(DataDirectory, "Config"),
 				logsDirectory: Path.Combine(DataDirectory, "Logs"),
