@@ -12,6 +12,10 @@
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
     </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="Indexer" vmsize="Small">
     <Imports>
