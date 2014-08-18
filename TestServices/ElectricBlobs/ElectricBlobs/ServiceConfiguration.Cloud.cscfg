@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ServiceConfiguration serviceName="ElectricBlobs" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2014-01.2.3">
-  <Role name="Spark">
-    <Instances count="8" />
+  <Role name="SparkMaster">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
+    </ConfigurationSettings>
+  </Role>
+  <Role name="SparkSlave">
+    <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />

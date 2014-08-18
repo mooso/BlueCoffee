@@ -16,11 +16,6 @@ namespace Shark
 {
 	public class WorkerRole : SharkNodeBase
 	{
-		protected override string DiscoverMasterNode()
-		{
-			return GetIPAddress(RoleEnvironment.Roles["Spark"].Instances.Single(i => i.Id.EndsWith("_0")));
-		}
-
 		protected override ImmutableDictionary<string, string> GetHadoopConfigProperties()
 		{
 			var wasbAccountsInfo = ReadWasbAccountsFile().ToList();
