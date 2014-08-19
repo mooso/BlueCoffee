@@ -80,6 +80,10 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <returns>Default implementation returns the first instance in the "SparkMaster" role.</returns>
 		protected virtual string DiscoverMasterNode()
 		{
+			if (RoleEnvironment.IsEmulated)
+			{
+				return "localhost";
+			}
 			return RoleEnvironment.Roles["SparkMaster"].Instances
 				.Select(GetIPAddress)
 				.First();
