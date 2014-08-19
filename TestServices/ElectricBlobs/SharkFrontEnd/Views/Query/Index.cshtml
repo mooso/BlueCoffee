@@ -1,0 +1,45 @@
+﻿@model SharkFrontEnd.Models.QueryResults
+
+@{
+    ViewBag.Title = "View";
+}
+
+<h2>Query</h2>
+
+@using (Html.BeginForm())
+{
+	<fieldset>
+		<table>
+			<tr>
+				<td>
+					@Html.LabelFor(m => m.QueryString)
+				</td>
+				<td>
+					@Html.TextAreaFor(m => m.QueryString)
+				</td>
+				<td>
+					@Html.ValidationMessageFor(m => m.QueryString)
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="submit" value="Query" />
+				</td>
+			</tr>
+		</table>
+	</fieldset>
+}
+
+@if (Model != null && Model.ResultsMessage != null)
+{
+	<p>
+		@Html.Encode(Model.ResultsMessage)
+	</p>
+}
+
+
+@if (Model != null)
+{
+	var grid = new WebGrid(Model.Results);
+	@grid.GetHtml();
+}

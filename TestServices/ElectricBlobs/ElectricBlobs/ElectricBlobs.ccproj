@@ -37,6 +37,14 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SharkFrontEnd\SharkFrontEnd.csproj">
+      <Name>SharkFrontEnd</Name>
+      <Project>{778b756c-cf76-4f1d-b779-97a9c71109b7}</Project>
+      <Private>True</Private>
+      <RoleType>Web</RoleType>
+      <RoleName>SharkFrontEnd</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\..\BlobbySpeed\HiveMetastore\HiveMetastore.csproj">
       <Name>HiveMetastore</Name>
       <Project>{c7f679c2-eabc-46da-9e96-dfcebe91140e}</Project>
@@ -73,6 +81,7 @@
   <ItemGroup>
     <Folder Include="HiveMetastoreContent\" />
     <Folder Include="SharkContent\" />
+    <Folder Include="SharkFrontEndContent\" />
     <Folder Include="SparkMasterContent\" />
     <Folder Include="SparkSlaveContent\" />
   </ItemGroup>
@@ -81,6 +90,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="SharkContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="SharkFrontEndContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
     <Content Include="SparkMasterContent\diagnostics.wadcfg">
