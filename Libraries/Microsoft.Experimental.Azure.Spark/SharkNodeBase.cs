@@ -53,6 +53,7 @@ namespace Microsoft.Experimental.Azure.Spark
 				sparkMaster: "spark://" + master + ":8081",
 				extraHiveConfig:
 					GetHadoopConfigProperties()
+					.Add( "fs.azure.skip.metrics", "true")
 					.Add("hive.exec.local.scratchdir", "C:/Resources/temp/HiveScratch")
 					.Add("hive.querylog.location", Path.Combine(InstallDirectory, "Shark", "QueryHistory")));
 			_sharkRunner = new SharkRunner(
