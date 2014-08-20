@@ -50,6 +50,35 @@ namespace Microsoft.Experimental.Azure.Spark
 		}
 
 		/// <summary>
+		/// Run Shark server.
+		/// </summary>
+		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
+		/// <param name="monitor">Optional process monitor.</param>
+		public void RunSharkServer(bool runContinuous = true, ProcessMonitor monitor = null)
+		{
+			var runner = CreateJavaRunner();
+			const string className = "shark.SharkServer";
+			runner.RunClass(className,
+				"-p" + _config.ServerPort.ToString(),
+				ClassPath(),
+				maxMemoryMb: _config.MaxMemoryMb,
+				extraJavaOptions: new[]
+				{
+					"-XX:+UseParNewGC",
+					"-XX:+UseConcMarkSweepGC",
+					"-XX:CMSInitiatingOccupancyFraction=75",
+					"-XX:+UseCMSInitiatingOccupancyOnly",
+				},
+				defines: HadoopHomeAndLog4jDefines,
+				runContinuous: runContinuous,
+				monitor: monitor,
+				environmentVariables: new Dictionary<string, string>()
+				{
+					{ "MASTER", _config.SparkMaster },
+				});
+		}
+
+		/// <summary>
 		/// Run Shark server 2.
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
