@@ -7,17 +7,11 @@ using System.Web;
 
 namespace SharkFrontEnd.Models
 {
-	public class QueryResults
+	public class SharkQueryModel
 	{
-		public QueryResults()
-		{
-			Results = new List<dynamic>();
-		}
-
 		[Display(Name = "Query")]
 		[Required]
 		public string QueryString { get; set; }
-		public List<dynamic> Results { get; set; }
-		public string ResultsMessage { get; set; }
+		public int? QueryResultId { get; set; }
 	}
 }

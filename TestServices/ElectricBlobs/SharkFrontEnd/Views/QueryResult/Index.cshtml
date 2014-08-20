@@ -1,0 +1,30 @@
+﻿@model SharkFrontEnd.Models.SharkQueryResultModel
+
+@{
+	ViewBag.Title = "Query result";
+}
+
+<h2>Query result</h2>
+
+@if (Model != null)
+{
+	<p>Query: @Model.Id</p>
+	if (Model.QueryException != null)
+	{
+		<p>
+			@Html.Encode(Model.QueryException)
+		</p>
+	}
+	else if (Model.ActualResults != null)
+	{
+		<p>
+			Query took this long to execute: @Model.QueryExecutionTime
+		</p>
+		var grid = new WebGrid(Model.ActualResults);
+		@grid.GetHtml();
+	}
+	else
+	{
+		<p>Still executing...</p>
+	}
+}

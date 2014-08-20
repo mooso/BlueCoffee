@@ -1,7 +1,7 @@
-﻿@model SharkFrontEnd.Models.QueryResults
+﻿@model SharkFrontEnd.Models.SharkQueryModel
 
 @{
-    ViewBag.Title = "View";
+	ViewBag.Title = "View";
 }
 
 <h2>Query</h2>
@@ -30,16 +30,10 @@
 	</fieldset>
 }
 
-@if (Model != null && Model.ResultsMessage != null)
+@if (Model != null && Model.QueryResultId.HasValue)
 {
-	<p>
-		@Html.Encode(Model.ResultsMessage)
+	<p>Query submitted. Click
+	 @Html.ActionLink("here", "Index", "QueryResult", routeValues: new { queryId = Model.QueryResultId.Value }, htmlAttributes: new { id = "resultLink" })
+	for the results.
 	</p>
-}
-
-
-@if (Model != null)
-{
-	var grid = new WebGrid(Model.Results);
-	@grid.GetHtml();
 }

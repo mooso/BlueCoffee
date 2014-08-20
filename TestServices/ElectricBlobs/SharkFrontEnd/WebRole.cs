@@ -14,11 +14,6 @@ namespace SharkFrontEnd
 {
 	public class WebRole : RoleEntryPoint
 	{
-		private string _rootResourcesDirectory;
-		private string _javaRoot;
-		private string _sparkRoot;
-		private string _sharkNode;
-
 		public override bool OnStart()
 		{
 			return base.OnStart();

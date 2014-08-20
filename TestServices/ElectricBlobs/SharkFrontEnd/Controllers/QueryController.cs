@@ -1,7 +1,10 @@
 ﻿using SharkFrontEnd.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -9,6 +12,8 @@ namespace SharkFrontEnd.Controllers
 {
 	public class QueryController : Controller
 	{
+		private static int _currentId;
+
 		// GET: Query
 		public ActionResult Index()
 		{
@@ -16,18 +21,34 @@ namespace SharkFrontEnd.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Index(QueryResults query)
+		public ActionResult Index(SharkQueryModel query)
 		{
 			if (!ModelState.IsValid)
 			{
 				return View();
 			}
-			if (HiveDataSource.Instance == null)
+			var newResult = new SharkQueryResultModel()
 			{
-				query.ResultsMessage = "Not yet initialized...";
-				return View(query);
-			}
-			query.Results = HiveDataSource.Instance.ExecuteQuery(query.QueryString);
+				Id = Interlocked.Increment(ref _currentId),
+				QuerySubmitTime = DateTime.Now,
+				QueryString = query.QueryString,
+			};
+			AllQueries.AddNewResult(newResult);
+			query.QueryResultId = newResult.Id;
+			var executionTask = Task.Factory.StartNew(() =>
+				{
+					try
+					{
+						var dataSource = HiveDataSource.Instance;
+						var timer = Stopwatch.StartNew();
+						newResult.ActualResults = dataSource.ExecuteQuery(query.QueryString);
+						newResult.QueryExecutionTime = timer.Elapsed;
+					}
+					catch (Exception ex)
+					{
+						newResult.QueryException = ex.Message;
+					}
+				});
 			return View(query);
 		}
 	}
