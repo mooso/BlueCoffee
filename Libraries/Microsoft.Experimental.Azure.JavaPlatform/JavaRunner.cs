@@ -47,6 +47,21 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		}
 
 		/// <summary>
+		/// Helper method to get Java arguments that make it possible to attach Eclipse (or other debuggers)
+		/// to the process started.
+		/// </summary>
+		/// <param name="port">The port to attach Eclipse to.</param>
+		/// <returns>The arguments.</returns>
+		public static IEnumerable<string> GetStandardDebugArguments(int port = 1044)
+		{
+			return new[]
+			{
+				"-Xdebug",
+				"-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044"
+			};
+		}
+
+		/// <summary>
 		/// Runs a Java class as a separate program as a console program.
 		/// </summary>
 		/// <param name="className">The fully qualified name of the Java class to run.</param>

@@ -54,7 +54,8 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
 		/// <param name="monitor">Optional process monitor.</param>
-		public void RunSharkServer2(bool runContinuous = true, ProcessMonitor monitor = null)
+		/// <param name="debugPort">If given, we'll start in debug mode so Eclipse cat attach at the given port.</param>
+		public void RunSharkServer2(bool runContinuous = true, ProcessMonitor monitor = null, int? debugPort = null)
 		{
 			var runner = CreateJavaRunner();
 			const string className = "shark.SharkServer2";
@@ -68,7 +69,7 @@ namespace Microsoft.Experimental.Azure.Spark
 					"-XX:+UseConcMarkSweepGC",
 					"-XX:CMSInitiatingOccupancyFraction=75",
 					"-XX:+UseCMSInitiatingOccupancyOnly",
-				},
+				}.Concat(debugPort.HasValue ? JavaRunner.GetStandardDebugArguments(debugPort.Value) : Enumerable.Empty<string>()),
 				defines: HadoopHomeAndLog4jDefines,
 				runContinuous: runContinuous,
 				monitor: monitor,

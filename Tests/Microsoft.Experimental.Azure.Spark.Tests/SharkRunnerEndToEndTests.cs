@@ -38,7 +38,6 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 			var metastoreConfig = new HiveDerbyMetastoreConfig(
 				derbyDataDirectory: Path.Combine(hiveRoot, "metastore"),
 				extraProperties: WasbProperties());
-
 			var hiveTask = Task.Factory.StartNew(() => hiveRunner.RunMetastore(metastoreConfig, runContinuous: false, monitor: killer));
 			var sparkRunner = SetupSpark(sparkRoot);
 			var masterTask = Task.Factory.StartNew(() => sparkRunner.RunMaster(runContinuous: false, monitor: killer));
@@ -47,7 +46,7 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 			var metastoreLogFile = Path.Combine(hiveRoot, "logs", "hive-metastore.log");
 			WaitForCondition(() => File.Exists(metastoreLogFile), TimeSpan.FromSeconds(30));
 			WaitForCondition(() => SharedRead(metastoreLogFile).Contains("Initialized ObjectStore"), TimeSpan.FromSeconds(30));
-			var sharkTask = Task.Factory.StartNew(() => sharkRunner.RunSharkServer2(runContinuous: false, monitor: killer));
+			var sharkTask = Task.Factory.StartNew(() => sharkRunner.RunSharkServer2(runContinuous: false, monitor: killer, debugPort: 1044));
 
 			try
 			{
