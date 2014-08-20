@@ -31,6 +31,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\..\packages\Microsoft.Bcl.Immutable.1.0.34\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,13 +44,28 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourcePaths.cs" />
+    <Compile Include="TestConfigFile.cs" />
+    <Compile Include="WasbConfiguration.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\TestConf\SqlMetastore.txt">
+      <Link>SqlMetastore.txt</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\TestConf\WasbAccounts.txt">
+      <Link>WasbAccounts.txt</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <Target Name="BeforeBuild" Outputs="..\..\TestConf\SqlMetastore.txt;..\..\TestConf\WasbAccounts.txt">
+    <MakeDir Condition="!Exists('..\..\TestConf')" Directories="..\..\TestConf" />
+    <WriteLinesToFile Condition="!Exists('..\..\TestConf\SqlMetastore.txt')" File="..\..\TestConf\SqlMetastore.txt" Lines="# Four lines of SQL Server metastore info. In order: server URI, database name, user name (including @server part), password." Encoding="Ascii" />
+    <WriteLinesToFile Condition="!Exists('..\..\TestConf\WasbAccounts.txt')" File="..\..\TestConf\WasbAccounts.txt" Lines="# WASB accounts to include, as pairs of lines: account name, key." Encoding="Ascii" />
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  -->
 </Project>
