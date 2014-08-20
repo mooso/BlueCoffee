@@ -95,10 +95,16 @@
       <Link>SqlMetastore.txt</Link>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\..\TestConf\WasbAccounts.txt">
+      <Link>WasbAccounts.txt</Link>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="BeforeBuild" Outputs="..\..\..\TestConf\SqlMetastore.txt">
+  <Target Name="BeforeBuild" Outputs="..\..\..\TestConf\SqlMetastore.txt;..\..\..\TestConf\WasbAccounts.txt">
     <MakeDir Condition="!Exists('..\..\..\TestConf')" Directories="..\..\..\TestConf" />
     <WriteLinesToFile Condition="!Exists('..\..\..\TestConf\SqlMetastore.txt')" File="..\..\..\TestConf\SqlMetastore.txt" Lines="# Four lines of SQL Server metastore info. In order: server URI, database name, user name (including @server part), password." Encoding="Ascii" />
+    <WriteLinesToFile Condition="!Exists('..\..\..\TestConf\WasbAccounts.txt')" File="..\..\..\TestConf\WasbAccounts.txt" Lines="# WASB accounts to include, as pairs of lines: account name, key." Encoding="Ascii" />
   </Target>
   <Target Name="AfterBuild">
   </Target>
