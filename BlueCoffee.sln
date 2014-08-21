@@ -105,6 +105,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Experimental.Azur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharkFrontEnd", "TestServices\ElectricBlobs\SharkFrontEnd\SharkFrontEnd.csproj", "{778B756C-CF76-4F1D-B779-97A9C71109B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiveMetastore", "TestServices\ElectricBlobs\HiveMetastore\HiveMetastore.csproj", "{94ECCD02-4D0C-412F-869D-2F0961757891}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -279,6 +281,10 @@ Global
 		{778B756C-CF76-4F1D-B779-97A9C71109B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{778B756C-CF76-4F1D-B779-97A9C71109B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{778B756C-CF76-4F1D-B779-97A9C71109B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94ECCD02-4D0C-412F-869D-2F0961757891}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94ECCD02-4D0C-412F-869D-2F0961757891}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94ECCD02-4D0C-412F-869D-2F0961757891}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94ECCD02-4D0C-412F-869D-2F0961757891}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -332,5 +338,6 @@ Global
 		{9EE93B39-CB1F-422C-A5FE-558993A3869F} = {2A85EC81-8A26-4773-8221-CE5D1EAA00F1}
 		{DB465E94-5E9C-4019-921D-75881E514749} = {718E312B-F3CA-45DF-A091-E847CEF03946}
 		{778B756C-CF76-4F1D-B779-97A9C71109B7} = {2A85EC81-8A26-4773-8221-CE5D1EAA00F1}
+		{94ECCD02-4D0C-412F-869D-2F0961757891} = {2A85EC81-8A26-4773-8221-CE5D1EAA00F1}
 	EndGlobalSection
 EndGlobal

@@ -57,22 +57,6 @@
       <Setting name="BlueCoffee.Resources.Container.Name" />
     </ConfigurationSettings>
   </WorkerRole>
-  <WorkerRole name="HiveMetastore" vmsize="Small">
-    <Imports>
-      <Import moduleName="Diagnostics" />
-    </Imports>
-    <Endpoints>
-      <InternalEndpoint name="Thrift" protocol="tcp" port="9083" />
-    </Endpoints>
-    <LocalResources>
-      <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="10240" />
-      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
-    </LocalResources>
-    <ConfigurationSettings>
-      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
-      <Setting name="BlueCoffee.Resources.Container.Name" />
-    </ConfigurationSettings>
-  </WorkerRole>
   <WebRole name="SharkFrontEnd" vmsize="Small">
     <Sites>
       <Site name="Web">
@@ -95,4 +79,20 @@
       <Setting name="BlueCoffee.Resources.Container.Name" />
     </ConfigurationSettings>
   </WebRole>
+  <WorkerRole name="HiveMetastore" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InternalEndpoint name="Thrift" protocol="tcp" port="9083" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="10240" />
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="1024" />
+    </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
+  </WorkerRole>
 </ServiceDefinition>

@@ -24,7 +24,7 @@
       <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
     </ConfigurationSettings>
   </Role>
-  <Role name="HiveMetastore">
+  <Role name="SharkFrontEnd">
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
@@ -32,7 +32,7 @@
       <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
     </ConfigurationSettings>
   </Role>
-  <Role name="SharkFrontEnd">
+  <Role name="HiveMetastore">
     <Instances count="1" />
     <ConfigurationSettings>
       <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />

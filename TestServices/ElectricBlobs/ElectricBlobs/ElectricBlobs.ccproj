@@ -37,20 +37,20 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HiveMetastore\HiveMetastore.csproj">
+      <Name>HiveMetastore</Name>
+      <Project>{94eccd02-4d0c-412f-869d-2f0961757891}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>HiveMetastore</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\SharkFrontEnd\SharkFrontEnd.csproj">
       <Name>SharkFrontEnd</Name>
       <Project>{778b756c-cf76-4f1d-b779-97a9c71109b7}</Project>
       <Private>True</Private>
       <RoleType>Web</RoleType>
       <RoleName>SharkFrontEnd</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
-    </ProjectReference>
-    <ProjectReference Include="..\..\BlobbySpeed\HiveMetastore\HiveMetastore.csproj">
-      <Name>HiveMetastore</Name>
-      <Project>{c7f679c2-eabc-46da-9e96-dfcebe91140e}</Project>
-      <Private>True</Private>
-      <RoleType>Worker</RoleType>
-      <RoleName>HiveMetastore</RoleName>
       <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
     <ProjectReference Include="..\Shark\Shark.csproj">
