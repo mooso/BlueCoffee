@@ -1,0 +1,24 @@
+﻿:100644 100644 b127b97... 0000000... M	src/main/scala/shark/execution/FileSinkOperator.scala
+
+diff --git a/src/main/scala/shark/execution/FileSinkOperator.scala b/src/main/scala/shark/execution/FileSinkOperator.scala
+index b127b97..9b33889 100644
+--- a/src/main/scala/shark/execution/FileSinkOperator.scala
++++ b/src/main/scala/shark/execution/FileSinkOperator.scala
+@@ -99,9 +99,6 @@ class FileSinkOperator extends TerminalOperator with Serializable {
+       finalPathsField.setAccessible(true)
+       val finalPaths = finalPathsField.get(fileSystemPaths).asInstanceOf[Array[Path]]
+ 
+-      // Get a reference to the FileSystem. No need for reflection here.
+-      val fileSystem = FileSystem.get(localHconf)
+-
+       for (idx <- 0 until finalPaths.length) {
+         var finalPath = finalPaths(idx)
+         if (finalPath == null) {
+@@ -114,6 +111,7 @@ class FileSinkOperator extends TerminalOperator with Serializable {
+           createFilesMethod.invoke(localHiveOp, fileSystemPaths)
+           finalPath = finalPaths(idx)
+         }
++		val fileSystem = finalPath.getFileSystem(localHconf)
+         if (!fileSystem.exists(finalPath.getParent)) {
+           fileSystem.mkdirs(finalPath.getParent)
+         }
