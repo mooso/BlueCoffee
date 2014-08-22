@@ -8,6 +8,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Microsoft.Experimental.Azure.Spark
 {
@@ -17,6 +18,8 @@ namespace Microsoft.Experimental.Azure.Spark
 	public sealed class SharkRunner : SharkSparkRunnerBase
 	{
 		private readonly SharkConfig _config;
+		private const string HiveLog4jPropertiesFileName = "hive-exec-log4j.properties";
+		private readonly Log4jTraceLevel _hiveExecTraceLevel;
 
 		/// <summary>
 		/// Create a new runner.
@@ -26,11 +29,14 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <param name="javaHome">The directory where Java is installed.</param>
 		/// <param name="config">The configuration.</param>
 		/// <param name="traceLevel">The trace level to use.</param>
+		/// <param name="hiveExecTraceLevel">The trace level to use for the Hive side of the world.</param>
 		public SharkRunner(string resourceFileDirectory, string sharkHome, string javaHome, SharkConfig config,
-			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO)
+			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO,
+			Log4jTraceLevel hiveExecTraceLevel = Log4jTraceLevel.INFO)
 			: base(resourceFileDirectory, sharkHome, javaHome, traceLevel)
 		{
 			_config = config;
+			_hiveExecTraceLevel = hiveExecTraceLevel;
 		}
 
 		/// <summary>
@@ -38,7 +44,31 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// </summary>
 		protected override void WriteConfig()
 		{
-			_config.GetHiveConfigXml().Save(Path.Combine(ConfDirectory, "hive-site.xml"));
+			var configXml = _config.GetHiveConfigXml();
+			var logPropertiesFile = Path.Combine(ConfDirectory, HiveLog4jPropertiesFileName);
+			configXml.Root.AddFirst(new XElement("property",
+				new XElement("name", "hive.log4j.file"),
+				new XElement("value", logPropertiesFile)));
+			configXml.Save(Path.Combine(ConfDirectory, "hive-site.xml"));
+			CreateHiveLog4jConfig().ToPropertiesFile().WriteToFile(logPropertiesFile);
+		}
+
+		private Log4jConfig CreateHiveLog4jConfig()
+		{
+			var layout = LayoutDefinition.PatternLayout("[%d{ISO8601}][%-5p][%-25c] %m%n");
+
+			var consoleAppender = AppenderDefinitionFactory.ConsoleAppender("console",
+				layout: layout);
+			var fileAppender = AppenderDefinitionFactory.DailyRollingFileAppender("file",
+				Path.Combine(LogsDirectory, "HiveExecLog.log"),
+				layout: layout);
+
+			var rootLogger = new RootLoggerDefinition(_hiveExecTraceLevel, consoleAppender, fileAppender);
+			// Tone down the security logger warnings - keeps complaining about not being able to resolve users, and honestly
+			// I don't care since I'm not running with Kerberos authentication supported.
+			var securityLogger = new ChildLoggerDefinition("org.apache.hadoop.security", Log4jTraceLevel.ERROR);
+
+			return new Log4jConfig(rootLogger, new[] { securityLogger });
 		}
 
 		/// <summary>

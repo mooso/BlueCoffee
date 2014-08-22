@@ -128,6 +128,11 @@ namespace Microsoft.Experimental.Azure.Spark
 		protected string ConfDirectory { get { return _confDirectory; } }
 
 		/// <summary>
+		/// The logs directory.
+		/// </summary>
+		protected string LogsDirectory { get { return _logsDirectory; } }
+
+		/// <summary>
 		/// The common class path.
 		/// </summary>
 		/// <returns>The class path.</returns>
