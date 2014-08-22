@@ -90,6 +90,11 @@ namespace Microsoft.Experimental.Azure.Spark
 				var ret = _extraHiveConfig;
 				ret = AddIfNotExists(ret, localScratchDirKey, @"${java.io.tmpdir}/${user.name}/HiveSratch");
 				ret = AddIfNotExists(ret, queryLogKey, @"${java.io.tmpdir}/${user.name}/QueryLog");
+				// Hive needs to know that we're not executing locally, or else it's going to write
+				// results for queries into files on the local file system, and on a cluster it would
+				// execute queries but not return any results (that was a fun bug to debug)
+				const string mapredFrameworkKey = "mapreduce.framework.name";
+				ret = AddIfNotExists(ret, mapredFrameworkKey, "classic"); // Anything other than "local" would work really I think
 				return ret;
 			}
 
