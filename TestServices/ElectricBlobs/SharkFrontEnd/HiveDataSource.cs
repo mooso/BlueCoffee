@@ -17,15 +17,20 @@ namespace SharkFrontEnd
 	public class HiveDataSource
 	{
 		private static Lazy<HiveDataSource> _instance = new Lazy<HiveDataSource>(Initialize);
-		private readonly dynamic _java;
+		private readonly DarkJava _java;
+		private readonly dynamic _driver;
+		private readonly dynamic _emptyProperties;
 		private readonly string _jdbcUri;
 		private const string JavaPlatformDirectory = "JavaPlatform";
 		private const string SparkDirectory = "Spark";
 
-		private HiveDataSource(DarkJava java, string serverIP)
+		private HiveDataSource(DarkJava java, string serverIP, dynamic driver)
 		{
 			_java = java;
 			_jdbcUri = String.Format("jdbc:hive2://{0}:8082", serverIP);
+			_driver = driver;
+			dynamic dynJava = java;
+			_emptyProperties = dynJava.java.util.Properties.@new();
 		}
 
 		private static HiveDataSource Initialize()
@@ -47,17 +52,16 @@ namespace SharkFrontEnd
 			// Import some packages
 			java.ImportPackage("java.lang");
 			java.ImportPackage("java.sql");
-			// Initialize the driver class
-			var hiveThrowawayDriver = java.org.apache.hive.jdbc.HiveDriver.@new();
-			// Initalize the singleton
-			return new HiveDataSource(java, serverIP);
+			// Initialize the driver
+			var driver = java.org.apache.hive.jdbc.HiveDriver.@new();
+			return new HiveDataSource(java, serverIP, driver);
 		}
 
 		public static HiveDataSource Instance { get { return _instance.Value; } }
 
 		public List<dynamic> ExecuteQuery(string query)
 		{
-			dynamic conn = _java.DriverManager.getConnection(_jdbcUri);
+			dynamic conn = _driver.connect(_jdbcUri, _emptyProperties);
 			dynamic statement = conn.createStatement();
 			dynamic resultSet = statement.executeQuery(query);
 			dynamic metadata = resultSet.getMetaData();

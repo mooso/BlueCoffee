@@ -12,7 +12,7 @@
 	if (Model.QueryException != null)
 	{
 		<p>
-			@Html.Encode(Model.QueryException)
+			@Html.Encode(Model.QueryException).Replace(Environment.NewLine, "<br/>")
 		</p>
 	}
 	else if (Model.ActualResults != null)
