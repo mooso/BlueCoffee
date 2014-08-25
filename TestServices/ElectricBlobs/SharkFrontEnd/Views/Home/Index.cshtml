@@ -1,5 +1,11 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
-
+<p>
+	This is a bare-bones query front-end to execute queries in the sample Shark applications.
+</p>
+<p>
+	Use the Query link below to execute queries. Every time you execute one you'll be presented
+	with a link you can use to track the query results.
+</p>
 @Html.ActionLink("Query", "Index", "Query", routeValues: null, htmlAttributes: new { id = "queryLink" })

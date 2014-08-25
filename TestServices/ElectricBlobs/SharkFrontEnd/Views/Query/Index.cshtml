@@ -32,7 +32,7 @@
 
 @if (Model != null && Model.QueryResultId.HasValue)
 {
-	<p>Query submitted. Click
+	<p>Query @Model.QueryResultId submitted. Click
 	 @Html.ActionLink("here", "Index", "QueryResult", routeValues: new { queryId = Model.QueryResultId.Value }, htmlAttributes: new { id = "resultLink" })
 	for the results.
 	</p>
