@@ -1,5 +1,6 @@
 ﻿using Microsoft.Experimental.Azure.JavaPlatform;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
@@ -56,6 +57,38 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <returns>The properties.</returns>
 		protected abstract ImmutableDictionary<string, string> GetHadoopConfigProperties();
 
+		/// <summary>
+		/// The memory bound on the node.
+		/// </summary>
+		protected virtual int MaxNodeMemoryMb
+		{
+			get
+			{
+				return MachineTotalMemoryMb - 1024;
+			}
+		}
+
+		/// <summary>
+		/// The memory bound on each standalone executor.
+		/// </summary>
+		protected virtual int ExecutorMemoryMb
+		{
+			get
+			{
+				return Math.Min(512, MachineTotalMemoryMb / Environment.ProcessorCount);
+			}
+		}
+		/// <summary>
+		/// Other Spark properties than what's explicitly given.
+		/// </summary>
+		public virtual ImmutableDictionary<string, string> ExtraSparkProperties
+		{
+			get
+			{
+				return null;
+			}
+		}
+
 		private void InstallSpark()
 		{
 			var master = DiscoverMasterNode();
@@ -65,7 +98,9 @@ namespace Microsoft.Experimental.Azure.Spark
 				masterPort: 8081,
 				masterWebUIPort: 8080,
 				hadoopConfigProperties: GetHadoopConfigProperties(),
-				maxNodeMemoryMb: MachineTotalMemoryMb - 1024);
+				maxNodeMemoryMb: MaxNodeMemoryMb,
+				executorMemoryMb : ExecutorMemoryMb,
+				extraSparkProperties: ExtraSparkProperties);
 			_sparkRunner = new SparkRunner(
 				resourceFileDirectory: SparkResourceDirectory,
 				sparkHome: Path.Combine(InstallDirectory, "Spark"),
@@ -98,7 +133,10 @@ namespace Microsoft.Experimental.Azure.Spark
 			get { return RoleEnvironment.GetLocalResource("DataDirectory").RootPath; }
 		}
 
-		private static int MachineTotalMemoryMb
+		/// <summary>
+		/// The total memory on the machine in MB.
+		/// </summary>
+		protected static int MachineTotalMemoryMb
 		{
 			get
 			{

@@ -2,6 +2,7 @@
 using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -87,7 +88,7 @@ namespace Microsoft.Experimental.Azure.Spark
 					"-XX:CMSInitiatingOccupancyFraction=75",
 					"-XX:+UseCMSInitiatingOccupancyOnly",
 				},
-				defines: HadoopHomeAndLog4jDefines,
+				defines: SparkNodeDefines,
 				runContinuous: runContinuous,
 				monitor: monitor,
 				environmentVariables: SparkEnvironmentVariables());
@@ -113,10 +114,20 @@ namespace Microsoft.Experimental.Azure.Spark
 					"-XX:CMSInitiatingOccupancyFraction=75",
 					"-XX:+UseCMSInitiatingOccupancyOnly",
 				},
-				defines: HadoopHomeAndLog4jDefines,
+				defines: SparkNodeDefines,
 				runContinuous: runContinuous,
 				monitor: monitor,
 				environmentVariables: SparkEnvironmentVariables());
+		}
+
+		private ImmutableDictionary<string, string> SparkNodeDefines
+		{
+			get
+			{
+				return HadoopHomeAndLog4jDefines
+					.Add("spark.executor.memory", _config.ExecutorMemoryMb + "m")
+					.AddRange(_config.ExtraSparkProperties);
+			}
 		}
 
 		/// <summary>
