@@ -14,7 +14,7 @@
     <tags>Microsoft, Azure, Apache, ZooKeeper</tags>
     <dependencies>
       <dependency id="Microsoft.Bcl.Immutable" version="[1.0.34,)"/>
-      <dependency id="Microsoft.Experimental.Azure.JavaPlatform" version="0.1.5-alpha"/>
+      <dependency id="Microsoft.Experimental.Azure.JavaPlatform" version="$nugetversion$"/>
     </dependencies>
   </metadata>
 </package>
