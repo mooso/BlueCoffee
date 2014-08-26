@@ -64,7 +64,8 @@ namespace Microsoft.Experimental.Azure.Spark
 				masterAddress: master,
 				masterPort: 8081,
 				masterWebUIPort: 8080,
-				hadoopConfigProperties: GetHadoopConfigProperties());
+				hadoopConfigProperties: GetHadoopConfigProperties(),
+				maxNodeMemoryMb: MachineTotalMemoryMb - 1024);
 			_sparkRunner = new SparkRunner(
 				resourceFileDirectory: SparkResourceDirectory,
 				sparkHome: Path.Combine(InstallDirectory, "Spark"),
@@ -95,6 +96,14 @@ namespace Microsoft.Experimental.Azure.Spark
 		protected virtual string DataDirectory
 		{
 			get { return RoleEnvironment.GetLocalResource("DataDirectory").RootPath; }
+		}
+
+		private static int MachineTotalMemoryMb
+		{
+			get
+			{
+				return (int)(new Microsoft.VisualBasic.Devices.ComputerInfo().TotalPhysicalMemory / (1024 * 1024));
+			}
 		}
 	}
 }

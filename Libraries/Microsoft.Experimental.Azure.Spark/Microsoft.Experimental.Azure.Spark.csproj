@@ -34,6 +34,7 @@
     <DocumentationFile>bin\Release\Microsoft.Experimental.Azure.Spark.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=2.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <Private>False</Private>
     </Reference>

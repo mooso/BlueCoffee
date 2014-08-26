@@ -18,6 +18,7 @@ namespace Microsoft.Experimental.Azure.Spark
 		private readonly int _masterPort;
 		private readonly int _masterWebUIPort;
 		private readonly ImmutableDictionary<string, string> _hadoopConfigProperties;
+		private readonly int _maxNodeMemoryMb;
 
 		/// <summary>
 		/// Creates the config.
@@ -26,7 +27,9 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <param name="masterPort">The port for the master node.</param>
 		/// <param name="masterWebUIPort">The port for the web UI on the master node.</param>
 		/// <param name="hadoopConfigProperties">Optional extra config properties for the Hadoop side of the world.</param>
+		/// <param name="maxNodeMemoryMb">The memory bound on the node.</param>
 		public SparkConfig(string masterAddress, int masterPort, int masterWebUIPort,
+			int maxNodeMemoryMb = 2048,
 			ImmutableDictionary<string, string> hadoopConfigProperties = null)
 		{
 			_masterAddress = masterAddress;
@@ -34,6 +37,7 @@ namespace Microsoft.Experimental.Azure.Spark
 			_masterWebUIPort = masterWebUIPort;
 			_hadoopConfigProperties = (hadoopConfigProperties ?? ImmutableDictionary<string, string>.Empty)
 				.SetItem("fs.azure.skip.metrics", "true");
+			_maxNodeMemoryMb = maxNodeMemoryMb;
 ;
 		}
 
@@ -46,6 +50,11 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// The port the master node listens to.
 		/// </summary>
 		public int MasterPort { get { return _masterPort; } }
+
+		/// <summary>
+		/// The memory bound on the node.
+		/// </summary>
+		public int MaxNodeMemoryMb { get { return _maxNodeMemoryMb; } }
 
 		/// <summary>
 		/// The URI for the Spark master node.

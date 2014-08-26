@@ -104,6 +104,7 @@ namespace Microsoft.Experimental.Azure.Spark
 			runner.RunClass(className,
 				_config.SparkMasterUri,
 				ClassPath(),
+				maxMemoryMb: _config.MaxNodeMemoryMb,
 				extraJavaOptions: new[]
 				{
 					"-XX:+UseParNewGC",
@@ -135,6 +136,7 @@ namespace Microsoft.Experimental.Azure.Spark
 				String.Format("--master {0} --class {1} \"{2}\" {3}",
 					_config.SparkMasterUri, exampleClassName, exampleJarPath, exampleArgs),
 				ClassPath(),
+				maxMemoryMb: _config.MaxNodeMemoryMb,
 				extraJavaOptions: new[]
 				{
 					"-XX:+UseParNewGC",
