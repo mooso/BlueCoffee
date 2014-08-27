@@ -18,6 +18,8 @@ namespace Microsoft.Experimental.Azure.Spark
 		private readonly FakeHiveConfig _hiveConfig;
 		private readonly int _maxMemoryMb;
 		private readonly string _sparkMaster;
+		private readonly int _executorMemoryMb;
+		private readonly ImmutableDictionary<string, string> _extraSparkProperties;
 
 		/// <summary>
 		/// Creates a new config.
@@ -27,13 +29,18 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <param name="maxMemoryMb">The maximum memory of the Shark server.</param>
 		/// <param name="sparkMaster">The Spark master URI.</param>
 		/// <param name="extraHiveConfig">Optional extra configuration parameters for Hive.</param>
+		/// <param name="executorMemoryMb">The memory bound on each standalone executor launched by Shark.</param>
+		/// <param name="extraSparkProperties">Other Spark properties than what's explicitly given in the parameters above.</param>
 		public SharkConfig(int serverPort, string metastoreUris, string sparkMaster, int maxMemoryMb = 1024,
-			ImmutableDictionary<string, string> extraHiveConfig = null)
+			ImmutableDictionary<string, string> extraHiveConfig = null, int executorMemoryMb = 1024,
+			ImmutableDictionary<string, string> extraSparkProperties = null)
 		{
 			_serverPort = serverPort;
 			_hiveConfig = new FakeHiveConfig(metastoreUris, extraHiveConfig ?? ImmutableDictionary<string, string>.Empty);
 			_maxMemoryMb = maxMemoryMb;
 			_sparkMaster = sparkMaster;
+			_executorMemoryMb = executorMemoryMb;
+			_extraSparkProperties = extraSparkProperties ?? ImmutableDictionary<string, string>.Empty;
 		}
 
 		/// <summary>
@@ -45,6 +52,16 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// The maximum memory of the Shark server.
 		/// </summary>
 		public int MaxMemoryMb { get { return _maxMemoryMb; } }
+
+		/// <summary>
+		/// The memory bound on each standalone executor launched by Shark.
+		/// </summary>
+		public int ExecutorMemoryMb { get { return _executorMemoryMb; } }
+
+		/// <summary>
+		/// Other Spark properties than what's explicitly given.
+		/// </summary>
+		public ImmutableDictionary<string, string> ExtraSparkProperties { get { return _extraSparkProperties; } }
 
 		/// <summary>
 		/// The Spark master URI;

@@ -68,27 +68,6 @@ namespace Microsoft.Experimental.Azure.Spark
 			}
 		}
 
-		/// <summary>
-		/// The memory bound on each standalone executor.
-		/// </summary>
-		protected virtual int ExecutorMemoryMb
-		{
-			get
-			{
-				return Math.Min(512, MachineTotalMemoryMb / Environment.ProcessorCount);
-			}
-		}
-		/// <summary>
-		/// Other Spark properties than what's explicitly given.
-		/// </summary>
-		public virtual ImmutableDictionary<string, string> ExtraSparkProperties
-		{
-			get
-			{
-				return null;
-			}
-		}
-
 		private void InstallSpark()
 		{
 			var master = DiscoverMasterNode();
@@ -131,17 +110,6 @@ namespace Microsoft.Experimental.Azure.Spark
 		protected virtual string DataDirectory
 		{
 			get { return RoleEnvironment.GetLocalResource("DataDirectory").RootPath; }
-		}
-
-		/// <summary>
-		/// The total memory on the machine in MB.
-		/// </summary>
-		protected static int MachineTotalMemoryMb
-		{
-			get
-			{
-				return (int)(new Microsoft.VisualBasic.Devices.ComputerInfo().TotalPhysicalMemory / (1024 * 1024));
-			}
 		}
 	}
 }

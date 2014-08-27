@@ -2,6 +2,7 @@
 using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -99,7 +100,7 @@ namespace Microsoft.Experimental.Azure.Spark
 					"-XX:CMSInitiatingOccupancyFraction=75",
 					"-XX:+UseCMSInitiatingOccupancyOnly",
 				},
-				defines: HadoopHomeAndLog4jDefines,
+				defines: SharkServerDefines,
 				runContinuous: runContinuous,
 				monitor: monitor,
 				environmentVariables: new Dictionary<string, string>()
@@ -129,7 +130,7 @@ namespace Microsoft.Experimental.Azure.Spark
 					"-XX:CMSInitiatingOccupancyFraction=75",
 					"-XX:+UseCMSInitiatingOccupancyOnly",
 				}.Concat(debugPort.HasValue ? JavaRunner.GetStandardDebugArguments(debugPort.Value) : Enumerable.Empty<string>()),
-				defines: HadoopHomeAndLog4jDefines,
+				defines: SharkServerDefines,
 				runContinuous: runContinuous,
 				monitor: monitor,
 				environmentVariables: new Dictionary<string, string>()
@@ -164,6 +165,16 @@ namespace Microsoft.Experimental.Azure.Spark
 				tracer: tracer,
 				runContinuous: false);
 			return tracer.GetOutputSoFar();
+		}
+
+		private ImmutableDictionary<string, string> SharkServerDefines
+		{
+			get
+			{
+				return HadoopHomeAndLog4jDefines
+					.Add("spark.executor.memory", _config.ExecutorMemoryMb + "m")
+					.AddRange(_config.ExtraSparkProperties);
+			}
 		}
 	}
 }

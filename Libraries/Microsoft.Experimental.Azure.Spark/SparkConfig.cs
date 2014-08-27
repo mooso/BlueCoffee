@@ -45,7 +45,6 @@ namespace Microsoft.Experimental.Azure.Spark
 			_extraSparkProperties = extraSparkProperties ?? ImmutableDictionary<string, string>.Empty;
 			_maxNodeMemoryMb = maxNodeMemoryMb;
 			_executorMemoryMb = executorMemoryMb;
-;
 		}
 
 		/// <summary>
