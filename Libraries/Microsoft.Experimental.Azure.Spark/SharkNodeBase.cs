@@ -51,6 +51,8 @@ namespace Microsoft.Experimental.Azure.Spark
 				serverPort: 8082,
 				metastoreUris: "thrift://" + metastore + ":9083",
 				sparkMaster: "spark://" + master + ":8081",
+				executorMemoryMb : ExecutorMemoryMb,
+				extraSparkProperties: ExtraSparkProperties,
 				extraHiveConfig:
 					GetHadoopConfigProperties()
 					.Add( "fs.azure.skip.metrics", "true")
