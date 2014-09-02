@@ -57,7 +57,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 			return new[]
 			{
 				"-Xdebug",
-				"-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044"
+				"-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=" + port
 			};
 		}
 
