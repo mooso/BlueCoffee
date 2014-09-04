@@ -19,8 +19,6 @@ namespace Microsoft.Experimental.Azure.Spark
 	public sealed class SharkRunner : SharkSparkRunnerBase
 	{
 		private readonly SharkConfig _config;
-		private const string HiveLog4jPropertiesFileName = "hive-exec-log4j.properties";
-		private readonly Log4jTraceLevel _hiveExecTraceLevel;
 
 		/// <summary>
 		/// Create a new runner.
@@ -30,14 +28,11 @@ namespace Microsoft.Experimental.Azure.Spark
 		/// <param name="javaHome">The directory where Java is installed.</param>
 		/// <param name="config">The configuration.</param>
 		/// <param name="traceLevel">The trace level to use.</param>
-		/// <param name="hiveExecTraceLevel">The trace level to use for the Hive side of the world.</param>
 		public SharkRunner(string resourceFileDirectory, string sharkHome, string javaHome, SharkConfig config,
-			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO,
-			Log4jTraceLevel hiveExecTraceLevel = Log4jTraceLevel.INFO)
+			Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO)
 			: base(resourceFileDirectory, sharkHome, javaHome, traceLevel)
 		{
 			_config = config;
-			_hiveExecTraceLevel = hiveExecTraceLevel;
 		}
 
 		/// <summary>
@@ -46,30 +41,7 @@ namespace Microsoft.Experimental.Azure.Spark
 		protected override void WriteConfig()
 		{
 			var configXml = _config.GetHiveConfigXml();
-			var logPropertiesFile = Path.Combine(ConfDirectory, HiveLog4jPropertiesFileName);
-			configXml.Root.AddFirst(new XElement("property",
-				new XElement("name", "hive.log4j.file"),
-				new XElement("value", logPropertiesFile)));
 			configXml.Save(Path.Combine(ConfDirectory, "hive-site.xml"));
-			CreateHiveLog4jConfig().ToPropertiesFile().WriteToFile(logPropertiesFile);
-		}
-
-		private Log4jConfig CreateHiveLog4jConfig()
-		{
-			var layout = LayoutDefinition.PatternLayout("[%d{ISO8601}][%-5p][%-25c] %m%n");
-
-			var consoleAppender = AppenderDefinitionFactory.ConsoleAppender("console",
-				layout: layout);
-			var fileAppender = AppenderDefinitionFactory.DailyRollingFileAppender("file",
-				Path.Combine(LogsDirectory, "HiveExecLog.log"),
-				layout: layout);
-
-			var rootLogger = new RootLoggerDefinition(_hiveExecTraceLevel, consoleAppender, fileAppender);
-			// Tone down the security logger warnings - keeps complaining about not being able to resolve users, and honestly
-			// I don't care since I'm not running with Kerberos authentication supported.
-			var securityLogger = new ChildLoggerDefinition("org.apache.hadoop.security", Log4jTraceLevel.ERROR);
-
-			return new Log4jConfig(rootLogger, new[] { securityLogger });
 		}
 
 		/// <summary>
@@ -81,35 +53,6 @@ namespace Microsoft.Experimental.Azure.Spark
 		}
 
 		/// <summary>
-		/// Run Shark server.
-		/// </summary>
-		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
-		/// <param name="monitor">Optional process monitor.</param>
-		public void RunSharkServer(bool runContinuous = true, ProcessMonitor monitor = null)
-		{
-			var runner = CreateJavaRunner();
-			const string className = "shark.SharkServer";
-			runner.RunClass(className,
-				"-p" + _config.ServerPort.ToString(),
-				ClassPath(),
-				maxMemoryMb: _config.MaxMemoryMb,
-				extraJavaOptions: new[]
-				{
-					"-XX:+UseParNewGC",
-					"-XX:+UseConcMarkSweepGC",
-					"-XX:CMSInitiatingOccupancyFraction=75",
-					"-XX:+UseCMSInitiatingOccupancyOnly",
-				},
-				defines: SharkServerDefines,
-				runContinuous: runContinuous,
-				monitor: monitor,
-				environmentVariables: new Dictionary<string, string>()
-				{
-					{ "MASTER", _config.SparkMaster },
-				});
-		}
-
-		/// <summary>
 		/// Run Shark server 2.
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
@@ -118,7 +61,7 @@ namespace Microsoft.Experimental.Azure.Spark
 		public void RunSharkServer2(bool runContinuous = true, ProcessMonitor monitor = null, int? debugPort = null)
 		{
 			var runner = CreateJavaRunner();
-			const string className = "shark.SharkServer2";
+			const string className = "org.apache.spark.sql.hive.thriftserver.HiveThriftServer2";
 			runner.RunClass(className,
 				"",
 				ClassPath(),
@@ -136,7 +79,6 @@ namespace Microsoft.Experimental.Azure.Spark
 				environmentVariables: new Dictionary<string, string>()
 				{
 					{ "HIVE_SERVER2_THRIFT_PORT", _config.ServerPort.ToString() },
-					{ "MASTER", _config.SparkMaster },
 				});
 		}
 
@@ -156,9 +98,7 @@ namespace Microsoft.Experimental.Azure.Spark
 					String.Join(" ", commands.Select(c => String.Format("-e \"{0}\"", c)))),
 				ClassPath(),
 				maxMemoryMb: _config.MaxMemoryMb,
-				defines: new Dictionary<string, string>
-				{
-				},
+				defines: HadoopHomeAndLog4jDefines,
 				environmentVariables: new Dictionary<string, string>()
 				{
 				},
@@ -173,6 +113,7 @@ namespace Microsoft.Experimental.Azure.Spark
 			{
 				return HadoopHomeAndLog4jDefines
 					.Add("spark.executor.memory", _config.ExecutorMemoryMb + "m")
+					.Add("spark.master", _config.SparkMaster)
 					.AddRange(_config.ExtraSparkProperties);
 			}
 		}

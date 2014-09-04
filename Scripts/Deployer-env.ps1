@@ -72,7 +72,7 @@ function Upload-ResourcesToContext([Microsoft.WindowsAzure.Commands.Storage.Mode
             if (($existingBlob -eq $null) -or ($existingBlob.Length -ne $_.Length))
             {
                 Write-Host "Uploading $blobName ..."
-                $newBlob = Set-AzureStorageBlobContent -Blob $blobName -Context $storageContext -Container $container -File $($_.FullName)
+                $newBlob = Set-AzureStorageBlobContent -Blob $blobName -Context $storageContext -Container $container -File $($_.FullName) -Force
             }
         }
     }

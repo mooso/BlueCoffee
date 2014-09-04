@@ -153,8 +153,11 @@ namespace Microsoft.Experimental.Azure.Spark
 				layout: layout);
 
 			var rootLogger = new RootLoggerDefinition(_traceLevel, consoleAppender, fileAppender);
+			// Tone down the security logger warnings - keeps complaining about not being able to resolve users, and honestly
+			// I don't care since I'm not running with Kerberos authentication supported.
+			var securityLogger = new ChildLoggerDefinition("org.apache.hadoop.security", Log4jTraceLevel.ERROR);
 
-			return new Log4jConfig(rootLogger, Enumerable.Empty<ChildLoggerDefinition>());
+			return new Log4jConfig(rootLogger, new[] { securityLogger });
 		}
 
 		private void ExtractResourceArchive(string resourceName, string targetDirectory)

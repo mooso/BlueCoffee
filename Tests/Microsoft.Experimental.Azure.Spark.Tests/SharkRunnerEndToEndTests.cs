@@ -46,13 +46,13 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 			var metastoreLogFile = Path.Combine(hiveRoot, "logs", "hive-metastore.log");
 			WaitForCondition(() => File.Exists(metastoreLogFile), TimeSpan.FromSeconds(30));
 			WaitForCondition(() => SharedRead(metastoreLogFile).Contains("Initialized ObjectStore"), TimeSpan.FromSeconds(30));
-			var sharkTask = Task.Factory.StartNew(() => sharkRunner.RunSharkServer2(runContinuous: false, monitor: killer, debugPort: 1044));
+			var sharkTask = Task.Factory.StartNew(() => sharkRunner.RunSharkServer2(runContinuous: false, monitor: killer, debugPort: 1045));
 
 			try
 			{
 				var sharkLogFile = Path.Combine(sharkRoot, "logs", "SharkLog.log");
 				WaitForCondition(() => File.Exists(sharkLogFile), TimeSpan.FromSeconds(30));
-				WaitForCondition(() => SharedRead(sharkLogFile).Contains("SharkServer2 started"), TimeSpan.FromSeconds(30));
+				WaitForCondition(() => SharedRead(sharkLogFile).Contains("HiveThriftServer2 started"), TimeSpan.FromSeconds(30));
 				var dataFilePath = Path.Combine(tempDirectory, "TestData.txt");
 				File.WriteAllText(dataFilePath, String.Join("\n", 501, 623, 713), Encoding.ASCII);
 				var beelineOutput = sharkRunner.RunBeeline(new[]
@@ -60,6 +60,7 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 					"CREATE TABLE t(a int);",
 					String.Format("LOAD DATA LOCAL INPATH 'file:///{0}' INTO TABLE t;", dataFilePath.Replace('\\', '/')),
 					"SELECT * FROM t WHERE a > 700;",
+					"SELECT * FROM t t1 JOIN t t2 on t1.a = t2.a;",
 				});
 				Trace.WriteLine("Stderr: " + beelineOutput.StandardError);
 				StringAssert.Contains(beelineOutput.StandardOutput, "713");
@@ -83,16 +84,31 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 		private sealed class ProcessKiller : ProcessMonitor
 		{
 			private readonly List<Process> _processes = new List<Process>();
+			private readonly object _listLock = new object();
 
 			public void KillAll()
 			{
-				Parallel.ForEach(_processes, p => p.Kill());
+				List<Process> copy;
+				lock (_listLock)
+				{
+					copy = _processes.ToList();
+				}
+				Parallel.ForEach(copy, p => p.Kill());
 			}
 
 			public override void ProcessStarted(Process process)
 			{
-				_processes.Add(process);
-				process.Disposed += (s, e) => _processes.Remove(process);
+				lock (_listLock)
+				{
+					_processes.Add(process);
+				}
+				process.Disposed += (s, e) =>
+					{
+						lock (_listLock)
+						{
+							_processes.Remove(process);
+						}
+					};
 			}
 		}
 
