@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$nugetversion$</version>
+    <title>$title$</title>
+    <authors>mostafae@microsoft.com</authors>
+    <owners>mostafae@microsoft.com</owners>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</iconUrl>
+    <projectUrl>https://github.com/mooso/BlueCoffee</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <copyright>Copyright 2014</copyright>
+    <tags>Microsoft, Azure, Apache, Storm</tags>
+    <dependencies>
+      <dependency id="Microsoft.Bcl.Immutable" version="[1.0.34,)"/>
+      <dependency id="Microsoft.Experimental.Azure.JavaPlatform" version="$nugetversion$"/>
+    </dependencies>
+  </metadata>
+</package>
