@@ -54,6 +54,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StormEndToEndTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.JavaPlatform\Microsoft.Experimental.Azure.JavaPlatform.csproj">
@@ -63,6 +64,10 @@
     <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.Storm\Microsoft.Experimental.Azure.Storm.csproj">
       <Project>{0f6dada9-4b0f-4c5e-a769-0995ec3ae5f3}</Project>
       <Name>Microsoft.Experimental.Azure.Storm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\Microsoft.Experimental.Azure.ZooKeeper\Microsoft.Experimental.Azure.ZooKeeper.csproj">
+      <Project>{4586a4f0-1fe5-48e2-aed3-e6d5558dbfd1}</Project>
+      <Name>Microsoft.Experimental.Azure.ZooKeeper</Name>
     </ProjectReference>
     <ProjectReference Include="..\Microsoft.Experimental.Azure.CommonTestUtilities\Microsoft.Experimental.Azure.CommonTestUtilities.csproj">
       <Project>{db465e94-5e9c-4019-921d-75881e514749}</Project>

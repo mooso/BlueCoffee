@@ -48,10 +48,8 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		/// <summary>
 		/// Run ZooKeeper.
 		/// </summary>
-		/// <remarks>
-		/// This method never returns (just runs continuously or throws).
-		/// </remarks>
-		public void Run()
+		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
+		public void Run(bool runContinuous = true)
 		{
 			var runner = new JavaRunner(_javaHome);
 			const string className = "org.apache.zookeeper.server.quorum.QuorumPeerMain";
@@ -60,7 +58,8 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 				defines: new Dictionary<string, string>
 					{
 						{ "log4j.configuration", "file:\"" + _zooKeeperLog4jPropertiesPath + "\"" }
-					});
+					},
+					runContinuous: runContinuous);
 		}
 
 		/// <summary>

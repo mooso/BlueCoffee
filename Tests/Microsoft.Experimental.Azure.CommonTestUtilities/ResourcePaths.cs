@@ -28,6 +28,12 @@ namespace Microsoft.Experimental.Azure.CommonTestUtilities
 		public static readonly string SparkResourcesPath =
 			Path.Combine(RootLibrariesPath,
 			"Microsoft.Experimental.Azure.Spark", "Resources");
+		public static readonly string StormResourcesPath =
+				Path.Combine(RootLibrariesPath,
+				"Microsoft.Experimental.Azure.Storm", "Resources");
+		public static readonly string ZooKeeperResourcesPath =
+				Path.Combine(RootLibrariesPath,
+				"Microsoft.Experimental.Azure.ZooKeeper", "Resources");
 
 		private static string FindRootSolutionDirectory()
 		{

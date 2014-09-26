@@ -51,7 +51,7 @@ namespace Microsoft.Experimental.Azure.Presto
 		}
 
 		/// <summary>
-		/// Setup Elastic Search.
+		/// Setup Presto.
 		/// </summary>
 		public void Setup()
 		{
@@ -66,7 +66,7 @@ namespace Microsoft.Experimental.Azure.Presto
 		}
 
 		/// <summary>
-		/// Run Elastic Search.
+		/// Run Presto.
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
 		public void Run(bool runContinuous = true)
