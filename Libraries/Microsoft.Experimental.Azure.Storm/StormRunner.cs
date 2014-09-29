@@ -70,30 +70,33 @@ namespace Microsoft.Experimental.Azure.Storm
 		/// Run Storm Nimbus.
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
-		public void RunNimbus(bool runContinuous = true)
+		/// <param name="monitor">Optional process monitor.</param>
+		public void RunNimbus(bool runContinuous = true, ProcessMonitor monitor = null)
 		{
 			const string className = "backtype.storm.daemon.nimbus";
-			RunClass(runContinuous, className);
+			RunClass(runContinuous, className, monitor: monitor);
 		}
 
 		/// <summary>
 		/// Run Storm Supervisor.
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
-		public void RunSupervisor(bool runContinuous = true)
+		/// <param name="monitor">Optional process monitor.</param>
+		public void RunSupervisor(bool runContinuous = true, ProcessMonitor monitor = null)
 		{
 			const string className = "backtype.storm.daemon.supervisor";
-			RunClass(runContinuous, className);
+			RunClass(runContinuous, className, monitor: monitor);
 		}
 
 		/// <summary>
 		/// Run Storm UI.
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
-		public void RunUI(bool runContinuous = true)
+		/// <param name="monitor">Optional process monitor.</param>
+		public void RunUI(bool runContinuous = true, ProcessMonitor monitor = null)
 		{
 			const string className = "backtype.storm.ui.core";
-			RunClass(runContinuous, className);
+			RunClass(runContinuous, className, monitor: monitor);
 		}
 
 		/// <summary>
@@ -103,8 +106,9 @@ namespace Microsoft.Experimental.Azure.Storm
 		/// <param name="jarPath">The fully qualified path to the jar file.</param>
 		/// <param name="arguments">Optional arguments to the class.</param>
 		/// <param name="runContinuous">If set, this method will keep restarting the class whenver it exits and will never return.</param>
+		/// <param name="monitor">Optional process monitor.</param>
 		public void RunJar(string className, string jarPath, IEnumerable<string> arguments = null,
-			bool runContinuous = true)
+			bool runContinuous = true, ProcessMonitor monitor = null)
 		{
 			RunClass(runContinuous: runContinuous,
 				className: className,
@@ -113,13 +117,15 @@ namespace Microsoft.Experimental.Azure.Storm
 					{ "storm.jar", jarPath },
 				},
 				extraClassPathEntries: new[] { jarPath },
-				arguments: arguments);
+				arguments: arguments,
+				monitor: monitor);
 		}
 
 		private void RunClass(bool runContinuous, string className,
 			IEnumerable<KeyValuePair<string, string>> extraDefines = null,
 			IEnumerable<string> extraClassPathEntries = null,
-			IEnumerable<string> arguments = null)
+			IEnumerable<string> arguments = null,
+			ProcessMonitor monitor = null)
 		{
 			var runner = new JavaRunner(_javaHome);
 			var classPathEntries = new[] { Path.Combine(_stormHomeDirectory), _configDirectory }
@@ -149,7 +155,8 @@ namespace Microsoft.Experimental.Azure.Storm
 					environmentVariables: new Dictionary<string, string>()
 					{
 						{ "JAVA_HOME", _javaHome },
-					});
+					},
+					monitor: monitor);
 		}
 
 		private void WriteStormConfigFiles()

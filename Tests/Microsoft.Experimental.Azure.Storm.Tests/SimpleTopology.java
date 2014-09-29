@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.*;
 
 import backtype.storm.*;
@@ -5,6 +6,7 @@ import backtype.storm.generated.*;
 import backtype.storm.spout.*;
 import backtype.storm.task.*;
 import backtype.storm.topology.*;
+import backtype.storm.topology.base.*;
 import backtype.storm.tuple.*;
 import backtype.storm.utils.Utils;
 
@@ -12,7 +14,7 @@ import backtype.storm.utils.Utils;
 public class SimpleTopology {
 
 	public static void main(String[] args) throws Exception {
-		StormTopology topology = createTestTopology();
+		StormTopology topology = createTestTopology(args[0]);
 		Config conf = configure();
 		StormSubmitter.submitTopology("test", conf, topology);
 	}
@@ -33,71 +35,71 @@ public class SimpleTopology {
 		return conf;
 	}
 
-	private static StormTopology createTestTopology() {
+	private static StormTopology createTestTopology(String outputFileName) {
 		TopologyBuilder builder = new TopologyBuilder();
-		builder.setSpout("words", new TestWordSpout(), 10);
-		builder.setBolt("exclaim1", new ExclamationBolt(), 3)
+		builder.setSpout("words", new TestWordSpout(), 1);
+		builder.setBolt("exclaim", new ExclamationBolt(), 1)
 		        .shuffleGrouping("words");
-		builder.setBolt("exclaim2", new ExclamationBolt(), 2)
-		        .shuffleGrouping("exclaim1");
+		builder.setBolt("out", new FilePrinter(outputFileName), 1)
+		        .shuffleGrouping("exclaim");
 		StormTopology toplogy = builder.createTopology();
 		return toplogy;
 	}
 
-	public static class ExclamationBolt implements IRichBolt {
+	public static class FilePrinter extends BaseBasicBolt {
 		private static final long serialVersionUID = 1L;
-		private OutputCollector _collector;
+		private final String _fileName;
+		private PrintStream _printStream;
+
+		public FilePrinter(String fileName) {
+			_fileName = fileName;
+		}
+
+		@Override
+		public void execute(Tuple tuple, BasicOutputCollector collector) {
+			_printStream.println(tuple);
+			_printStream.flush();
+		}
+
+		@Override
+		public void declareOutputFields(OutputFieldsDeclarer declarer) {
+		}
+
+		@Override
+		public void cleanup() {
+			super.cleanup();
+			_printStream.close();
+		}
 
 		@SuppressWarnings("rawtypes")
 		@Override
-		public void prepare(Map conf, TopologyContext context, OutputCollector collector) {
-	        _collector = collector;
-	    }
+		public void prepare(Map stormConf, TopologyContext context) {
+			super.prepare(stormConf, context);
+			try {
+				_printStream = new PrintStream(_fileName);
+			} catch (FileNotFoundException e) {
+				throw new Error(e);
+			}
+		}
+	}
+
+	public static class ExclamationBolt extends BaseBasicBolt {
+		private static final long serialVersionUID = 1L;
 
 		@Override
-	    public void execute(Tuple tuple) {
-	        _collector.emit(tuple, new Values(tuple.getString(0) + "!!!"));
-	        _collector.ack(tuple);
-	    }
-
-		@Override
-	    public void cleanup() {
+		public void execute(Tuple tuple, BasicOutputCollector collector) {
+	        collector.emit(new Values(tuple.getString(0) + "!!!"));
 	    }
 
 		@Override
 	    public void declareOutputFields(OutputFieldsDeclarer declarer) {
 	        declarer.declare(new Fields("word"));
 	    }
-
-		@Override
-	    public Map<String, Object> getComponentConfiguration() {
-	        return null;
-	    }
 	}
 
-	public static class TestWordSpout implements IRichSpout {
+	public static class TestWordSpout extends BaseRichSpout {
 		private static final long serialVersionUID = 1L;
 		private SpoutOutputCollector _collector;
-
-		@Override
-		public void ack(Object msgId) {
-		}
-
-		@Override
-		public void activate() {
-		}
-
-		@Override
-		public void close() {
-		}
-
-		@Override
-		public void deactivate() {
-		}
-
-		@Override
-		public void fail(Object msgId) {
-		}
 
 		@Override
 		public void nextTuple() {

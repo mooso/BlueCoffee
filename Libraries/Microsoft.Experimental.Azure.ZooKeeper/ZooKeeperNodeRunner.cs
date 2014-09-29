@@ -49,7 +49,8 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		/// Run ZooKeeper.
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
-		public void Run(bool runContinuous = true)
+		/// <param name="monitor">Optional process monitor</param>
+		public void Run(bool runContinuous = true, ProcessMonitor monitor = null)
 		{
 			var runner = new JavaRunner(_javaHome);
 			const string className = "org.apache.zookeeper.server.quorum.QuorumPeerMain";
@@ -59,7 +60,8 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 					{
 						{ "log4j.configuration", "file:\"" + _zooKeeperLog4jPropertiesPath + "\"" }
 					},
-					runContinuous: runContinuous);
+				runContinuous: runContinuous,
+				monitor: monitor);
 		}
 
 		/// <summary>
