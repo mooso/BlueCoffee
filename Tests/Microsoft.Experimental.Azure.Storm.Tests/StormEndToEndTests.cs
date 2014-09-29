@@ -36,7 +36,8 @@ namespace Microsoft.Experimental.Azure.Storm.Tests
 			var zooKeeperTask = Task.Factory.StartNew(() => zooKeeperRunner.Run(false));
 			var stormConfig = new StormConfig(
 				nimbusHost: "localhost",
-				zooKeeperServers: new[] { "localhost" });
+				zooKeeperServers: new[] { "localhost" },
+				stormLocalDirectory: Path.Combine(stormDirectory, "storm-local"));
 			var stormRunner = new StormRunner(
 				resourceFileDirectory: ResourcePaths.StormResourcesPath,
 				stormHomeDirectory: stormDirectory,
