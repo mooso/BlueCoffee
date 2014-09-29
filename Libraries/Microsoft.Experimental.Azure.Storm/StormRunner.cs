@@ -121,7 +121,8 @@ namespace Microsoft.Experimental.Azure.Storm
 		private LogbackConfig CreateLogbackConfig()
 		{
 			var fileAppender = new RollingFileAppenderDefinition("main", Path.Combine(_logsDirectory, "Storm.log"));
-			return new LogbackConfig(new RootLoggerDefinition(_traceLevel, fileAppender),
+			var consoleAppender = new ConsoleAppenderDefinition();
+			return new LogbackConfig(new RootLoggerDefinition(_traceLevel, fileAppender, consoleAppender),
 				new ChildLoggerDefinition[] {});
 		}
 

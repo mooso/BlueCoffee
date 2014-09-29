@@ -15,16 +15,19 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Logback
 	{
 		private readonly string _name;
 		private readonly string _className;
+		private readonly string _pattern;
 
 		/// <summary>
 		/// Create a new definition.
 		/// </summary>
 		/// <param name="name">The name of the appender.</param>
 		/// <param name="className">The Java fully qualified class name of the appender.</param>
-		public AppenderDefinition(string name, string className)
+		/// <param name="pattern">Pattern to use for each log message.</param>
+		public AppenderDefinition(string name, string className, string pattern = null)
 		{
 			_name = name;
 			_className = className;
+			_pattern = pattern ?? "%d{yyyy-MM-dd HH:mm:ss} %c{1} [%p] %m%n";
 		}
 
 		/// <summary>
@@ -45,7 +48,19 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Logback
 			{
 				new XAttribute("name", _name),
 				new XAttribute("class", _className),
+				EncoderElement(),
 			}.Concat(CreateXmlContent()));
+		}
+
+		/// <summary>
+		/// The encoder XML element.
+		/// </summary>
+		/// <returns></returns>
+		private XElement EncoderElement()
+		{
+			return new XElement("encoder",
+				new XElement("pattern", _pattern))
+			;
 		}
 
 		/// <summary>

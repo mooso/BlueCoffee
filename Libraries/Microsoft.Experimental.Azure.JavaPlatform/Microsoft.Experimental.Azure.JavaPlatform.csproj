@@ -90,6 +90,7 @@
     <Compile Include="Log4j\RootLoggerDefinition.cs" />
     <Compile Include="Logback\AppenderDefinition.cs" />
     <Compile Include="Logback\ChildLoggerDefinition.cs" />
+    <Compile Include="Logback\ConsoleAppenderDefinition.cs" />
     <Compile Include="Logback\LogbackConfig.cs" />
     <Compile Include="Logback\LogbackTraceLevel.cs" />
     <Compile Include="Logback\LoggerDefinition.cs" />

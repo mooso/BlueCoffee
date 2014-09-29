@@ -13,7 +13,6 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Logback
 	public sealed class RollingFileAppenderDefinition : AppenderDefinition
 	{
 		private readonly int _maxFileSizeMb;
-		private readonly string _pattern;
 		private readonly string _filePath;
 
 		/// <summary>
@@ -24,12 +23,11 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Logback
 		/// <param name="maxFileSizeMb">Maximum size before rolling.</param>
 		/// <param name="pattern">Pattern to use for each log message.</param>
 		public RollingFileAppenderDefinition(string name, string filePath,
-			int maxFileSizeMb = 100, string pattern = "%d{yyyy-MM-dd HH:mm:ss} %c{1} [%p] %m%n")
-			: base(name, "ch.qos.logback.core.rolling.RollingFileAppender")
+			int maxFileSizeMb = 100, string pattern = null)
+			: base(name, "ch.qos.logback.core.rolling.RollingFileAppender", pattern)
 		{
 			_filePath = filePath;
 			_maxFileSizeMb = maxFileSizeMb;
-			_pattern = pattern;
 		}
 
 		/// <summary>
@@ -48,8 +46,6 @@ namespace Microsoft.Experimental.Azure.JavaPlatform.Logback
 				new XElement("triggeringPolicy",
 					new XAttribute("class", "ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy"),
 					new XElement("maxFileSize", _maxFileSizeMb + "MB")),
-				new XElement("encoder",
-					new XElement("pattern", _pattern))
 			};
 		}
 	}
