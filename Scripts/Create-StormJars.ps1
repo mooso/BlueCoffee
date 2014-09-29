@@ -27,3 +27,11 @@ Remove-Item -Recurse -Force $tempDir
 # Split up the zip file
 #Add-Type -TypeDefinition $(Get-Content "$scriptLocation\..\Libraries\CombineJar.cs" -Raw) -Language CSharp
 #[SplitAndMerge.Program]::Split($zipfilename)
+
+# Create the UI HTML pages zip file
+$UIZipFileName = "$scriptLocation\..\Libraries\Microsoft.Experimental.Azure.Storm\Resources\UI.zip"
+if (Test-Path $UIZipFileName)
+{
+    Remove-Item -Force $UIZipFileName
+}
+[System.IO.Compression.ZipFile]::CreateFromDirectory("$StormHome\public", $UIZipFileName, $compressionLevel, $false)

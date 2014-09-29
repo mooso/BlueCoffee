@@ -44,15 +44,13 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 			var slaveTask = Task.Factory.StartNew(() => sparkRunner.RunSlave(runContinuous: false, monitor: killer));
 			var sharkRunner = SetupShark(sharkRoot);
 			var metastoreLogFile = Path.Combine(hiveRoot, "logs", "hive-metastore.log");
-			WaitForCondition(() => File.Exists(metastoreLogFile), TimeSpan.FromSeconds(30));
-			WaitForCondition(() => SharedRead(metastoreLogFile).Contains("Initialized ObjectStore"), TimeSpan.FromSeconds(30));
+			ConditionAwaiter.WaitForLogSnippet(metastoreLogFile, "Initialized ObjectStore");
 			var sharkTask = Task.Factory.StartNew(() => sharkRunner.RunSharkServer2(runContinuous: false, monitor: killer, debugPort: 1045));
 
 			try
 			{
 				var sharkLogFile = Path.Combine(sharkRoot, "logs", "SharkLog.log");
-				WaitForCondition(() => File.Exists(sharkLogFile), TimeSpan.FromSeconds(30));
-				WaitForCondition(() => SharedRead(sharkLogFile).Contains("HiveThriftServer2 started"), TimeSpan.FromSeconds(30));
+				ConditionAwaiter.WaitForLogSnippet(sharkLogFile, "HiveThriftServer2 started");
 				var dataFilePath = Path.Combine(tempDirectory, "TestData.txt");
 				File.WriteAllText(dataFilePath, String.Join("\n", 501, 623, 713), Encoding.ASCII);
 				var beelineOutput = sharkRunner.RunBeeline(new[]
@@ -70,60 +68,6 @@ namespace Microsoft.Experimental.Azure.Spark.Tests
 				killer.KillAll();
 				Task.WaitAll(hiveTask, sharkTask, masterTask, slaveTask);
 			}
-		}
-
-		private static string SharedRead(string sharkLogFile)
-		{
-			using (var fileStream = new FileStream(sharkLogFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-			using (var textReader = new StreamReader(fileStream))
-			{
-				return textReader.ReadToEnd();
-			}
-		}
-
-		private sealed class ProcessKiller : ProcessMonitor
-		{
-			private readonly List<Process> _processes = new List<Process>();
-			private readonly object _listLock = new object();
-
-			public void KillAll()
-			{
-				List<Process> copy;
-				lock (_listLock)
-				{
-					copy = _processes.ToList();
-				}
-				Parallel.ForEach(copy, p => p.Kill());
-			}
-
-			public override void ProcessStarted(Process process)
-			{
-				lock (_listLock)
-				{
-					_processes.Add(process);
-				}
-				process.Disposed += (s, e) =>
-					{
-						lock (_listLock)
-						{
-							_processes.Remove(process);
-						}
-					};
-			}
-		}
-
-		private static void WaitForCondition(Func<bool> condition, TimeSpan timeout)
-		{
-			var timer = Stopwatch.StartNew();
-			do
-			{
-				if (condition())
-				{
-					return;
-				}
-				Thread.Sleep(100);
-			} while (timer.Elapsed < timeout);
-			Assert.Fail("Timed out.");
 		}
 
 		private static ImmutableDictionary<string, string> WasbProperties()

@@ -69,6 +69,7 @@
     <None Include="Microsoft.Experimental.Azure.Storm.nuspec" />
     <None Include="packages.config" />
     <None Include="Resources\Jars.zip" />
+    <None Include="Resources\UI.zip" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
