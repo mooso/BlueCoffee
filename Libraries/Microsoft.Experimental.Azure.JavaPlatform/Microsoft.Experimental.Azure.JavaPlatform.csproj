@@ -88,6 +88,13 @@
     <Compile Include="Log4j\Log4jTraceLevel.cs" />
     <Compile Include="Log4j\LoggerDefinition.cs" />
     <Compile Include="Log4j\RootLoggerDefinition.cs" />
+    <Compile Include="Logback\AppenderDefinition.cs" />
+    <Compile Include="Logback\ChildLoggerDefinition.cs" />
+    <Compile Include="Logback\LogbackConfig.cs" />
+    <Compile Include="Logback\LogbackTraceLevel.cs" />
+    <Compile Include="Logback\LoggerDefinition.cs" />
+    <Compile Include="Logback\RollingFileAppenderDefinition.cs" />
+    <Compile Include="Logback\RootLoggerDefinition.cs" />
     <Compile Include="NodeWithJavaBase.cs" />
     <Compile Include="ProcessMonitor.cs" />
     <Compile Include="ProcessOutput.cs" />

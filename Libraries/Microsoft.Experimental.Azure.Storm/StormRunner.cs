@@ -1,5 +1,5 @@
 ﻿using Microsoft.Experimental.Azure.JavaPlatform;
-using Microsoft.Experimental.Azure.JavaPlatform.Log4j;
+using Microsoft.Experimental.Azure.JavaPlatform.Logback;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +22,7 @@ namespace Microsoft.Experimental.Azure.Storm
 		private readonly string _configDirectory;
 		private readonly StormConfig _config;
 		private readonly string _configFilePath;
-		private readonly Log4jTraceLevel _traceLevel;
+		private readonly LogbackTraceLevel _traceLevel;
 		private readonly string _loggingPropertiesFilePath;
 
 		/// <summary>
@@ -35,7 +35,7 @@ namespace Microsoft.Experimental.Azure.Storm
 		/// <param name="config">The Storm configuration to use.</param>
 		/// <param name="traceLevel">The trace level.</param>
 		public StormRunner(string resourceFileDirectory, string stormHomeDirectory, string javaHome,
-				string logsDirectory, StormConfig config, Log4jTraceLevel traceLevel = Log4jTraceLevel.INFO)
+				string logsDirectory, StormConfig config, LogbackTraceLevel traceLevel = LogbackTraceLevel.INFO)
 		{
 			_resourceFileDirectory = resourceFileDirectory;
 			_jarsDirectory = Path.Combine(stormHomeDirectory, "lib");
@@ -44,7 +44,7 @@ namespace Microsoft.Experimental.Azure.Storm
 			_config = config;
 			_configDirectory = Path.Combine(stormHomeDirectory, "conf");
 			_configFilePath = Path.Combine(_configDirectory, "storm.yaml");
-			_loggingPropertiesFilePath = Path.Combine(_configDirectory, "logging.properties");
+			_loggingPropertiesFilePath = Path.Combine(_configDirectory, "logging.xml");
 			_traceLevel = traceLevel;
 		}
 
@@ -101,8 +101,8 @@ namespace Microsoft.Experimental.Azure.Storm
 					defines: new Dictionary<string, string>
 					{
 						{
-							"log4j.configuration",
-							"file:\"" + _loggingPropertiesFilePath + "\""
+							"logback.configurationFile",
+							"\"" + _loggingPropertiesFilePath + "\""
 						},
 						{ "storm.conf.file", Path.GetFileName(_configFilePath) },
 					},
@@ -115,22 +115,14 @@ namespace Microsoft.Experimental.Azure.Storm
 			{
 				_config.WriteToYamlFile(writer);
 			}
-			CreateLog4jConfig().ToPropertiesFile().WriteToFile(_loggingPropertiesFilePath);
+			CreateLogbackConfig().ToXDocument().Save(_loggingPropertiesFilePath);
 		}
 
-		private Log4jConfig CreateLog4jConfig()
+		private LogbackConfig CreateLogbackConfig()
 		{
-			var layout = LayoutDefinition.PatternLayout("[%d{ISO8601}][%-5p][%-25c] %m%n");
-
-			var consoleAppender = AppenderDefinitionFactory.ConsoleAppender("console",
-					layout: layout);
-			var fileAppender = AppenderDefinitionFactory.DailyRollingFileAppender("file",
-					Path.Combine(_logsDirectory, "storm.log"),
-					layout: layout);
-
-			var rootLogger = new RootLoggerDefinition(_traceLevel, consoleAppender, fileAppender);
-
-			return new Log4jConfig(rootLogger, new ChildLoggerDefinition[] { });
+			var fileAppender = new RollingFileAppenderDefinition("main", Path.Combine(_logsDirectory, "Storm.log"));
+			return new LogbackConfig(new RootLoggerDefinition(_traceLevel, fileAppender),
+				new ChildLoggerDefinition[] {});
 		}
 
 		private void ExtractResourceArchive(string resourceName, string targetDirectory)
