@@ -50,13 +50,13 @@ function Discover-Accounts($serviceName)
 	Discover-AccountsForLocation $service.Location
 }
 
-function Get-ConnectionString([Microsoft.WindowsAzure.Commands.ServiceManagement.Model.StorageServicePropertiesOperationContext]$storageAccount)
+function Get-ConnectionString([Microsoft.WindowsAzure.Commands.Common.Storage.AzureStorageContext]$storageAccount)
 {
 	$key = Get-AzureStorageKey $storageAccount.StorageAccountName
 	"DefaultEndpointsProtocol=https;AccountName=$($storageAccount.StorageAccountName);AccountKey=$($key.Primary)"
 }
 
-function Upload-ResourcesToContext([Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel.AzureStorageContext]$storageContext)
+function Upload-ResourcesToContext([Microsoft.WindowsAzure.Commands.Common.Storage.AzureStorageContext]$storageContext)
 {
 	Write-Host "Uploading resources..."
     $container = 'bluecoffeeresources'
@@ -78,7 +78,7 @@ function Upload-ResourcesToContext([Microsoft.WindowsAzure.Commands.Storage.Mode
     }
 }
 
-function Upload-Resources([Microsoft.WindowsAzure.Commands.ServiceManagement.Model.StorageServicePropertiesOperationContext]$storageAccount)
+function Upload-Resources([Microsoft.WindowsAzure.Commands.Common.Storage.AzureStorageContext]$storageAccount)
 {
     Upload-ResourcesToContext $(New-AzureStorageContext -ConnectionString $(Get-ConnectionString $storageAccount))
 }
@@ -100,7 +100,7 @@ function Delete-ExistingDeployments([Parameter(Mandatory=$true)]$serviceName)
 function Deploy-TestService(
 	[Parameter(Mandatory=$true)]$testServiceName,
 	[Parameter(Mandatory=$true)]$serviceName,
-	[Microsoft.WindowsAzure.Commands.ServiceManagement.Model.StorageServicePropertiesOperationContext]$storageAccount = $null,
+	[Microsoft.WindowsAzure.Commands.Common.Storage.AzureStorageContext]$storageAccount = $null,
 	$flavor = 'Release',
 	[Switch]$upgradeInPlace)
 {
