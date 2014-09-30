@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceDefinition name="StormyKafka" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
+  <WorkerRole name="KafkaBroker" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <LocalResources>
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="250" />
+      <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
+    </LocalResources>
+    <Endpoints>
+      <InternalEndpoint name="BrokerEndpiont" protocol="tcp" port="9092" />
+    </Endpoints>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
+  </WorkerRole>
+  <WorkerRole name="ZooKeeper" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <Endpoints>
+      <InternalEndpoint name="ZooKeeperEndpoint" protocol="tcp" port="2181" />
+    </Endpoints>
+    <LocalResources>
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="250" />
+      <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
+    </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
+  </WorkerRole>
+  <WorkerRole name="Nimbus" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <LocalResources>
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="1024" />
+      <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
+    </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
+  </WorkerRole>
+  <WorkerRole name="Supervisor" vmsize="Small">
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+    <LocalResources>
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="1024" />
+      <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
+    </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
+  </WorkerRole>
+</ServiceDefinition>

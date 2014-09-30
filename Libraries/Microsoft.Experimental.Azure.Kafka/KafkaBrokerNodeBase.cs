@@ -50,6 +50,10 @@ namespace Microsoft.Experimental.Azure.Kafka
 		/// <returns>The list of IP addresses for Zoo Keeper nodes.</returns>
 		protected virtual IEnumerable<string> DiscoverZooKeeperHosts()
 		{
+			if (RoleEnvironment.IsEmulated)
+			{
+				return new[] { "localhost" };
+			}
 			return ZooKeeperRole.Instances.Select(GetIPAddress);
 		}
 

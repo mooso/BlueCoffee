@@ -98,14 +98,31 @@ namespace Microsoft.Experimental.Azure.Storm
 		/// <returns>The list of IP addresses for Zoo Keeper nodes.</returns>
 		protected virtual IEnumerable<string> DiscoverZooKeeperHosts()
 		{
+			if (RoleEnvironment.IsEmulated)
+			{
+				return new[] { "localhost" };
+			}
 			return ZooKeeperRole.Instances.Select(GetIPAddress);
+		}
+
+		/// <summary>
+		/// Get the IP address for the Nimbus node.
+		/// </summary>
+		/// <returns>Default implementation returns the first instance in the NimbusRole role.</returns>
+		protected virtual string DiscoverNimbusNode()
+		{
+			if (RoleEnvironment.IsEmulated)
+			{
+				return "localhost";
+			}
+			return NimbusRole.Instances
+					.Select(GetIPAddress)
+					.First();
 		}
 
 		private void InstallStorm()
 		{
-			var nimbus = NimbusRole.Instances
-				.Select(GetIPAddress)
-				.First();
+			var nimbus = DiscoverNimbusNode();
 			Trace.TraceInformation("Nimbus node we'll use: " + nimbus);
 			var zookeeperHosts = DiscoverZooKeeperHosts();
 			var config = new StormConfig(

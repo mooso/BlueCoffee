@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="StormyKafka" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2014-01.2.3">
+  <Role name="KafkaBroker">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
+    </ConfigurationSettings>
+  </Role>
+  <Role name="ZooKeeper">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
+    </ConfigurationSettings>
+  </Role>
+  <Role name="Nimbus">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
+    </ConfigurationSettings>
+  </Role>
+  <Role name="Supervisor">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
+    </ConfigurationSettings>
+  </Role>
+</ServiceConfiguration>
