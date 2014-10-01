@@ -1,32 +1,40 @@
 package com.microsoft.experimental.storm.test.topologies;
 
+import java.util.*;
+
 import org.slf4j.*;
 
+import storm.kafka.*;
+import storm.kafka.bolt.*;
+import storm.kafka.trident.*;
 import storm.trident.*;
-import storm.trident.operation.builtin.*;
-import storm.trident.testing.*;
 import backtype.storm.*;
 import backtype.storm.generated.*;
+import backtype.storm.topology.*;
 import backtype.storm.tuple.*;
 import backtype.storm.utils.Utils;
 
 public class Main {
 	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+	private static final String KAFKA_TOPIC_NAME = "storm";
 
 	public static void main(String[] args) throws Exception {
-		StormTopology topology = createSimpleTopology();
+		StormTopology first = createGenerateToKafkaTopology();
+		StormTopology second = createKafkaToBlobTopology(args[0]);
 		Config conf = configure(args);
-		if (args.length > 3 && args[3].equals("-local")) {
-			runLocally(topology, conf);
+		if (args.length > 4 && args[4].equals("-local")) {
+			runLocally("generate", first, conf);
+			runLocally("consume", second, conf);
 		} else {
-			runRemote(topology, conf);
+			runRemote("generate", first, conf);
+			runRemote("consume", second, conf);
 		}
 	}
 
-	private static void runRemote(StormTopology topology, Config conf) {
+	private static void runRemote(String name, StormTopology topology, Config conf) {
 		while (true) {
 			try {
-				StormSubmitter.submitTopology("test", conf, topology);
+				StormSubmitter.submitTopology(name, conf, topology);
 				return;
 			} catch (Exception ex) {
 				// I'm being this crude now because this runs when Storm is still
@@ -37,11 +45,11 @@ public class Main {
 		}
 	}
 
-	private static void runLocally(StormTopology toplogy, Config conf) {
+	private static void runLocally(String name, StormTopology toplogy, Config conf) {
 		LocalCluster cluster = new LocalCluster();
-		cluster.submitTopology("test", conf, toplogy);
+		cluster.submitTopology(name, conf, toplogy);
 		Utils.sleep(50000);
-		cluster.killTopology("test");
+		cluster.killTopology(name);
 		cluster.shutdown();
 	}
 
@@ -49,26 +57,35 @@ public class Main {
 		Config conf = new Config();
 		conf.setDebug(true);
 		conf.setNumWorkers(2);
-		conf.put(OutputToAzureBlob.CONNECTION_STRING, args[0]);
-		conf.put(OutputToAzureBlob.CONTAINER_NAME, args[1]);
-		conf.put(OutputToAzureBlob.BLOB_PREFIX, args[2]);
+		Properties props = new Properties();
+		props.put("metadata.broker.list", args[0]);
+		props.put("request.required.acks", "1");
+		props.put("serializer.class", "kafka.serializer.StringEncoder");
+		conf.put(KafkaBolt.KAFKA_BROKER_PROPERTIES, props);
+		conf.put(KafkaBolt.TOPIC, KAFKA_TOPIC_NAME);
+		conf.put(OutputToAzureBlob.CONNECTION_STRING, args[1]);
+		conf.put(OutputToAzureBlob.CONTAINER_NAME, args[2]);
+		conf.put(OutputToAzureBlob.BLOB_PREFIX, args[3]);
 		return conf;
 	}
 
-	@SuppressWarnings("unchecked")
-	private static StormTopology createSimpleTopology() {
-		FixedBatchSpout source = new FixedBatchSpout(new Fields("word"), 3,
-				new Values("just"),
-				new Values("testing"),
-				new Values("this"),
-				new Values("out"));
-		source.setCycle(true);
+	@SuppressWarnings({ "rawtypes" })
+	private static StormTopology createGenerateToKafkaTopology() {
+		TopologyBuilder builder = new TopologyBuilder();
+		builder.setSpout("source", new TestWordSpout(), 1);
+		builder.setBolt("kafka", new KafkaBolt(), 2)
+			.shuffleGrouping("source");
+		return builder.createTopology();
+	}
 
+	private static StormTopology createKafkaToBlobTopology(String kafkaBroker) {
 		TridentTopology tridentTopology = new TridentTopology();
-		tridentTopology.newStream("source", source)
-			.groupBy(new Fields("word"))
-			.aggregate(new Count(), new Fields("count"))
-			.each(new Fields("word", "count"), new OutputToAzureBlob(), new Fields());
+		GlobalPartitionInformation partitionInformation = new GlobalPartitionInformation();
+		partitionInformation.addPartition(0, Broker.fromString(kafkaBroker));
+		TridentKafkaConfig kafkaConfig = new TridentKafkaConfig(
+				new StaticHosts(partitionInformation), KAFKA_TOPIC_NAME);
+		tridentTopology.newStream("source", new OpaqueTridentKafkaSpout(kafkaConfig))
+			.each(new Fields("bytes"), new OutputToAzureBlob(), new Fields());
 
 		return tridentTopology.build();
 	}

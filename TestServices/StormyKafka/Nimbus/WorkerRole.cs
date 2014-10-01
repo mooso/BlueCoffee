@@ -26,15 +26,25 @@ namespace Nimbus
 		protected override Task StartOtherWork()
 		{
 			var uiTask = Task.Factory.StartNew(() => StormRunner.RunUI());
+			var kafkaHost = DiscoverKafkaHost();
 			var outputConnectionString = RoleEnvironment.GetConfigurationSettingValue("Output.Account.ConnectionString");
 			var outputContainerName = "fromstorm";
 			var outputBlobPrefix = "output";
 			var jarTask = Task.Factory.StartNew(() => StormRunner.RunJar(
 				className: "com.microsoft.experimental.storm.test.topologies.Main",
-				arguments: new[] { outputConnectionString, outputContainerName, outputBlobPrefix },
+				arguments: new[] { kafkaHost + ":9092", outputConnectionString, outputContainerName, outputBlobPrefix },
 				jarPath: _topologyJarPath,
 				runContinuous: false));
 			return Task.WhenAll(uiTask, jarTask);
+		}
+
+		private string DiscoverKafkaHost()
+		{
+			if (RoleEnvironment.IsEmulated)
+			{
+				return "localhost";
+			}
+			return RoleEnvironment.Roles["KafkaBroker"].Instances.Select(GetIPAddress).Single();
 		}
 
 		protected override void PostStormInstallInitialize()
