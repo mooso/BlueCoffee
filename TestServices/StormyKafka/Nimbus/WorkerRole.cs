@@ -26,8 +26,12 @@ namespace Nimbus
 		protected override Task StartOtherWork()
 		{
 			var uiTask = Task.Factory.StartNew(() => StormRunner.RunUI());
+			var outputConnectionString = RoleEnvironment.GetConfigurationSettingValue("Output.Account.ConnectionString");
+			var outputContainerName = "fromstorm";
+			var outputBlobPrefix = "output";
 			var jarTask = Task.Factory.StartNew(() => StormRunner.RunJar(
 				className: "com.microsoft.experimental.storm.test.topologies.Main",
+				arguments: new[] { outputConnectionString, outputContainerName, outputBlobPrefix },
 				jarPath: _topologyJarPath,
 				runContinuous: false));
 			return Task.WhenAll(uiTask, jarTask);

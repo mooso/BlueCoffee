@@ -43,6 +43,7 @@
     <ConfigurationSettings>
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
       <Setting name="BlueCoffee.Resources.Container.Name" />
+      <Setting name="Output.Account.ConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
       <InputEndpoint name="StormUI" protocol="tcp" port="80" localPort="8080" />
