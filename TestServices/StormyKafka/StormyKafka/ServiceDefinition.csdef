@@ -44,6 +44,10 @@
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
       <Setting name="BlueCoffee.Resources.Container.Name" />
     </ConfigurationSettings>
+    <Endpoints>
+      <InputEndpoint name="StormUI" protocol="tcp" port="80" localPort="8080" />
+      <InternalEndpoint name="All" protocol="any" />
+    </Endpoints>
   </WorkerRole>
   <WorkerRole name="Supervisor" vmsize="Small">
     <Imports>
@@ -57,5 +61,8 @@
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
       <Setting name="BlueCoffee.Resources.Container.Name" />
     </ConfigurationSettings>
+    <Endpoints>
+      <InternalEndpoint name="All" protocol="any" />
+    </Endpoints>
   </WorkerRole>
 </ServiceDefinition>

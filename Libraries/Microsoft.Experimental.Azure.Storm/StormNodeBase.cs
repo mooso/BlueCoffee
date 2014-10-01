@@ -35,18 +35,35 @@ namespace Microsoft.Experimental.Azure.Storm
 		protected abstract bool IsNimbus { get; }
 
 		/// <summary>
+		/// The Storm runner we're using.
+		/// </summary>
+		protected StormRunner StormRunner { get { return _stormRunner; } }
+
+		/// <summary>
 		/// Override GuardedRun to run Storm.
 		/// </summary>
 		protected sealed override void GuardedRun()
 		{
+			Task stormTask;
 			if (IsNimbus)
 			{
-				_stormRunner.RunNimbus();
+				stormTask = Task.Factory.StartNew(() => _stormRunner.RunNimbus());
 			}
 			else
 			{
-				_stormRunner.RunSupervisor();
+				stormTask = Task.Factory.StartNew(() => _stormRunner.RunSupervisor());
 			}
+			var otherTask = StartOtherWork();
+			Task.WaitAll(otherTask, stormTask);
+		}
+
+		/// <summary>
+		/// Optional method to start any tasks that will run in parallel with Storm on this node.
+		/// </summary>
+		/// <returns></returns>
+		protected virtual Task StartOtherWork()
+		{
+			return Task.FromResult(0);
 		}
 
 		/// <summary>
@@ -55,7 +72,14 @@ namespace Microsoft.Experimental.Azure.Storm
 		protected sealed override void PostJavaInstallInitialize()
 		{
 			InstallStorm();
+			PostStormInstallInitialize();
 		}
+
+		/// <summary>
+		/// Optional method to do any initialization after installing Storm.
+		/// </summary>
+		protected virtual void PostStormInstallInitialize()
+		{ }
 
 		/// <summary>
 		/// The Azure role for nimbus, defaults to the role named Nimbus.
@@ -120,6 +144,11 @@ namespace Microsoft.Experimental.Azure.Storm
 					.First();
 		}
 
+		/// <summary>
+		/// The Storm home directory.
+		/// </summary>
+		protected string StormHomeDirectory { get { return Path.Combine(InstallDirectory, "Storm"); } }
+
 		private void InstallStorm()
 		{
 			var nimbus = DiscoverNimbusNode();
@@ -133,7 +162,7 @@ namespace Microsoft.Experimental.Azure.Storm
 				maxNodeMemoryMb: MachineTotalMemoryMb - 512);
 			_stormRunner = new StormRunner(
 				resourceFileDirectory: GetResourcesDirectory(StormDirectory),
-				stormHomeDirectory: Path.Combine(InstallDirectory, "Storm"),
+				stormHomeDirectory: StormHomeDirectory,
 				javaHome: JavaHome,
 				logsDirectory: Path.Combine(DataDirectory, "Logs"),
 				config: config);

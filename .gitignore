@@ -134,3 +134,18 @@ FinalPackages/
 # Big zip file we merge on the spot
 Libraries/Microsoft.Experimental.Azure.Spark/Resources/Jars.zip
 
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Eclipse Files #
+java/.settings/*
+.classpath
+.project
+
+#Build target
+java/target/*
+dependency-reduced-pom.xml
