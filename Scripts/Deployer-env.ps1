@@ -50,14 +50,32 @@ function Discover-Accounts($serviceName)
 	Discover-AccountsForLocation $service.Location
 }
 
-function Get-ConnectionString([Microsoft.WindowsAzure.Commands.Common.Storage.AzureStorageContext]$storageAccount)
+function Contextify-Account($storageAccount)
 {
-	$key = Get-AzureStorageKey $storageAccount.StorageAccountName
-	"DefaultEndpointsProtocol=https;AccountName=$($storageAccount.StorageAccountName);AccountKey=$($key.Primary)"
+    if ($storageAccount -is [String] -or $storageAccount -is [Microsoft.WindowsAzure.Commands.ServiceManagement.Model.StorageServicePropertiesOperationContext])
+    {
+        $storageAccount = New-AzureStorageContext -ConnectionString $(Get-ConnectionString $storageAccount)
+    }
+    return $storageAccount
 }
 
-function Upload-ResourcesToContext([Microsoft.WindowsAzure.Commands.Common.Storage.AzureStorageContext]$storageContext)
+function Get-ConnectionString($storageAccount)
 {
+    if ($storageAccount -is [String])
+    {
+        $storageAccountName = $storageAccount
+    }
+    else
+    {
+	    $storageAccountName = $storageAccount.StorageAccountName
+    }
+    $key = Get-AzureStorageKey $storageAccountName
+	"DefaultEndpointsProtocol=https;AccountName=$storageAccountName;AccountKey=$($key.Primary)"
+}
+
+function Upload-ResourcesToContext($storageContext)
+{
+    $storageContext = Contextify-Account $storageContext
 	Write-Host "Uploading resources..."
     $container = 'bluecoffeeresources'
     $containerReference = New-AzureStorageContainer -Name $container -Context $storageContext -ErrorAction SilentlyContinue
@@ -78,9 +96,10 @@ function Upload-ResourcesToContext([Microsoft.WindowsAzure.Commands.Common.Stora
     }
 }
 
-function Upload-Resources([Microsoft.WindowsAzure.Commands.Common.Storage.AzureStorageContext]$storageAccount)
+function Upload-Resources($storageAccount)
 {
-    Upload-ResourcesToContext $(New-AzureStorageContext -ConnectionString $(Get-ConnectionString $storageAccount))
+    $storageAccount = Contextify-Account $storageAccount
+    Upload-ResourcesToContext $storageAccount
 }
 
 function Upload-ResourcesToLocal()
@@ -100,7 +119,7 @@ function Delete-ExistingDeployments([Parameter(Mandatory=$true)]$serviceName)
 function Deploy-TestService(
 	[Parameter(Mandatory=$true)]$testServiceName,
 	[Parameter(Mandatory=$true)]$serviceName,
-	[Microsoft.WindowsAzure.Commands.Common.Storage.AzureStorageContext]$storageAccount = $null,
+	$storageAccount = $null,
 	$flavor = 'Release',
 	[Switch]$upgradeInPlace)
 {
@@ -114,6 +133,7 @@ function Deploy-TestService(
 		Write-Host "Discovering storage account..."
 		$storageAccount = $(Discover-Accounts $serviceName)[0]
 	}
+    $storageAccount = Contextify-Account $storageAccount
     Upload-Resources $storageAccount
 	Write-Host "Constructing connection string..."
 	$connectionString = Get-ConnectionString $storageAccount
