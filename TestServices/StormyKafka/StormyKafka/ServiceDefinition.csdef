@@ -15,6 +15,9 @@
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
       <Setting name="BlueCoffee.Resources.Container.Name" />
     </ConfigurationSettings>
+    <Startup>
+      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
+    </Startup>
   </WorkerRole>
   <WorkerRole name="ZooKeeper" vmsize="Small">
     <Imports>
@@ -31,6 +34,9 @@
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
       <Setting name="BlueCoffee.Resources.Container.Name" />
     </ConfigurationSettings>
+    <Startup>
+      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
+    </Startup>
   </WorkerRole>
   <WorkerRole name="Nimbus" vmsize="Small">
     <Imports>
@@ -49,6 +55,9 @@
       <InputEndpoint name="StormUI" protocol="tcp" port="80" localPort="8080" />
       <InternalEndpoint name="All" protocol="any" />
     </Endpoints>
+    <Startup>
+      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
+    </Startup>
   </WorkerRole>
   <WorkerRole name="Supervisor" vmsize="Small">
     <Imports>
@@ -65,5 +74,8 @@
     <Endpoints>
       <InternalEndpoint name="All" protocol="any" />
     </Endpoints>
+    <Startup>
+      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
+    </Startup>
   </WorkerRole>
 </ServiceDefinition>

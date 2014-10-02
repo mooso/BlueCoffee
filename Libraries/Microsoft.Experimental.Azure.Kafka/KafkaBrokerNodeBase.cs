@@ -34,13 +34,13 @@ namespace Microsoft.Experimental.Azure.Kafka
 		protected virtual int ZooKeeperPort { get { return 2181; } }
 
 		/// <summary>
-		/// The Azure role for the Zoo Keeper nodes. Defaults to the role "ZooKeeperNode".
+		/// The Azure role for the Zoo Keeper nodes. Defaults to the role "ZooKeeperNode" or "ZooKeeper".
 		/// </summary>
 		protected virtual Role ZooKeeperRole
 		{
 			get
 			{
-				return RoleEnvironment.Roles["ZooKeeperNode"];
+				return GetRole("ZooKeeperNode", "ZooKeeper");
 			}
 		}
 

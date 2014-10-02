@@ -148,6 +148,27 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 					.UploadText(ex.ToString());
 		}
 
+		/// <summary>
+		/// Gets a Role from the RoleEnvironment that has any of the given name alternatives.
+		/// </summary>
+		/// <param name="alternativeNames">The possible names for the role.</param>
+		/// <returns>The Role. Throws if not found.</returns>
+		protected Role GetRole(params string[] alternativeNames)
+		{
+			foreach (var name in alternativeNames)
+			{
+				Role obtainedRole;
+				if (RoleEnvironment.Roles.TryGetValue(name, out obtainedRole))
+				{
+					return obtainedRole;
+				}
+			}
+			throw new InvalidOperationException(String.Format(
+				"Unable to find role ({{0}) in the role environment. Available roles: {1}",
+				String.Join(",", alternativeNames),
+				RoleEnvironment.Roles.Keys));
+		}
+
 		private void DownloadResources()
 		{
 			_rootResourcesDirectory = Path.Combine(InstallDirectory, "Resources");
