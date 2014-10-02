@@ -19,6 +19,7 @@ namespace Microsoft.Experimental.Azure.Storm.Tests
 		private const string JavaHome = @"C:\Program Files\Java\jdk1.7.0_21";
 
 		[TestMethod]
+		[Ignore]
 		public void RunStormClusterTest()
 		{
 			var tempDirectory = @"C:\StormTestOutput";
