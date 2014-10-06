@@ -52,7 +52,7 @@
       <Setting name="Output.Account.ConnectionString" />
     </ConfigurationSettings>
     <Endpoints>
-      <InputEndpoint name="StormUI" protocol="tcp" port="80" localPort="8080" />
+      <InputEndpoint name="StormUI" protocol="tcp" port="8080" localPort="8080" />
       <InternalEndpoint name="All" protocol="any" />
     </Endpoints>
     <Startup>
@@ -78,4 +78,19 @@
       <Task commandLine="AllowAllPorts.cmd" executionContext="elevated" />
     </Startup>
   </WorkerRole>
+  <WebRole name="StormDrpcWebUI" vmsize="Small">
+    <Sites>
+      <Site name="Web">
+        <Bindings>
+          <Binding name="Endpoint1" endpointName="Endpoint1" />
+        </Bindings>
+      </Site>
+    </Sites>
+    <Endpoints>
+      <InputEndpoint name="Endpoint1" protocol="http" port="80" />
+    </Endpoints>
+    <Imports>
+      <Import moduleName="Diagnostics" />
+    </Imports>
+  </WebRole>
 </ServiceDefinition>

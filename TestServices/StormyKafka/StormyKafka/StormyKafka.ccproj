@@ -37,6 +37,14 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\StormDrpcWebUI\StormDrpcWebUI.csproj">
+      <Name>StormDrpcWebUI</Name>
+      <Project>{07c6e7c9-4ec6-4476-b3c4-111c9313d4e5}</Project>
+      <Private>True</Private>
+      <RoleType>Web</RoleType>
+      <RoleName>StormDrpcWebUI</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\KafkaBroker\KafkaBroker.csproj">
       <Name>KafkaBroker</Name>
       <Project>{7207d0dc-012a-4264-945a-a634b2af0e2d}</Project>
@@ -73,6 +81,7 @@
   <ItemGroup>
     <Folder Include="KafkaBrokerContent\" />
     <Folder Include="NimbusContent\" />
+    <Folder Include="StormDrpcWebUIContent\" />
     <Folder Include="SupervisorContent\" />
     <Folder Include="ZooKeeperContent\" />
   </ItemGroup>
@@ -81,6 +90,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="NimbusContent\diagnostics.wadcfg">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="StormDrpcWebUIContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
     <Content Include="SupervisorContent\diagnostics.wadcfg">

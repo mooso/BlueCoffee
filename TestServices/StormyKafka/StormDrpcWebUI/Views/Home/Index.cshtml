@@ -1,0 +1,40 @@
+﻿@model StormDrpcWebUI.Models.StormDrpcQuery
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>DRPC Querying</h1>
+    <p class="lead">Query the Storm DRPC here.</p>
+</div>
+
+<div class="row">
+    @using (Html.BeginForm("Query", "Home", FormMethod.Post))
+    {
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <div class="form-group">
+                @Html.LabelFor(m => m.QueryWords, new { @class = "col-md-3 control-label" })
+                <div class="col-md-5">
+                    @Html.TextBoxFor(m => m.QueryWords, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.QueryWords, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="submit" value="Query" class="btn btn-default" />
+                </div>
+            </div>
+        </fieldset>
+    }
+</div>
+@if (Model != null && Model.QueryResult.HasValue)
+{
+    <div class="row">
+        <div class="col-md-5 col-md-offset-1">
+            <p class="text-primary" style="font-size:large">@Model.QueryResult</p>
+        </div>
+    </div>
+}
+    

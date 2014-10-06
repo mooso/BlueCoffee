@@ -33,4 +33,10 @@
       <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
     </ConfigurationSettings>
   </Role>
+  <Role name="StormDrpcWebUI">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+    </ConfigurationSettings>
+  </Role>
 </ServiceConfiguration>
