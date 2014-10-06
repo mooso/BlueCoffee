@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ServiceDefinition name="ElectricBlobs" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-01.2.3">
+<ServiceDefinition name="ElectricBlobs" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-06.2.4">
   <WorkerRole name="SparkMaster" vmsize="Small">
     <Imports>
       <Import moduleName="Diagnostics" />
@@ -13,7 +13,7 @@
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
     </LocalResources>
     <Startup>
-      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
+      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated" />
     </Startup>
     <ConfigurationSettings>
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
@@ -31,7 +31,7 @@
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
     </LocalResources>
     <Startup>
-      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
+      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated" />
     </Startup>
     <ConfigurationSettings>
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
@@ -50,7 +50,7 @@
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
     </LocalResources>
     <Startup>
-      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated"/>
+      <Task commandLine="AllowAllPorts.cmd" executionContext="elevated" />
     </Startup>
     <ConfigurationSettings>
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
