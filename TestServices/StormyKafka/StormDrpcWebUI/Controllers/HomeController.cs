@@ -18,7 +18,7 @@ namespace StormDrpcWebUI.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				model.QueryResult = 5; // Stub for now, will fill.
+				model.QueryResult = DrpcQuery.Instance.GetWordCount(model.QueryWords);
 				return View("Index", model);
 			}
 			return View("Index", model);

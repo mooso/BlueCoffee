@@ -92,5 +92,12 @@
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
+    <LocalResources>
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="1024" />
+    </LocalResources>
+    <ConfigurationSettings>
+      <Setting name="BlueCoffee.Resources.Account.ConnectionString" />
+      <Setting name="BlueCoffee.Resources.Container.Name" />
+    </ConfigurationSettings>
   </WebRole>
 </ServiceDefinition>
