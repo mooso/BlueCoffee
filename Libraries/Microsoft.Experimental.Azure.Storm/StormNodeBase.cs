@@ -30,9 +30,9 @@ namespace Microsoft.Experimental.Azure.Storm
 		}
 
 		/// <summary>
-		/// true for nimbus, false for supervisors.
+		/// The type of work this node is doing.
 		/// </summary>
-		protected abstract bool IsNimbus { get; }
+		protected abstract StormNodeType NodeType { get; }
 
 		/// <summary>
 		/// The Storm runner we're using.
@@ -45,13 +45,35 @@ namespace Microsoft.Experimental.Azure.Storm
 		protected sealed override void GuardedRun()
 		{
 			Task stormTask;
-			if (IsNimbus)
+			switch (NodeType)
 			{
-				stormTask = Task.Factory.StartNew(() => _stormRunner.RunNimbus());
-			}
-			else
-			{
-				stormTask = Task.Factory.StartNew(() => _stormRunner.RunSupervisor());
+				case StormNodeType.Nimbus:
+					stormTask = Task.Factory.StartNew(() => _stormRunner.RunNimbus());
+					break;
+				case StormNodeType.Supervisor:
+					stormTask = Task.Factory.StartNew(() => _stormRunner.RunSupervisor());
+					break;
+				case StormNodeType.UI:
+					stormTask = Task.Factory.StartNew(() => _stormRunner.RunUI());
+					break;
+				case StormNodeType.Drpc:
+					stormTask = Task.Factory.StartNew(() => _stormRunner.RunDrpc());
+					break;
+				case StormNodeType.NimbusWithUI:
+					stormTask = Task.WhenAll(
+						Task.Factory.StartNew(() => _stormRunner.RunNimbus()),
+						Task.Factory.StartNew(() => _stormRunner.RunUI()));
+					break;
+				case StormNodeType.SupervisorWithDrpc:
+					stormTask = Task.WhenAll(
+						Task.Factory.StartNew(() => _stormRunner.RunSupervisor()),
+						Task.Factory.StartNew(() => _stormRunner.RunDrpc()));
+					break;
+				case StormNodeType.Custom:
+					stormTask = Task.FromResult(0);
+					break;
+				default:
+					throw new InvalidOperationException("Unknown storm node type: " + NodeType);
 			}
 			var otherTask = StartOtherWork();
 			Task.WaitAll(otherTask, stormTask);
@@ -89,6 +111,28 @@ namespace Microsoft.Experimental.Azure.Storm
 			get
 			{
 				return RoleEnvironment.Roles["Nimbus"];
+			}
+		}
+
+		/// <summary>
+		/// The Azure role for the DRPC server.
+		/// Defaults to either the role named StormDrpc or Supervisor if either exist, otherwise null.
+		/// Can be null if this Storm cluster won't have DRPC servers.
+		/// </summary>
+		protected virtual Role DrpcRole
+		{
+			get
+			{
+				Role drpcRole;
+				if (RoleEnvironment.Roles.TryGetValue("StormDrpc", out drpcRole) ||
+					RoleEnvironment.Roles.TryGetValue("Supervisor", out drpcRole))
+				{
+					return drpcRole;
+				}
+				else
+				{
+					return null;
+				}
 			}
 		}
 
@@ -145,6 +189,24 @@ namespace Microsoft.Experimental.Azure.Storm
 		}
 
 		/// <summary>
+		/// Get the IP address for the DRPC nodes if they exist.
+		/// </summary>
+		/// <returns>Default implementation returns all the instances in the DrpcRole role if it's not null.</returns>
+		protected virtual IEnumerable<string> DiscoverDrpcNodes()
+		{
+			if (DrpcRole == null)
+			{
+				return null;
+			}
+			if (RoleEnvironment.IsEmulated)
+			{
+				return new[] { "localhost" };
+			}
+			return DrpcRole.Instances
+					.Select(GetIPAddress);
+		}
+
+		/// <summary>
 		/// The Storm home directory.
 		/// </summary>
 		protected string StormHomeDirectory { get { return Path.Combine(InstallDirectory, "Storm"); } }
@@ -157,6 +219,7 @@ namespace Microsoft.Experimental.Azure.Storm
 			var config = new StormConfig(
 				stormLocalDirectory: Path.Combine(DataDirectory, "storm-local"),
 				nimbusHost: nimbus,
+				drpcServers: DiscoverDrpcNodes(),
 				zooKeeperServers: zookeeperHosts,
 				zooKeeperPort: ZooKeeperPort,
 				maxNodeMemoryMb: MachineTotalMemoryMb - 512);

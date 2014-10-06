@@ -89,6 +89,17 @@ namespace Microsoft.Experimental.Azure.Storm
 		}
 
 		/// <summary>
+		/// Run Storm DRPC server.
+		/// </summary>
+		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>
+		/// <param name="monitor">Optional process monitor.</param>
+		public void RunDrpc(bool runContinuous = true, ProcessMonitor monitor = null)
+		{
+			const string className = "backtype.storm.daemon.drpc";
+			RunClass(runContinuous, className, monitor: monitor);
+		}
+
+		/// <summary>
 		/// Run Storm UI.
 		/// </summary>
 		/// <param name="runContinuous">If set, this method will keep restarting the node whenver it exits and will never return.</param>

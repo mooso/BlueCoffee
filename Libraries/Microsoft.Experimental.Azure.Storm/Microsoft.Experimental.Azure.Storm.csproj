@@ -61,6 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StormConfig.cs" />
     <Compile Include="StormNodeBase.cs" />
+    <Compile Include="StormNodeType.cs" />
     <Compile Include="StormRunner.cs" />
   </ItemGroup>
   <ItemGroup>

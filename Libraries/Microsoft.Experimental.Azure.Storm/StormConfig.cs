@@ -17,6 +17,7 @@ namespace Microsoft.Experimental.Azure.Storm
 		private readonly int _maxNodeMemoryMb;
 		private readonly string _nimbusHost;
 		private readonly ImmutableList<string> _zooKeeperServers;
+		private readonly ImmutableList<string> _drpcServers;
 		private readonly int _zooKeeperPort;
 		private readonly string _stormLocalDirectory;
 
@@ -26,15 +27,18 @@ namespace Microsoft.Experimental.Azure.Storm
 		/// <param name="nimbusHost">The host where Nimbus is running.</param>
 		/// <param name="zooKeeperServers">The names of ZooKeeper hosts.</param>
 		/// <param name="zooKeeperPort">The port ZooKeeper nodes are listening on.</param>
+		/// <param name="drpcServers">The list of DRPC servers available to use (defaults to null/empty).</param>
 		/// <param name="maxNodeMemoryMb">Maximum amount of memory used by the Storm node.</param>
 		/// <param name="stormLocalDirectory">storm.local.dir, where Storm stores its data.</param>
 		public StormConfig(string nimbusHost,
 				IEnumerable<string> zooKeeperServers, int zooKeeperPort = 2181,
+				IEnumerable<string> drpcServers = null,
 				int maxNodeMemoryMb = 2048, string stormLocalDirectory = "storm-local")
 		{
 			_nimbusHost = nimbusHost;
 			_zooKeeperServers = zooKeeperServers.ToImmutableList();
 			_zooKeeperPort = zooKeeperPort;
+			_drpcServers = (drpcServers ?? Enumerable.Empty<string>()).ToImmutableList();
 			_maxNodeMemoryMb = maxNodeMemoryMb;
 			_stormLocalDirectory = stormLocalDirectory;
 		}
@@ -53,6 +57,11 @@ namespace Microsoft.Experimental.Azure.Storm
 		/// The port ZooKeeper nodes are listening on.
 		/// </summary>
 		public int ZooKeeperPort { get { return _zooKeeperPort; } }
+
+		/// <summary>
+		/// The names of the DRPC server hosts.
+		/// </summary>
+		public ImmutableList<string> DrpcServers { get { return _drpcServers; } }
 
 		/// <summary>
 		/// Maximum amount of memory used by the Storm node.
@@ -76,6 +85,7 @@ namespace Microsoft.Experimental.Azure.Storm
 				{ "storm.zookeeper.servers", _zooKeeperServers.ToArray() },
 				{ "nimbus.host", _nimbusHost },
 				{ "storm.local.dir", _stormLocalDirectory.Replace('\\', '/') },
+				{ "drpc.servers", _drpcServers.ToArray() },
 			});
 		}
 	}

@@ -18,14 +18,13 @@ namespace Nimbus
 	{
 		private string _topologyJarPath;
 
-		protected override bool IsNimbus
+		protected override StormNodeType NodeType
 		{
-			get { return true; }
+			get { return StormNodeType.NimbusWithUI; }
 		}
 
 		protected override Task StartOtherWork()
 		{
-			var uiTask = Task.Factory.StartNew(() => StormRunner.RunUI());
 			var kafkaHost = DiscoverKafkaHost();
 			var outputConnectionString = RoleEnvironment.GetConfigurationSettingValue("Output.Account.ConnectionString");
 			var outputContainerName = "fromstorm";
@@ -35,7 +34,7 @@ namespace Nimbus
 				arguments: new[] { kafkaHost + ":9092", outputConnectionString, outputContainerName, outputBlobPrefix },
 				jarPath: _topologyJarPath,
 				runContinuous: false));
-			return Task.WhenAll(uiTask, jarTask);
+			return jarTask;
 		}
 
 		private string DiscoverKafkaHost()

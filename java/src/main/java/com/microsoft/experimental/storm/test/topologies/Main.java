@@ -8,6 +8,14 @@ import storm.kafka.*;
 import storm.kafka.bolt.*;
 import storm.kafka.trident.*;
 import storm.trident.*;
+import storm.trident.operation.*;
+import storm.trident.operation.builtin.Count;
+import storm.trident.operation.builtin.FilterNull;
+import storm.trident.operation.builtin.MapGet;
+import storm.trident.operation.builtin.Sum;
+import storm.trident.testing.MemoryMapState;
+import storm.trident.testing.Split;
+import storm.trident.tuple.*;
 import backtype.storm.*;
 import backtype.storm.generated.*;
 import backtype.storm.topology.*;
@@ -19,22 +27,28 @@ public class Main {
 	private static final String KAFKA_TOPIC_NAME = "storm";
 
 	public static void main(String[] args) throws Exception {
-		StormTopology first = createGenerateToKafkaTopology();
-		StormTopology second = createKafkaToBlobTopology(args[0]);
+		boolean runLocal = args.length > 4 && args[4].equals("-local");
+		LocalDRPC drpc = null;
+		if (runLocal) {
+			drpc = new LocalDRPC();
+		}
+		StormTopology generator = createGenerateToKafkaTopology();
+		StormTopology consumerToBlob = createKafkaToBlobTopology(args[0]);
+		StormTopology consumerToDrpc = createKafkaToDrpcTopology(args[0], drpc);
 		Config conf = configure(args);
-		if (args.length > 4 && args[4].equals("-local")) {
-			runLocally("generate", first, conf);
-			runLocally("consume", second, conf);
+		if (runLocal) {
+			runLocally(conf, generator, consumerToBlob, consumerToDrpc);
 		} else {
-			runRemote("generate", first, conf);
-			runRemote("consume", second, conf);
+			runRemote(conf, generator, consumerToBlob, consumerToDrpc);
 		}
 	}
 
-	private static void runRemote(String name, StormTopology topology, Config conf) {
+	private static void runRemote(Config conf, StormTopology... topologies) {
 		while (true) {
 			try {
-				StormSubmitter.submitTopology(name, conf, topology);
+				for (int i = 0; i < topologies.length; i++) {
+					StormSubmitter.submitTopology("" + i, conf, topologies[i]);
+				}
 				return;
 			} catch (Exception ex) {
 				// I'm being this crude now because this runs when Storm is still
@@ -45,11 +59,15 @@ public class Main {
 		}
 	}
 
-	private static void runLocally(String name, StormTopology toplogy, Config conf) {
+	private static void runLocally(Config conf, StormTopology... topologies) {
 		LocalCluster cluster = new LocalCluster();
-		cluster.submitTopology(name, conf, toplogy);
+		for (int i = 0; i < topologies.length; i++) {
+			cluster.submitTopology("" + i, conf, topologies[i]);
+		}
 		Utils.sleep(50000);
-		cluster.killTopology(name);
+		for (int i = 0; i < topologies.length; i++) {
+			cluster.killTopology("" + i);
+		}
 		cluster.shutdown();
 	}
 
@@ -80,12 +98,44 @@ public class Main {
 
 	private static StormTopology createKafkaToBlobTopology(String kafkaBroker) {
 		TridentTopology tridentTopology = new TridentTopology();
+		Stream kafkaStream = createKafkaTridentStream(kafkaBroker,
+				tridentTopology);
+		kafkaStream.each(new Fields("bytes"), new OutputToAzureBlob(), new Fields());
+
+		return tridentTopology.build();
+	}
+
+	private static Stream createKafkaTridentStream(String kafkaBroker,
+			TridentTopology tridentTopology) {
 		GlobalPartitionInformation partitionInformation = new GlobalPartitionInformation();
 		partitionInformation.addPartition(0, Broker.fromString(kafkaBroker));
 		TridentKafkaConfig kafkaConfig = new TridentKafkaConfig(
 				new StaticHosts(partitionInformation), KAFKA_TOPIC_NAME);
-		tridentTopology.newStream("source", new OpaqueTridentKafkaSpout(kafkaConfig))
-			.each(new Fields("bytes"), new OutputToAzureBlob(), new Fields());
+		return tridentTopology.newStream("source", new OpaqueTridentKafkaSpout(kafkaConfig));
+	}
+
+	private static StormTopology createKafkaToDrpcTopology(String kafkaBroker, LocalDRPC drpc) {
+		TridentTopology tridentTopology = new TridentTopology();
+		Stream kafkaStream = createKafkaTridentStream(kafkaBroker,
+				tridentTopology);
+		TridentState wordCounts = kafkaStream
+			.each(new Fields("bytes"), new BaseFunction() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void execute(TridentTuple tuple, TridentCollector collector) {
+					collector.emit(new Values(new String(tuple.getBinary(0))));
+				}
+			}, new Fields("word"))
+		       .groupBy(new Fields("word"))
+		       .persistentAggregate(new MemoryMapState.Factory(), new Count(), new Fields("count"))
+		       .parallelismHint(6);
+		tridentTopology.newDRPCStream("words", drpc)
+	       .each(new Fields("args"), new Split(), new Fields("word"))
+	       .groupBy(new Fields("word"))
+	       .stateQuery(wordCounts, new Fields("word"), new MapGet(), new Fields("count"))
+	       .each(new Fields("count"), new FilterNull())
+	       .aggregate(new Fields("count"), new Sum(), new Fields("sum"));
 
 		return tridentTopology.build();
 	}

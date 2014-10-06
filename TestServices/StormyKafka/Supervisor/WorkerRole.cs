@@ -15,9 +15,9 @@ namespace Supervisor
 {
 	public class WorkerRole : StormNodeBase
 	{
-		protected override bool IsNimbus
+		protected override StormNodeType NodeType
 		{
-			get { return false; }
+			get { return StormNodeType.SupervisorWithDrpc; }
 		}
 	}
 }
