@@ -9,12 +9,8 @@ import storm.kafka.bolt.*;
 import storm.kafka.trident.*;
 import storm.trident.*;
 import storm.trident.operation.*;
-import storm.trident.operation.builtin.Count;
-import storm.trident.operation.builtin.FilterNull;
-import storm.trident.operation.builtin.MapGet;
-import storm.trident.operation.builtin.Sum;
-import storm.trident.testing.MemoryMapState;
-import storm.trident.testing.Split;
+import storm.trident.operation.builtin.*;
+import storm.trident.testing.*;
 import storm.trident.tuple.*;
 import backtype.storm.*;
 import backtype.storm.generated.*;
@@ -32,40 +28,45 @@ public class Main {
 		if (runLocal) {
 			drpc = new LocalDRPC();
 		}
-		StormTopology generator = createGenerateToKafkaTopology();
-		StormTopology consumerToBlob = createKafkaToBlobTopology(args[0]);
-		StormTopology consumerToDrpc = createKafkaToDrpcTopology(args[0], drpc);
+		List<StormTopology> topologies = new ArrayList<StormTopology>();
+		topologies.add(createGenerateToKafkaTopology());
+		if (Arrays.asList(args).contains("-toBlob")) {
+			topologies.add(createKafkaToBlobTopology(args[0]));
+		}
+		topologies.add(createKafkaToDrpcTopology(args[0], drpc));
 		Config conf = configure(args);
 		if (runLocal) {
-			runLocally(conf, generator, consumerToBlob, consumerToDrpc);
+			runLocally(conf, topologies);
 		} else {
-			runRemote(conf, generator, consumerToBlob, consumerToDrpc);
+			runRemote(conf, topologies);
 		}
 	}
 
-	private static void runRemote(Config conf, StormTopology... topologies) {
+	private static void runRemote(Config conf, List<StormTopology> topologies)
+			throws InterruptedException {
 		while (true) {
 			try {
-				for (int i = 0; i < topologies.length; i++) {
-					StormSubmitter.submitTopology("" + i, conf, topologies[i]);
+				for (int i = 0; i < topologies.size(); i++) {
+					StormSubmitter.submitTopology("" + i, conf, topologies.get(i));
 				}
 				return;
 			} catch (Exception ex) {
 				// I'm being this crude now because this runs when Storm is still
 				// setting up, so it's the fast-and-easy way I have to wait until Storm
 				// is ready to accept my requests.
-				LOG.error("Error submitting topology. Retrying.", ex);
+				LOG.error("Error submitting topology. Retrying in 1 second.", ex);
+				Thread.sleep(1000);
 			}
 		}
 	}
 
-	private static void runLocally(Config conf, StormTopology... topologies) {
+	private static void runLocally(Config conf, List<StormTopology> topologies) {
 		LocalCluster cluster = new LocalCluster();
-		for (int i = 0; i < topologies.length; i++) {
-			cluster.submitTopology("" + i, conf, topologies[i]);
+		for (int i = 0; i < topologies.size(); i++) {
+			cluster.submitTopology("" + i, conf, topologies.get(i));
 		}
 		Utils.sleep(50000);
-		for (int i = 0; i < topologies.length; i++) {
+		for (int i = 0; i < topologies.size(); i++) {
 			cluster.killTopology("" + i);
 		}
 		cluster.shutdown();
