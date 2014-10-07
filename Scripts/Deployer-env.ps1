@@ -160,6 +160,7 @@ function Deploy-TestService(
 
 function BuildAndDeploy([Parameter(Mandatory=$true)]$testServiceName,
 	[Parameter(Mandatory=$true)]$serviceName,
+	$storageAccount = $null,
 	[Switch]$upgradeInPlace)
 {
 	Trap
@@ -169,6 +170,6 @@ function BuildAndDeploy([Parameter(Mandatory=$true)]$testServiceName,
 	Build-TestService $testServiceName
 	if ($LASTEXITCODE -eq 0)
 	{
-		Deploy-TestService $testServiceName $serviceName -upgradeInPlace:$upgradeInPlace
+		Deploy-TestService $testServiceName $serviceName -storageAccount $storageAccount -upgradeInPlace:$upgradeInPlace
 	}
 }
