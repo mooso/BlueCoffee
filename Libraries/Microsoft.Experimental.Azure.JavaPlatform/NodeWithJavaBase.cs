@@ -15,9 +15,8 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 	/// </summary>
 	public abstract class NodeWithJavaBase : RoleEntryPoint
 	{
-		private JavaInstaller _javaInstaller;
+		private JavaAzureInstaller _javaInstaller;
 		private const string JavaPlatformDirectory = "JavaPlatform";
-		private string _rootResourcesDirectory;
 
 		/// <summary>
 		/// Overrides the Run() method to do the run logic while always logging exceptions before rethrowing them.
@@ -43,8 +42,9 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		{
 			try
 			{
-				DownloadResources();
-				InstallJava();
+				_javaInstaller = CreateJavaInstaller();
+				_javaInstaller.DownloadResources(ResourceDirectoriesToDownload);
+				_javaInstaller.InstallJava();
 				PostJavaInstallInitialize();
 			}
 			catch (Exception ex)
@@ -62,6 +62,15 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		{ }
 
 		/// <summary>
+		/// Create a new Java Azure Installer to use.
+		/// </summary>
+		/// <returns>The installer.</returns>
+		protected virtual JavaAzureInstaller CreateJavaInstaller()
+		{
+			return new JavaAzureInstaller();
+		}
+
+		/// <summary>
 		/// Run the actual logic of the role (if exceptions are thrown they will be logged first before rethrowing).
 		/// </summary>
 		protected abstract void GuardedRun();
@@ -70,6 +79,22 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		/// The directory where Java was installed.
 		/// </summary>
 		protected string JavaHome { get { return _javaInstaller.JavaHome; } }
+
+		/// <summary>
+		/// The Install directory from the JavaInstaller.
+		/// </summary>
+		protected string InstallDirectory { get { return _javaInstaller.InstallDirectory; } }
+
+		/// <summary>
+		/// Gets the resources directory for the given component.
+		/// </summary>
+		/// <param name="componentName">The component (directory name) for which we want resources.
+		/// It should've been included in <see cref="ResourceDirectoriesToDownload"/>.</param>
+		/// <returns>The local directory where the component's resources are located.</returns>
+		public string GetResourcesDirectory(string componentName)
+		{
+			return _javaInstaller.GetResourcesDirectory(componentName);
+		}
 
 		/// <summary>
 		/// Helper method to get the IP address of a given role instanace that exposes at least one internal endpoint.
@@ -82,26 +107,6 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		}
 
 		/// <summary>
-		/// The install directory to put Java in. By default we assume the existence of local resource called "InstallDirectory"
-		/// that we use.
-		/// </summary>
-		protected virtual string InstallDirectory
-		{
-			get { return RoleEnvironment.GetLocalResource("InstallDirectory").RootPath; }
-		}
-
-		/// <summary>
-		/// Gets the resources directory for hte given component.
-		/// </summary>
-		/// <param name="componentName">The component (directory name) for which we want resources.
-		/// It should've been included in <see cref="ResourceDirectoriesToDownload"/>.</param>
-		/// <returns>The local directory where the component's resources are located.</returns>
-		protected string GetResourcesDirectory(string componentName)
-		{
-			return Path.Combine(_rootResourcesDirectory, componentName);
-		}
-
-		/// <summary>
 		/// The resource directories to download. By default it's just JavaPlatform.
 		/// </summary>
 		protected virtual IEnumerable<string> ResourceDirectoriesToDownload
@@ -110,26 +115,6 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 			{
 				yield return JavaPlatformDirectory;
 			}
-		}
-
-		/// <summary>
-		/// Gets the container that has all the resource files for the components used in this node.
-		/// </summary>
-		/// <returns>The container reference.</returns>
-		/// <remarks>
-		/// By default we get it using the connection string and container name specified in the role
-		/// settings:
-		/// "BlueCoffee.Resources.Account.ConnectionString" and
-		/// "BlueCoffee.Resources.Container.Name".
-		/// </remarks>
-		protected virtual CloudBlobContainer GetResourcesContainer()
-		{
-			var connectionString = RoleEnvironment.GetConfigurationSettingValue(
-				"BlueCoffee.Resources.Account.ConnectionString");
-			var containerName = RoleEnvironment.GetConfigurationSettingValue(
-				"BlueCoffee.Resources.Container.Name");
-			var storageAccount = CloudStorageAccount.Parse(connectionString);
-			return storageAccount.CreateCloudBlobClient().GetContainerReference(containerName);
 		}
 
 		/// <summary>
@@ -167,31 +152,6 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 				"Unable to find role ({{0}) in the role environment. Available roles: {1}",
 				String.Join(",", alternativeNames),
 				RoleEnvironment.Roles.Keys));
-		}
-
-		private void DownloadResources()
-		{
-			_rootResourcesDirectory = Path.Combine(InstallDirectory, "Resources");
-			var resourcesContainer = GetResourcesContainer();
-			Parallel.ForEach(ResourceDirectoriesToDownload, directory =>
-			{
-				var cloudDirectory = resourcesContainer.GetDirectoryReference(directory);
-				var localDirectory = Path.Combine(_rootResourcesDirectory, directory);
-				Directory.CreateDirectory(localDirectory);
-				Parallel.ForEach(cloudDirectory.ListBlobs().OfType<CloudBlockBlob>(), blob =>
-					{
-						var blobSimpleName = blob.Name.Substring(blob.Name.LastIndexOf('/') + 1);
-						blob.DownloadToFile(Path.Combine(localDirectory, blobSimpleName), FileMode.Create);
-					});
-			});
-		}
-
-		private void InstallJava()
-		{
-			_javaInstaller = new JavaInstaller(
-				installDirectory: Path.Combine(InstallDirectory, "Java"),
-				resourceFileDirectory: Path.Combine(_rootResourcesDirectory, JavaPlatformDirectory));
-			_javaInstaller.Setup();
 		}
 	}
 }
