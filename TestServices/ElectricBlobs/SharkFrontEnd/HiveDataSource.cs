@@ -50,7 +50,7 @@ namespace SharkFrontEnd
 		{
 			var allJars = String.Join(";", Directory.EnumerateFiles(sparkRoot));
 			dynamic java = DarkJava.CreateVm(
-				jvmDllPath: Path.Combine(javaRoot, "java", "jre", "bin", "server", "jvm.dll"),
+				jvmDllPath: Path.Combine(javaRoot, "jre", "bin", "server", "jvm.dll"),
 				options: new[] { JavaOption.DefineProperty("java.class.path", allJars) });
 			// Import some packages
 			java.ImportPackage("java.lang");
