@@ -27,7 +27,7 @@
    Upload-ResourcesToContext $Storage
 
 #>
-param([Parameter(Mandatory=$true)][Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel.AzureStorageContext]$StorageContext,
+param([Parameter(Mandatory=$true)]$StorageContext,
     $ProjectRoot = '.',
     $Container = 'bluecoffeeresources')
 
