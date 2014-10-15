@@ -86,6 +86,11 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		protected string InstallDirectory { get { return _javaInstaller.InstallDirectory; } }
 
 		/// <summary>
+		/// The Java Azure Installer we're using.
+		/// </summary>
+		protected JavaAzureInstaller JavaInstaller { get { return _javaInstaller; } }
+
+		/// <summary>
 		/// Gets the resources directory for the given component.
 		/// </summary>
 		/// <param name="componentName">The component (directory name) for which we want resources.
