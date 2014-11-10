@@ -26,6 +26,7 @@ namespace Microsoft.Experimental.Azure.ZooKeeper.Tests
 			var zooKeeperDirectory = Path.Combine(tempDirectory, "ZooKeeper");
 			var jarsDirectory = Path.Combine(zooKeeperDirectory, "lib");
 			var zooKeeperTask = RunZooKeeper(killer, zooKeeperDirectory);
+			ConditionAwaiter.WaitForLogSnippet(Path.Combine(zooKeeperDirectory, "log", "zk.log"), "binding to port");
 			try
 			{
 				var output = TestJavaRunner.RunJavaResourceFile(
@@ -60,8 +61,8 @@ namespace Microsoft.Experimental.Azure.ZooKeeper.Tests
 			{
 				var zooKeeperDirectory = Path.Combine(tempDirectory, "ZooKeeper" + (i + 1));
 				zooKeeperTasks[i] = RunZooKeeper(killer, zooKeeperDirectory, clientPort: 2181 + i, allNodes: allNodes, myId: i + 1);
+				ConditionAwaiter.WaitForLogSnippet(Path.Combine(zooKeeperDirectory, "log", "zk.log"), "Created server");
 			});
-			Thread.Sleep(1000); // TODO: properly wait for the cluster to be up.
 			var jarsDirectory = Path.Combine(tempDirectory, "ZooKeeper1", "lib");
 			try
 			{

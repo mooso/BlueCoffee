@@ -13,8 +13,6 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 	/// </summary>
 	public static class ZooKeeperLog4jConfigFactory
 	{
-		private const string LogDirectoryPropertyName = "zookeeper.logs.dir";
-
 		/// <summary>
 		/// Creates the default configuration.
 		/// </summary>
@@ -23,19 +21,9 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		public static Log4jConfig CreateConfig(string logDirectory)
 		{
 			var consoleAppender = AppenderDefinitionFactory.ConsoleAppender();
-			var rootLogger = new RootLoggerDefinition(Log4jTraceLevel.INFO, consoleAppender);
-			var childLoggers = new ChildLoggerDefinition[]
-				{
-				};
-			return new Log4jConfig(rootLogger, childLoggers, new Dictionary<string, string>()
-				{
-					{ LogDirectoryPropertyName, logDirectory.Replace('\\', '/') }
-				});
-		}
-
-		private static AppenderDefinition QualifiedFileAppender(string name, string fileName)
-		{
-			return AppenderDefinitionFactory.DailyRollingFileAppender(name, "${" + LogDirectoryPropertyName + "}/" + fileName);
+			var fileAppender = AppenderDefinitionFactory.DailyRollingFileAppender("file", logDirectory.Replace('\\', '/') + "/zk.log");
+			var rootLogger = new RootLoggerDefinition(Log4jTraceLevel.INFO, consoleAppender, fileAppender);
+			return new Log4jConfig(rootLogger, new ChildLoggerDefinition[] {});
 		}
 	}
 }
