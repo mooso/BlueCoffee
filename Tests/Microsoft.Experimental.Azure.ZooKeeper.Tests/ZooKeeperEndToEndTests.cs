@@ -39,8 +39,7 @@ namespace Microsoft.Experimental.Azure.ZooKeeper.Tests
 					testClass: GetType(),
 					javaResourceName: "SimpleZooKeeperTester.java",
 					libDirectory: jarsDirectory);
-				Assert.AreEqual("", output.StandardError.Trim());
-				Assert.AreEqual("Fill me out", output.StandardOutput.Trim());
+				Assert.AreEqual("Success", output.StandardOutput.Trim(), output.StandardError);
 			}
 			finally
 			{
