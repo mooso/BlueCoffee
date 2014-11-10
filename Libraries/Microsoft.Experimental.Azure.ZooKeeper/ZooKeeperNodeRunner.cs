@@ -17,7 +17,7 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		private readonly string _resourceFileDirectory;
 		private readonly string _javaHome;
 		private readonly string _jarsDirectory;
-		private readonly string _dataDirectory;
+		private readonly ZooKeeperConfig _config;
 		private readonly string _configsDirectory;
 		private readonly string _zooKeeperPropertiesPath;
 		private readonly string _logsDirectory;
@@ -26,17 +26,18 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		/// <summary>
 		/// Create a new runner.
 		/// </summary>
+		/// <param name="config">The configuration.</param>
 		/// <param name="resourceFileDirectory">The directory that contains my resource files.</param>
-		/// <param name="dataDirectory">The directory to use for ZooKeeper data.</param>
 		/// <param name="configsDirectory">The directory to use for ZooKeeper configuration.</param>
 		/// <param name="logsDirectory">The directory to use for ZooKeeper logs.</param>
 		/// <param name="jarsDirectory">The directory to use for jar files.</param>
 		/// <param name="javaHome">The directory where Java is installed.</param>
-		public ZooKeeperNodeRunner(string resourceFileDirectory, string dataDirectory, string configsDirectory, string logsDirectory, string jarsDirectory,
+		public ZooKeeperNodeRunner(ZooKeeperConfig config,
+			string resourceFileDirectory, string configsDirectory, string logsDirectory, string jarsDirectory,
 			string javaHome)
 		{
+			_config = config;
 			_resourceFileDirectory = resourceFileDirectory;
-			_dataDirectory = dataDirectory;
 			_configsDirectory = configsDirectory;
 			_logsDirectory = logsDirectory;
 			_jarsDirectory = jarsDirectory;
@@ -69,7 +70,7 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		/// </summary>
 		public void Setup()
 		{
-			foreach (var dir in new[] { _dataDirectory, _configsDirectory, _logsDirectory, _jarsDirectory })
+			foreach (var dir in new[] { _config.SnapshotDirectory, _configsDirectory, _logsDirectory, _jarsDirectory })
 			{
 				Directory.CreateDirectory(dir);
 			}
@@ -80,8 +81,7 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 
 		private void WriteZooKeeperServerConfigFile()
 		{
-			var config = new ZooKeeperConfig(_dataDirectory);
-			config.ToPropertiesFile().WriteToFile(_zooKeeperPropertiesPath);
+			_config.ToPropertiesFile().WriteToFile(_zooKeeperPropertiesPath);
 		}
 
 		private void WriteZooKeeperLog4jFile()

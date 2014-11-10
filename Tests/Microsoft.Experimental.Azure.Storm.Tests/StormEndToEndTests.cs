@@ -91,7 +91,7 @@ namespace Microsoft.Experimental.Azure.Storm.Tests
 		{
 			var zooKeeperRunner = new ZooKeeperNodeRunner(
 					resourceFileDirectory: ResourcePaths.ZooKeeperResourcesPath,
-					dataDirectory: Path.Combine(zooKeeperDirectory, "data"),
+					config: new ZooKeeperConfig(Path.Combine(zooKeeperDirectory, "data")),
 					configsDirectory: Path.Combine(zooKeeperDirectory, "conf"),
 					logsDirectory: Path.Combine(zooKeeperDirectory, "log"),
 					jarsDirectory: Path.Combine(zooKeeperDirectory, "lib"),

@@ -32,6 +32,16 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		}
 
 		/// <summary>
+		/// Directory for snapshots (data directory).
+		/// </summary>
+		public string SnapshotDirectory { get { return _snapshotDirectory; } }
+
+		/// <summary>
+		/// The TCP port to use for communicating with the server.
+		/// </summary>
+		public int Port { get { return _port; } }
+
+		/// <summary>
 		/// Represent this configuration as a properties file.
 		/// </summary>
 		/// <returns>The properties file to use.</returns>

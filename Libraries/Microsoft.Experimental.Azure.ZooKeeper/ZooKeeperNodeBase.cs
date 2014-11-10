@@ -53,7 +53,7 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		{
 			_nodeRunner = new ZooKeeperNodeRunner(
 				resourceFileDirectory: GetResourcesDirectory(ZooKeeperDirectory),
-				dataDirectory: Path.Combine(DataDirectory, "Data"),
+				config: new ZooKeeperConfig(Path.Combine(DataDirectory, "Data")),
 				configsDirectory: Path.Combine(DataDirectory, "Config"),
 				logsDirectory: Path.Combine(DataDirectory, "Logs"),
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
