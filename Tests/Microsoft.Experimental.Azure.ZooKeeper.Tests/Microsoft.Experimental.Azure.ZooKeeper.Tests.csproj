@@ -76,6 +76,9 @@
   <ItemGroup>
     <EmbeddedResource Include="SimpleZooKeeperTester.java" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TwoNodeZooKeeperTester.java" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
