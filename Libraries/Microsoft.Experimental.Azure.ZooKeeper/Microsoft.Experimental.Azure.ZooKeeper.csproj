@@ -59,6 +59,7 @@
     <Compile Include="ZooKeeperLog4jConfigFactory.cs" />
     <Compile Include="ZooKeeperNodeBase.cs" />
     <Compile Include="ZooKeeperNodeRunner.cs" />
+    <Compile Include="ZooKeeperQuorumPeer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Microsoft.Experimental.Azure.ZooKeeper.nuspec" />

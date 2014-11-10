@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.Experimental.Azure.ZooKeeper.Tests
@@ -42,7 +43,7 @@ namespace Microsoft.Experimental.Azure.ZooKeeper.Tests
 
 		[TestMethod]
 		[Ignore]
-		public void TwoZooKeeperNodesTest()
+		public void ThreeZooKeeperNodesTest()
 		{
 			var tempDirectory = @"C:\ZooKeeperTestOutput";
 			if (Directory.Exists(tempDirectory))
@@ -50,11 +51,18 @@ namespace Microsoft.Experimental.Azure.ZooKeeper.Tests
 				Directory.Delete(tempDirectory, recursive: true);
 			}
 			var killer = new ProcessKiller();
-			var zooKeeper1Directory = Path.Combine(tempDirectory, "ZooKeeper1");
-			var zooKeeper2Directory = Path.Combine(tempDirectory, "ZooKeeper2");
-			var jarsDirectory = Path.Combine(zooKeeper1Directory, "lib");
-			var zooKeeper1Task = RunZooKeeper(killer, zooKeeper1Directory);
-			var zooKeeper2Task = RunZooKeeper(killer, zooKeeper2Directory, port: 2182);
+			const int numNodes = 3;
+			var zooKeeperTasks = new Task[numNodes];
+			var allNodes = Enumerable.Range(0, numNodes)
+				.Select(i => new ZooKeeperQuorumPeer("localhost", 2881 + i, 3881 + i))
+				.ToList();
+			Parallel.For(0, numNodes, i =>
+			{
+				var zooKeeperDirectory = Path.Combine(tempDirectory, "ZooKeeper" + (i + 1));
+				zooKeeperTasks[i] = RunZooKeeper(killer, zooKeeperDirectory, clientPort: 2181 + i, allNodes: allNodes, myId: i + 1);
+			});
+			Thread.Sleep(1000); // TODO: properly wait for the cluster to be up.
+			var jarsDirectory = Path.Combine(tempDirectory, "ZooKeeper1", "lib");
 			try
 			{
 				var output = TestJavaRunner.RunJavaResourceFile(
@@ -67,15 +75,20 @@ namespace Microsoft.Experimental.Azure.ZooKeeper.Tests
 			finally
 			{
 				killer.KillAll();
-				Task.WaitAll(zooKeeper1Task, zooKeeper2Task);
+				Task.WaitAll(zooKeeperTasks);
 			}
 		}
 
-		private static Task RunZooKeeper(ProcessKiller killer, string zooKeeperDirectory, int port = 2181)
+		private static Task RunZooKeeper(ProcessKiller killer, string zooKeeperDirectory,
+			int clientPort = ZooKeeperConfig.DefaultClientPort,
+			IEnumerable<ZooKeeperQuorumPeer> allNodes = null, int myId = 1)
 		{
 			var zooKeeperRunner = new ZooKeeperNodeRunner(
 					resourceFileDirectory: ResourcePaths.ZooKeeperResourcesPath,
-					config: new ZooKeeperConfig(Path.Combine(zooKeeperDirectory, "data"), port: port),
+					config: new ZooKeeperConfig(Path.Combine(zooKeeperDirectory, "data"),
+						clientPort: clientPort,
+						allNodes: allNodes,
+						myId: myId),
 					configsDirectory: Path.Combine(zooKeeperDirectory, "conf"),
 					logsDirectory: Path.Combine(zooKeeperDirectory, "log"),
 					jarsDirectory: Path.Combine(zooKeeperDirectory, "lib"),

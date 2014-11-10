@@ -77,6 +77,7 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 			ExtractJars();
 			WriteZooKeeperServerConfigFile();
 			WriteZooKeeperLog4jFile();
+			WriteMyIdFile();
 		}
 
 		private void WriteZooKeeperServerConfigFile()
@@ -88,6 +89,14 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 		{
 			var config = ZooKeeperLog4jConfigFactory.CreateConfig(_logsDirectory);
 			config.ToPropertiesFile().WriteToFile(_zooKeeperLog4jPropertiesPath);
+		}
+
+		private void WriteMyIdFile()
+		{
+			File.WriteAllText(
+				Path.Combine(_config.SnapshotDirectory, "myid"),
+				_config.MyId.ToString(),
+				Encoding.ASCII);
 		}
 
 		private void ExtractJars()
