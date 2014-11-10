@@ -48,6 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourcePaths.cs" />
     <Compile Include="TestConfigFile.cs" />
+    <Compile Include="TestJavaRunner.cs" />
     <Compile Include="WasbConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
