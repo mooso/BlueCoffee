@@ -25,6 +25,8 @@
     </Imports>
     <Endpoints>
       <InternalEndpoint name="ZooKeeperEndpoint" protocol="tcp" port="2181" />
+      <InternalEndpoint name="ZooKeeperPeerEndpoint" protocol="tcp" port="2888" />
+      <InternalEndpoint name="ZooKeeperLeaderEndpoint" protocol="tcp" port="3888" />
     </Endpoints>
     <LocalResources>
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="250" />

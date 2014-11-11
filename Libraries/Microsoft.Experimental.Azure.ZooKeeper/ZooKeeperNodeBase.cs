@@ -1,6 +1,9 @@
 ﻿using Microsoft.Experimental.Azure.JavaPlatform;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -51,9 +54,27 @@ namespace Microsoft.Experimental.Azure.ZooKeeper
 
 		private void InstallZooKeeper()
 		{
+			var zkNodes = RoleEnvironment.CurrentRoleInstance.Role.Instances.Select(GetIPAddress).ToList();
+			zkNodes.Sort(StringComparer.OrdinalIgnoreCase); // So everyone gets the same list in the same order
+			int myId = zkNodes.IndexOf(GetIPAddress(RoleEnvironment.CurrentRoleInstance)) + 1;
+			Trace.TraceInformation("All ZK nodes: ({0}). My ID: {1}",
+				string.Join(",", zkNodes), myId);
+			ZooKeeperConfig config;
+			if (zkNodes.Count <= 1)
+			{
+				// Single node configuration
+				config = new ZooKeeperConfig(Path.Combine(DataDirectory, "Data"));
+			}
+			else
+			{
+				// Multi-node configuration
+				config = new ZooKeeperConfig(Path.Combine(DataDirectory, "Data"),
+					allNodes: zkNodes.Select(n => new ZooKeeperQuorumPeer(n)),
+					myId: myId);
+			}
 			_nodeRunner = new ZooKeeperNodeRunner(
 				resourceFileDirectory: GetResourcesDirectory(ZooKeeperDirectory),
-				config: new ZooKeeperConfig(Path.Combine(DataDirectory, "Data")),
+				config: config,
 				configsDirectory: Path.Combine(DataDirectory, "Config"),
 				logsDirectory: Path.Combine(DataDirectory, "Logs"),
 				jarsDirectory: Path.Combine(InstallDirectory, "Jars"),
