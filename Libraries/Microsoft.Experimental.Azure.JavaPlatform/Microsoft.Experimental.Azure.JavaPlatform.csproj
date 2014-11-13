@@ -111,9 +111,6 @@
     <Compile Include="StringProcessOutputTracer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\openjdk7.zip" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="AllowAllPorts.cmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
