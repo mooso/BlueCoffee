@@ -32,7 +32,7 @@
 #>
 param([Parameter(Mandatory=$true)]$StorageContext,
     $JDKDownloadUri = 'http://cdn.azulsystems.com/zulu/2014-10-8.4-bin/zulu1.8.0_25-8.4.0.1-win64.zip',
-    $ProjectRoot = '.',
+    $ProjectRoot = $(Resolve-Path '.'),
     $Container = 'bluecoffeeresources')
 
 $ErrorActionPreference = 'Stop'
