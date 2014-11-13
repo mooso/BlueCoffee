@@ -32,7 +32,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		/// </summary>
 		public void Setup()
 		{
-			using (var rawStream = File.OpenRead(Path.Combine(_resourceFileDirectory, "openjdk7.zip")))
+			using (var rawStream = File.OpenRead(Path.Combine(_resourceFileDirectory, "jdk.zip")))
 			using (var archive = new ZipArchive(rawStream))
 			{
 				archive.ExtractToDirectory(_installDirectory);
@@ -44,7 +44,7 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		/// </summary>
 		public string JavaHome
 		{
-			get { return Path.Combine(_installDirectory, "java"); }
+			get { return Directory.EnumerateDirectories(_installDirectory).SingleOrDefault(); }
 		}
 	}
 }
