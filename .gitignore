@@ -149,3 +149,6 @@ java/.settings/*
 #Build target
 java/target/*
 dependency-reduced-pom.xml
+
+# Local JDK
+JDK/

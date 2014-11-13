@@ -10,6 +10,7 @@ function Get-ScriptDirectory
 
 $rootDirectory = Split-Path $(Get-ScriptDirectory)
 $solutionDirectory = $rootDirectory
+$LocalJDK = "$rootDirectory\JDK\jdk.zip"
 
 function Ensure-NugetRestored
 {
@@ -73,27 +74,60 @@ function Get-ConnectionString($storageAccount)
 	"DefaultEndpointsProtocol=https;AccountName=$storageAccountName;AccountKey=$($key.Primary)"
 }
 
+function Download-JDK()
+{
+    If (-not $(Test-Path $LocalJDK))
+    {
+        Write-Host "Downloading JDK..."
+        $JDKDownloadUri = 'http://cdn.azulsystems.com/zulu/2014-10-8.4-bin/zulu1.8.0_25-8.4.0.1-win64.zip'
+        $OutputDirectory = Split-Path $LocalJDK
+        If (-not $(Test-Path $OutputDirectory))
+        {
+            $MDOutput = md $OutputDirectory
+        }
+        $WebRequest = [System.Net.WebRequest]::CreateHttp($JDKDownloadUri)
+        $WebRequest.Referer = 'http://www.azulsystems.com/products/zulu/downloads'
+        $WebResponse = [System.Net.HttpWebResponse]$WebRequest.GetResponse()
+        If ($WebResponse.StatusCode -ne [System.Net.HttpStatusCode]::OK)
+        {
+            Throw $WebResponse.StatusDescription
+        }
+        $ResponseStream = $WebResponse.GetResponseStream()
+        $FileStream = [System.IO.File]::Create($LocalJDK)
+        $ResponseStream.CopyTo($FileStream)
+        $FileStream.Close()
+        $ResponseStream.Close()
+    }
+}
+
+function Upload-Resource($storageContext, $blobNamePrefix, $container, $fileToUpload)
+{
+    $blobName = $blobNamePrefix + $fileToUpload.Name
+    $existingBlob = Get-AzureStorageBlob -Blob $blobName -Context $storageContext -Container $container -ErrorAction SilentlyContinue
+    if (($existingBlob -eq $null) -or ($existingBlob.Length -ne $fileToUpload.Length))
+    {
+        Write-Host "Uploading $blobName ..."
+        $newBlob = Set-AzureStorageBlobContent -Blob $blobName -Context $storageContext -Container $container -File $($fileToUpload.FullName) -Force
+    }
+}
+
 function Upload-ResourcesToContext($storageContext)
 {
+    Download-JDK
     $storageContext = Contextify-Account $storageContext
 	Write-Host "Uploading resources..."
     $container = 'bluecoffeeresources'
     $containerReference = New-AzureStorageContainer -Name $container -Context $storageContext -ErrorAction SilentlyContinue
     $libraryPrefix = "Microsoft.Experimental.Azure."
-    $libraryDirectories = Get-ChildItem "$rootDirectory\Libraries" | ?{$_.Name.StartsWith($libraryPrefix)};
+    $libraryDirectories = Get-ChildItem "$rootDirectory\Libraries" | ?{$_.Name.StartsWith($libraryPrefix) -and -not $_.Name.EndsWith('JavaPlatform')};
     $libraryDirectories | %{
         $blobNamePrefix = $_.Name.Substring($libraryPrefix.Length) + "/"
         $myResources = Get-ChildItem "$($_.FullName)\Resources" | ?{$_.Extension -eq ".zip"}
         $myResources | %{
-            $blobName = $blobNamePrefix + $_.Name
-            $existingBlob = Get-AzureStorageBlob -Blob $blobName -Context $storageContext -Container $container -ErrorAction SilentlyContinue
-            if (($existingBlob -eq $null) -or ($existingBlob.Length -ne $_.Length))
-            {
-                Write-Host "Uploading $blobName ..."
-                $newBlob = Set-AzureStorageBlobContent -Blob $blobName -Context $storageContext -Container $container -File $($_.FullName) -Force
-            }
+            Upload-Resource $storageContext $blobNamePrefix $container $_
         }
     }
+    Upload-Resource $storageContext 'JavaPlatform/' $container $(Get-Item $LocalJDK)
 }
 
 function Upload-Resources($storageAccount)
