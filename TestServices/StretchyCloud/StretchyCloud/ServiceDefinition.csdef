@@ -9,7 +9,7 @@
       <InternalEndpoint name="Http" protocol="tcp" port="9200" />
     </Endpoints>
     <LocalResources>
-      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="256" />
+      <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="1024" />
       <LocalStorage name="DataDirectory" cleanOnRoleRecycle="false" sizeInMB="1024" />
     </LocalResources>
     <ConfigurationSettings>
