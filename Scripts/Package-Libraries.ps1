@@ -48,8 +48,11 @@ Get-ChildItem "$rootDirectory\Libraries" -Recurse -Include *.nuspec | %{
     $nuspecContent | Out-File -FilePath "$stagingDirectory\$libraryName.nuspec"
     $libDir = md "$stagingDirectory\lib\net45"
     Copy-Item "$dir\bin\Release\$libraryName.*" $libDir
-    $resourcesDir = md "$stagingDirectory\content\net45\BlueCoffeeResources\$libSimpleName"
-    Copy-Item "$dir\Resources\*.zip" $resourcesDir
+    If (Test-Path "$dir\Resources")
+    {
+        $resourcesDir = md "$stagingDirectory\content\net45\BlueCoffeeResources\$libSimpleName"
+        Copy-Item "$dir\Resources\*.zip" $resourcesDir
+    }
     Copy-Item "$rootDirectory\ClientScripts\*.ps1" "$stagingDirectory\content\net45"
     pushd $stagingDirectory
     nuget pack -OutputDirectory $packageDirectory
