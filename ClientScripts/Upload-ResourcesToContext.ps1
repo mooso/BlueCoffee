@@ -37,7 +37,7 @@ param([Parameter(Mandatory=$true)]$StorageContext,
 
 $ErrorActionPreference = 'Stop'
 $LocalJDK = "$ProjectRoot\BlueCoffeeResources\JavaPlatform\jdk.zip"
-If ($JDKDownloadUri -ne $null)
+If ($JDKDownloadUri -ne $null -and -not $(Test-Path $LocalJDK))
 {
     Write-Host "Downloading JDK..."
     $OutputDirectory = Split-Path $LocalJDK
