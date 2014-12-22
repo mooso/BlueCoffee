@@ -53,9 +53,38 @@ Get-ChildItem "$rootDirectory\Libraries" -Recurse -Include *.nuspec | %{
         $resourcesDir = md "$stagingDirectory\content\net45\BlueCoffeeResources\$libSimpleName"
         Copy-Item "$dir\Resources\*.zip" $resourcesDir
     }
+    Else
+    {
+        $contentDir = md "$stagingDirectory\content\net45"
+    }
     Copy-Item "$rootDirectory\ClientScripts\*.ps1" "$stagingDirectory\content\net45"
     pushd $stagingDirectory
     nuget pack -OutputDirectory $packageDirectory
     popd
-    Remove-Item -Recurse -Force $stagingDirectory
+    $RetryCount = 0
+    Do
+    {
+        Write-Host "Deleting staging directory..."
+        Remove-Item -Recurse -Force $stagingDirectory -ErrorVariable RemoveError -ErrorAction SilentlyContinue
+        If ($RemoveError.Count -eq 0)
+        {
+            $DoRetryRemove = $false
+            Write-Host "Successfully removed staging directory."
+        }
+        Else
+        {
+            Write-Host "Error: $($RemoveError[0])..."
+            if ($RetryCount++ -lt 3)
+            {
+                $DoRetryRemove = $true
+                Write-Host "Retrying..."
+                Start-Sleep -Seconds 1
+            }
+            Else
+            {
+                $DoRetryRemove = $false
+                Write-Host "Giving up."
+            }
+        }
+    } While ($DoRetryRemove)
 }
