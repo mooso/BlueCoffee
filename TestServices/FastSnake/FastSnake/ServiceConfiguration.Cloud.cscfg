@@ -3,7 +3,6 @@
   <Role name="PrestoCoordinator">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
     </ConfigurationSettings>
@@ -11,7 +10,6 @@
   <Role name="PrestoWorker">
     <Instances count="4" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
     </ConfigurationSettings>
@@ -19,7 +17,6 @@
   <Role name="CassandraNode">
     <Instances count="4" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
     </ConfigurationSettings>
@@ -27,7 +24,7 @@
   <Role name="Populator">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
+      <Setting name="ExceptionLogsAccount" value="UseDevelopmentStorage=true" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

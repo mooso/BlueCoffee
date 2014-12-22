@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>2.4</ProductVersion>
+    <ProductVersion>2.5</ProductVersion>
     <ProjectGuid>a0ea580a-41f4-40aa-b315-81ef9bcfcbd5</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -68,20 +68,14 @@
     <Folder Include="IndexerContent\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ElasticSearchContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="FrontendContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="IndexerContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
+    <DiagnosticsConfiguration Include="ElasticSearchContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="FrontendContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="IndexerContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
-    <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Windows Azure Tools\2.4\</CloudExtensionsDir>
+    <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Windows Azure Tools\2.5\</CloudExtensionsDir>
   </PropertyGroup>
   <Import Project="$(CloudExtensionsDir)Microsoft.WindowsAzure.targets" />
 </Project>

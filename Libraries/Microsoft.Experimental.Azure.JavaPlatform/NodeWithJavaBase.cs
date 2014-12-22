@@ -123,12 +123,12 @@ namespace Microsoft.Experimental.Azure.JavaPlatform
 		}
 
 		/// <summary>
-		/// Log the given exception. By default we upload it to a specialized container in the Diagnostics storage account.
+		/// Log the given exception. By default we upload it to a specialized container in the BlueCoffee.Resources.Account.ConnectionString storage account.
 		/// </summary>
 		/// <param name="ex">The exception.</param>
 		protected virtual void LogException(Exception ex)
 		{
-			var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString"));
+			var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("BlueCoffee.Resources.Account.ConnectionString"));
 			var container = storageAccount
 					.CreateCloudBlobClient()
 					.GetContainerReference("logs");

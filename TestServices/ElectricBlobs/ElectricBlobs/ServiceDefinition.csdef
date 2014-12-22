@@ -2,7 +2,6 @@
 <ServiceDefinition name="ElectricBlobs" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-06.2.4">
   <WorkerRole name="SparkMaster" vmsize="Small">
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <Endpoints>
       <InputEndpoint name="HTTP" protocol="tcp" port="8080" localPort="8080" />
@@ -22,7 +21,6 @@
   </WorkerRole>
   <WorkerRole name="SparkSlave" vmsize="Small">
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <Endpoints>
       <InternalEndpoint name="All" protocol="any" />
@@ -40,7 +38,6 @@
   </WorkerRole>
   <WorkerRole name="Shark" vmsize="Small">
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <Endpoints>
       <InputEndpoint name="Shark" protocol="tcp" port="8082" localPort="8082" />
@@ -69,7 +66,6 @@
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
     </Endpoints>
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <LocalResources>
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="10240" />
@@ -81,7 +77,6 @@
   </WebRole>
   <WorkerRole name="HiveMetastore" vmsize="Small">
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <Endpoints>
       <InternalEndpoint name="Thrift" protocol="tcp" port="9083" />

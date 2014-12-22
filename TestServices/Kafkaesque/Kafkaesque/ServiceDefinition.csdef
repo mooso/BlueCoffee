@@ -2,7 +2,6 @@
 <ServiceDefinition name="Kafkaesque" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-06.2.4">
   <WorkerRole name="KafkaBroker" vmsize="Small">
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <LocalResources>
       <LocalStorage name="InstallDirectory" cleanOnRoleRecycle="true" sizeInMB="1024" />
@@ -18,7 +17,6 @@
   </WorkerRole>
   <WorkerRole name="ZooKeeperNode" vmsize="Small">
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <Endpoints>
       <InternalEndpoint name="ZooKeeperEndpoint" protocol="tcp" port="2181" />

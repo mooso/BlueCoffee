@@ -78,7 +78,7 @@ namespace Populator
 
 		private void UploadExceptionToBlob(Exception ex)
 		{
-			var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString"));
+			var storageAccount = CloudStorageAccount.Parse(RoleEnvironment.GetConfigurationSettingValue("ExceptionLogsAccount"));
 			var container = storageAccount
 					.CreateCloudBlobClient()
 					.GetContainerReference("logs");

@@ -3,7 +3,6 @@
   <Role name="ElasticSearch">
     <Instances count="3" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="BlueCoffee.Resources.Account.ConnectionString" value="UseDevelopmentStorage=true" />
       <Setting name="BlueCoffee.Resources.Container.Name" value="bluecoffeeresources" />
     </ConfigurationSettings>
@@ -11,13 +10,11 @@
   <Role name="Indexer">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
     </ConfigurationSettings>
   </Role>
   <Role name="Frontend">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

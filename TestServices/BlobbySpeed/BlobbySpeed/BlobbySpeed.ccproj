@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>2.4</ProductVersion>
+    <ProductVersion>2.5</ProductVersion>
     <ProjectGuid>234a23d7-f5d7-4827-af82-bbf9af10139e</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -69,20 +69,14 @@
     <Folder Include="Profiles" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="HiveMetastoreContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="PrestoCoordinatorContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="PrestoWorkerContent\diagnostics.wadcfg">
-      <SubType>Content</SubType>
-    </Content>
+    <DiagnosticsConfiguration Include="HiveMetastoreContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="PrestoCoordinatorContent\diagnostics.wadcfgx" />
+    <DiagnosticsConfiguration Include="PrestoWorkerContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
-    <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Windows Azure Tools\2.4\</CloudExtensionsDir>
+    <CloudExtensionsDir Condition=" '$(CloudExtensionsDir)' == '' ">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Windows Azure Tools\2.5\</CloudExtensionsDir>
   </PropertyGroup>
   <Import Project="$(CloudExtensionsDir)Microsoft.WindowsAzure.targets" />
 </Project>

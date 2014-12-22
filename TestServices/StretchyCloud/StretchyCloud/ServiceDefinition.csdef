@@ -2,7 +2,6 @@
 <ServiceDefinition name="StretchyCloud" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition" schemaVersion="2014-06.2.4">
   <WorkerRole name="ElasticSearch" vmsize="Small">
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
     <Endpoints>
       <InternalEndpoint name="NodeComm" protocol="tcp" port="9300" />
@@ -19,7 +18,6 @@
   </WorkerRole>
   <WorkerRole name="Indexer" vmsize="Small">
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
   </WorkerRole>
   <WebRole name="Frontend" vmsize="Small">
@@ -34,7 +32,6 @@
       <InputEndpoint name="Endpoint1" protocol="http" port="80" />
     </Endpoints>
     <Imports>
-      <Import moduleName="Diagnostics" />
     </Imports>
   </WebRole>
 </ServiceDefinition>
